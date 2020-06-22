@@ -31,10 +31,10 @@ class ParserFGTest extends AnyFlatSpec with Diagrams {
 
     assert(actual.successful)
     assert(
-      actual.get.fields.keys.toList == Nil
+      actual.get.fields.map(_.name) == Nil
     )
     assert(
-      actual.get.fields.values.toList.map(_.value) == Nil
+      actual.get.fields.map(_.typeName).map(_.value) == Nil
     )
   }
 
@@ -45,10 +45,10 @@ class ParserFGTest extends AnyFlatSpec with Diagrams {
 
     assert(actual.successful)
     assert(
-      actual.get.fields.keys.toList == List(FieldName("value"))
+      actual.get.fields.map(_.name) == List(FieldName("value"))
     )
     assert(
-      actual.get.fields.values.toList.map(_.value) == List("int")
+      actual.get.fields.map(_.typeName).map(_.value) == List("int")
     )
   }
 
@@ -63,10 +63,10 @@ class ParserFGTest extends AnyFlatSpec with Diagrams {
 
     assert(actual.successful)
     assert(
-      actual.get.fields.keys.toList == List(FieldName("f1"), FieldName("f2"))
+      actual.get.fields.map(_.name) == List(FieldName("f1"), FieldName("f2"))
     )
     assert(
-      actual.get.fields.values.toList.map(_.value) == List("int", "string")
+      actual.get.fields.map(_.typeName).map(_.value) == List("int", "string")
     )
   }
 
@@ -201,18 +201,27 @@ class ParserFGTest extends AnyFlatSpec with Diagrams {
   it should "parse a method call without any argument" in new SetUp {
     val string = "v.method()"
 
-    val actual = parse(methodCall, string)
+    val actual = parse(expression, string)
     assert(actual.successful)
+    assert(actual.get.isInstanceOf[MethodCall])
+
+    val mc = actual.get.asInstanceOf[MethodCall]
+    assert(mc.expression == Variable(VariableName("v")))
+    assert(mc.methodName == MethodName("method"))
+    assert(mc.arguments == Nil)
   }
 
   it should "parse a method call with a argument" in new SetUp {
     val string = "v.method(a)"
 
-    val actual = parse(methodCall, string)
+    val actual = parse(expression, string)
     assert(actual.successful)
-    assert(actual.get.expression == Variable(VariableName("v")))
-    assert(actual.get.methodName == MethodName("method"))
-    assert(actual.get.arguments == List(Variable(VariableName("a"))))
+    assert(actual.get.isInstanceOf[MethodCall])
+
+    val mc = actual.get.asInstanceOf[MethodCall]
+    assert(mc.expression == Variable(VariableName("v")))
+    assert(mc.methodName == MethodName("method"))
+    assert(mc.arguments == List(Variable(VariableName("a"))))
   }
 
   it should "parse a structure literal" in new SetUp {
@@ -227,19 +236,27 @@ class ParserFGTest extends AnyFlatSpec with Diagrams {
   it should "parse a field select" in new SetUp {
     val string = "this.value"
 
-    val actual = parse(fieldSelect, string)
+    val actual = parse(expression, string)
     assert(actual.successful)
-    assert(actual.get.expression == Variable(VariableName("this")))
-    assert(actual.get.fieldName == FieldName("value"))
+    assert(actual.get.isInstanceOf[FieldSelect])
+
+    val fc = actual.get.asInstanceOf[FieldSelect]
+
+    assert(fc.expression == Variable(VariableName("this")))
+    assert(fc.fieldName == FieldName("value"))
   }
 
   it should "parse a type assertion" in new SetUp {
     val string = "t.(int)"
 
-    val actual = parse(typeAssertion, string)
+    val actual = parse(expression, string)
     assert(actual.successful)
-    assert(actual.get.typeName.value == "int")
-    assert(actual.get.expression == Variable(VariableName("t")))
+    assert(actual.get.isInstanceOf[TypeAssertion])
+
+    val ta = actual.get.asInstanceOf[TypeAssertion]
+
+    assert(ta.typeName.value == "int")
+    assert(ta.expression == Variable(VariableName("t")))
   }
 
   it should "parse the main function" in new SetUp {
@@ -296,7 +313,7 @@ class ParserFGTest extends AnyFlatSpec with Diagrams {
     ))
   }
 
-  it should "eval to call method" in new SetUp {
+  it should "parse to call method" in new SetUp {
     val string =
       """package main;
         |type V struct { }
@@ -311,5 +328,51 @@ class ParserFGTest extends AnyFlatSpec with Diagrams {
     val actual = parse(mainMethod, string)
     assert(actual.successful)
     assert(actual.get.main == MethodCall(StructureLiteral(StructureTypeName("V"), Nil), MethodName("f"), Nil))
+  }
+
+  it should "parse interface and its function" in new SetUp {
+    val string =
+      """package main;
+        |type V struct { }
+        |type T struct { }
+        |type T interface {
+        |  method() V
+        |}
+        |func (this T) method() V {
+        |  return V{}
+        |}
+        |func main() {
+        |  _ = T{}.method()
+        |}
+        |""".stripMargin
+
+    val actual = parse(mainMethod, string)
+    assert(actual.successful)
+    assert(actual.get.main == MethodCall(StructureLiteral(StructureTypeName("T"), Nil), MethodName("method"), Nil) )
+  }
+
+  it should "parse interface and struct" in new SetUp {
+    val string =
+      """package main;
+        |type V struct { }
+        |type T struct {
+        |  value V
+        |}
+        |type M interface {
+        |  Method() V
+        |}
+        |func (this T) Method() V {
+        |  return this.value
+        |}
+        |type S struct {
+        |  field M
+        |}
+        |func main() {
+        |  _ = S{T{V{}}}.field.Method()
+        |}
+        |""".stripMargin
+
+    val parseResult = parse(mainMethod, string)
+    assert(parseResult.successful)
   }
 }

@@ -99,4 +99,34 @@ class EvaluatorFGTest extends AnyFlatSpec with Diagrams {
 
     assert(actual == Right(ValuedStructureLiteral(StructureTypeName("T"), Nil)))
   }
+
+  it should "eval interface and struct" in new SetUp {
+    val string =
+      """package main;
+        |type V struct { }
+        |type T struct {
+        |  value V
+        |}
+        |type M interface {
+        |  Method() V
+        |}
+        |func (this T) Method() V {
+        |  return this.value
+        |}
+        |type S struct {
+        |  field M
+        |}
+        |func main() {
+        |  _ = S{T{V{}}}.field.Method()
+        |}
+        |""".stripMargin
+
+    val parseResult = parse(mainMethod, string)
+    assert(parseResult.successful)
+
+    val ast = parseResult.get
+    val actual = sut.eval(ast)
+
+    assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
+  }
 }

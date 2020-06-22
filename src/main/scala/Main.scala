@@ -1,20 +1,14 @@
 import evaluator.fg.EvaluatorFG
 import parser.fg.ParserFG
+import typer.fg.TyperFG
 
 object Main extends ParserFG {
   val evalFG = new EvaluatorFG()
+  val typerFG = new TyperFG()
 
-  def runGetField(): Unit = {
-    val string =
-      """package main;
-        |type V struct { }
-        |type T struct {
-        |  field V
-        |}
-        |func main() {
-        |  _ = T{V{}}.field
-        |}""".stripMargin
-
+  private def pp(
+    string: String
+  ): Unit = {
     println("=========== Input ===========")
     println(string)
     val parseResult = parse(mainMethod, string)
@@ -23,12 +17,29 @@ object Main extends ParserFG {
 
     println("=========== AST ===========")
     pprint.pprintln(ast)
+
     println("=========== Result ===========")
     pprint.pprintln(evalFG.eval(ast))
+
+    println("=========== Type ===========")
+    pprint.pprintln(typerFG.check(ast))
+  }
+
+  def runGetField(): Unit = {
+    pp(
+      """package main;
+        |type V struct { }
+        |type T struct {
+        |  field V
+        |}
+        |func main() {
+        |  _ = T{V{}}.field
+        |}""".stripMargin
+    )
   }
 
   def runMethodCall(): Unit = {
-    val string =
+    pp(
       """package main;
         |type T struct { }
         |type V struct {
@@ -41,22 +52,37 @@ object Main extends ParserFG {
         |  _ = V{T{}}.f(T{})
         |}
         |""".stripMargin
+    )
+  }
 
-    println("=========== Input ===========")
-    println(string)
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
-    val ast = parseResult.get
-
-    println("=========== AST ===========")
-    pprint.pprintln(ast)
-    println("=========== Result ===========")
-    pprint.pprintln(evalFG.eval(ast))
+  def runTypeCheck(): Unit = {
+    pp(
+      """package main;
+        |type V struct { }
+        |type T struct {
+        |  value V
+        |}
+        |type M interface {
+        |  Method() V
+        |}
+        |func (this T) Method() V {
+        |  return this.value
+        |}
+        |type S struct {
+        |  field M
+        |}
+        |func main() {
+        |  _ = S{T{V{}}}.field.Method()
+        |}
+        |""".stripMargin
+    )
   }
 
   def main(args: Array[String]): Unit = {
     runGetField()
 
     runMethodCall()
+
+    runTypeCheck()
   }
 }

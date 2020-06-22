@@ -1,14 +1,13 @@
 package evaluator.fg
 
 import ast.fg._
-import evaluator.Utils._
-import types.fg.TypedVariable
+import util.Utils._
 
 class EvaluatorFG {
   def eval(
     main: Main
   ): Either[Throwable, ValuedStructureLiteral] = {
-    val declarations = main.declarations
+    implicit val declarations: Seq[Declaration] = main.declarations
 
     def innerEval(
       expression: Expression
@@ -29,8 +28,8 @@ class EvaluatorFG {
           leftHandResult <- innerEval(expression)
           fs = fields(declarations, leftHandResult.structureTypeName)
           result <- fs.zip(leftHandResult.values).find {
-            case((fn, _), _) =>
-              fn == fieldName
+            case (sf, _) =>
+              sf.name == fieldName
           }.map {
             v => Right.apply(v._2)
           }
@@ -41,7 +40,7 @@ class EvaluatorFG {
         for {
           leftHandResult <- innerEval(expression)
           argumentResult <- evalAll(arguments)
-          vs <- body(declarations, getType(leftHandResult), methodName) match {
+          vs <- body(declarations, `type`(leftHandResult), methodName) match {
             case Some(result) => Right(result)
             case None => Left(new IllegalArgumentException)
           }
@@ -64,9 +63,14 @@ class EvaluatorFG {
           result <- innerEval(substitute(vs._2, variablesMap))
         } yield result
 
-      case TypeAssertion(_, _) =>
-        // This will be implemented after type checker will be implemented.
-        ???
+      case TypeAssertion(expression, typeName) =>
+        for {
+          leftHand <- innerEval(expression)
+          result <- if (`type`(leftHand) :< typeName)
+            Right(leftHand)
+          else
+            Left(new IllegalArgumentException)
+        } yield result
 
       case Variable(_) =>
         Left(new IllegalArgumentException)

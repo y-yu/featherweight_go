@@ -24,10 +24,17 @@ case class StructureTypeName(override val value: String) extends TypeName(value)
 
 case class InterfaceTypeName(override val value: String) extends TypeName(value)
 
+case class AnyTypeName(override val value: String) extends TypeName(value)
+
 sealed trait TypeLiteral extends AST
 
+case class StructureField(
+  name: FieldName,
+  typeName: TypeName
+)
+
 case class Structure(
-  fields: Map[FieldName, TypeName]
+  fields: Seq[StructureField]
 ) extends TypeLiteral
 
 case class Interface(
@@ -82,4 +89,4 @@ case class TypeAssertion(
 case class ValuedStructureLiteral(
   structureTypeName: StructureTypeName,
   values: Seq[ValuedStructureLiteral]
-) extends Expression
+) extends Expression // Does it make sense?

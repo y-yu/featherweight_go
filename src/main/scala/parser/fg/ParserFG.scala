@@ -1,9 +1,10 @@
 package parser.fg
 
 import ast.fg._
-import scala.util.parsing.combinator._
+import scala.util.parsing.combinator.RegexParsers
+import scala.util.parsing.input.CharSequenceReader
 
-class ParserFG extends RegexParsers {
+class ParserFG extends RegexParsers { self =>
   override def skipWhitespace = false
 
   val name: Parser[String] = """\w+""".r
@@ -21,7 +22,7 @@ class ParserFG extends RegexParsers {
     name.map(InterfaceTypeName.apply)
 
   val typeName: Parser[TypeName] =
-    structureTypeName | interfaceTypeName
+    name.map(AnyTypeName.apply)
 
   val fieldName: Parser[FieldName] =
     name.map(FieldName.apply)
@@ -65,8 +66,8 @@ class ParserFG extends RegexParsers {
       <~ whiteSpace.? <~ "}").map { fs =>
         Structure(
           fields = fs.map {
-            case fn ~ tn => (fn, tn)
-          }.toMap
+            case fn ~ tn => StructureField(fn, tn)
+          }
         )
     }
 
@@ -78,8 +79,9 @@ class ParserFG extends RegexParsers {
         )
     }
 
-  def typeLiteral: Parser[TypeLiteral] =
-    structure | interface
+  def typeLiteral: Parser[~[TypeName, TypeLiteral]] =
+    ((structureTypeName <~ whiteSpace) ~ structure) |
+      ((interfaceTypeName <~ whiteSpace) ~ interface)
 
   def methodDefinition: Parser[Method] =
     ((("func" ~> whiteSpace.? ~> receiver <~ whiteSpace.?) ~ methodSpecification <~ whiteSpace.? <~
@@ -93,7 +95,7 @@ class ParserFG extends RegexParsers {
     }
 
   def typeDefinition: Parser[Type] =
-    (("type" ~> whiteSpace ~> typeName <~ whiteSpace) ~ typeLiteral).map {
+    ("type" ~> whiteSpace ~> typeLiteral).map {
       case tn ~ tl =>
         Type(
           name = tn,
@@ -105,13 +107,14 @@ class ParserFG extends RegexParsers {
     methodDefinition | typeDefinition
 
   def mainMethod: Parser[Main] =
-    (("""package *main;""".r ~> whiteSpace.? ~> (declaration <~ whiteSpace).* <~ """func *main\(\) *\{""".r <~ whiteSpace.? <~ """_ *= *""".r) ~
+    (("""package *main;""".r ~> whiteSpace.? ~> (declaration <~ whiteSpace).* <~
+      """func +main\(\) *\{""".r <~ whiteSpace.? <~ """_ *= *""".r) ~
       (expression <~ whiteSpace.? <~ "}")).map {
-      case ds ~ e =>
-        ast.fg.Main(
-          declarations = ds,
-          main = e
-        )
+        case ds ~ e =>
+          ast.fg.Main(
+            declarations = ds,
+            main = e
+          )
     }
 
   def variable: Parser[Variable] =
@@ -125,17 +128,6 @@ class ParserFG extends RegexParsers {
   private def expressions(end: String): Parser[Seq[Expression]] =
     empty(end) | (commaSeparatedSequence(expression) <~ end)
 
-  def methodCall: Parser[MethodCall] =
-    ((inversePriorityExpression <~ whiteSpace.? <~ "." <~ whiteSpace.? ) ~
-      (methodName <~ "(") ~ expressions(")")).map {
-      case e ~ mn ~ es =>
-        MethodCall(
-          expression = e,
-          methodName = mn,
-          arguments = es
-        )
-    }
-
   def structureLiteral: Parser[StructureLiteral] =
     ((structureTypeName <~ "{" <~ whiteSpace.?) ~
       expressions("}") <~ whiteSpace.?).map {
@@ -146,33 +138,48 @@ class ParserFG extends RegexParsers {
         )
     }
 
-  def fieldSelect: Parser[FieldSelect] =
-    ((inversePriorityExpression <~ whiteSpace.? <~ "." <~ whiteSpace.?) ~ fieldName).map {
-      case e ~ fn =>
-        FieldSelect(
-          expression = e,
-          fieldName = fn
+  def methodCall(expression: Expression): Parser[MethodCall] =
+    ((whiteSpace.? ~> methodName <~ "(") ~ expressions(")")).map {
+      case mn ~ es =>
+        MethodCall(
+          expression = expression,
+          methodName = mn,
+          arguments = es
         )
     }
 
-  def typeAssertion: Parser[TypeAssertion] =
-    ((inversePriorityExpression <~ whiteSpace.? <~ ".(" <~ whiteSpace.?) ~
-      (typeName <~ whiteSpace.? <~ ")")).map {
-      case e ~ tn =>
+  def fieldSelect(expression: Expression): Parser[FieldSelect] =
+    (whiteSpace.? ~> fieldName).map { fn =>
+      FieldSelect(
+        expression = expression,
+        fieldName = fn
+      )
+    }
+
+  def typeAssertion(expression: Expression): Parser[TypeAssertion] =
+    (whiteSpace.? ~> "(" ~> whiteSpace.? ~>
+      typeName <~ whiteSpace.? <~ ")").map { tn =>
         TypeAssertion(
-          expression = e,
+          expression = expression,
           typeName = tn
         )
     }
-  def nonDotExpression: Parser[Expression] =
-    structureLiteral | variable
 
-  def dotExpression: Parser[Expression] =
-    typeAssertion | methodCall | fieldSelect
-
-  private def inversePriorityExpression: Parser[Expression] =
-    nonDotExpression | dotExpression
-
-  def expression: Parser[Expression] =
-    dotExpression | nonDotExpression
+  def expression: Parser[Expression] = Parser { in =>
+    ((""".+(?=\.)""".r <~ ".") ~ """.+""".r)(in) match {
+      case Success(l ~ r, next) =>
+        expression(new CharSequenceReader(l)).flatMapWithNext { e => i =>
+          (typeAssertion(e) | methodCall(e) | fieldSelect(e))(
+            new CharSequenceReader(r)
+          ).flatMapWithNext { result => j =>
+            if (i.atEnd && j.atEnd)
+              Success(result, next)
+            else
+              Failure("parse error!", in)
+          }
+        }
+      case _: NoSuccess =>
+        (structureLiteral | variable)(in)
+    }
+  }
 }
