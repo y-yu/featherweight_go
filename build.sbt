@@ -1,7 +1,15 @@
 import ReleaseTransformations._
 import UpdateReadme.updateReadme
 
-lazy val root = (project in file("."))
+lazy val root = project.in(file(".")).aggregate(
+  featherweightGoJS,
+  featherweightGoJVM
+).settings(
+  publish := {},
+  publishLocal := {}
+)
+
+lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) in file("."))
   .settings(
     organization := "com.github.y-yu",
     name := "featherweight_go",
@@ -17,12 +25,25 @@ lazy val root = (project in file("."))
       "-unchecked"
     ),
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
-      "org.scalatest" %% "scalatest" % "3.1.2" % "test",
-      "com.lihaoyi" %% "pprint" % "0.5.6"
+      "org.scala-lang.modules" %%% "scala-parser-combinators" % "1.1.2",
+      "org.scalatest" %%% "scalatest" % "3.1.2" % "test",
+      "com.lihaoyi" %%% "pprint" % "0.5.9"
     )
   )
   .settings(publishSettings)
+  .jsSettings(
+    scalacOptions += {
+      val a = (baseDirectory in LocalRootProject).value.toURI.toString
+      val g = "https://raw.githubusercontent.com/y-yu/featherweight_go/" + tagOrHash.value
+      s"-P:scalajs:mapSourceURI:$a->$g/"
+    }
+  )
+  .jvmSettings(
+    mainClass := Some("featherweightgo.Main")
+  )
+
+lazy val featherweightGoJVM = featherweightGo.jvm
+lazy val featherweightGoJS = featherweightGo.js
 
 lazy val publishSettings = Seq(
   publishMavenStyle := true,

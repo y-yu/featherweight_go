@@ -2,6 +2,10 @@ language: scala
 
 dist: bionic
 
+env:
+  global:
+    - secure: "G2utPx+ZrYvs/UjvRTvSXk8U2n58Kdxvo6TxBu6zpklxJV9bw38wbO3t3tEosgj+FYPcwLk2wIOy6Uq3L0shb8wnQ+OqOFIUEqsofuUiY/f9gwqTHQ4RVlNw1EQQ7RwI2KnFTHahvUz8cbNpGTGr3pBDZkW1Urr12RgXmn5NpWA3vS8H4eNAN/nEfh8oaCYzfYfRs8c3Fl9O6I+tRMAamxaNk6/HGv6PTc84sCXfkDKVOZtVna7nO/WZ9Z9YTsn8ojcGnzNij/UW4j/8W4uWbS8yzx93BchBIaeORm24Dm0oGkLr6akXHQ0waj+26UlCeuMJaoaxLllUAIeH+qnP/j5YoptBHVU9Dh4UM8bskWd4zD3BK0dOg0hT0eP2kdgb3QGURrk8UiVl0mWeeYl8cxlAfT0q95+jXfXMZfrYMbaNImPXDsTG61gNNRKBk3JsSojFUOtxhgVHxPXaVt5ku9mxLCye67hFin2ueO/OaN7wWK7uBs9PJSvGETIVK9Flmsomncax9BrbP10LVtRrfQzZjfAPVwtlH05KDqxy2I2S7GtnrdgFcuae6U8u2SiIxr+Fd2lg8JPAkDx8xMbdTJg1CRrPk45SJsehOPG+958c4tamRCa1KIjhgNRYfunWpqIunEhqjoMAhNBZtJ1IiAX6+QLcYTHYXIekFbFsyz4="
+
 cache:
   directories:
     - $HOME/.ivy2/cache
@@ -9,7 +13,10 @@ cache:
     - $HOME/.sbt/launchers
 
 script:
-  - ./sbt "run; test"
+  - ./sbt "featherweightGoJVM/run; test; featherweightGoJS/fastOptJS"
+
+after_script:
+  - ./travis/deploy.sh
 
 before_cache:
   - find $HOME/.sbt -name "*.lock" | xargs rm
