@@ -10,7 +10,7 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_BRANCH}" == "master" && "${TRA
   git config --global user.email "yyu@mental.poker"
   git config --global user.name "YOSHIMURA Hikaru"
   git fetch origin gh-pages:gh-pages
-  git stash -u
+  git stash -a
   git checkout gh-pages
   git rm index.html ./js/target/scala-2.13/featherweight_go-fastopt.js
   git checkout master index.html
