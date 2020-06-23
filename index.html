@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Featherweight Go implementation by Scala(.js)</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+</head>
+<style>
+    html, body,
+    #editor {
+        margin: 0;
+        height: 100%;
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        color: #333;
+    }
+
+    textarea,
+    #editor div {
+        font-size: large;
+        display: inline-block;
+        width: 45%;
+        height: 100%;
+        vertical-align: top;
+        box-sizing: border-box;
+        padding: 0 20px;
+    }
+
+    #editor pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    #editor div div {
+        display: inline-block;
+        width: 45%;
+        height: 20%;
+        vertical-align: top;
+        box-sizing: border-box;
+        padding: 0 20px;
+    }
+
+    textarea {
+        border: none;
+        border-right: 1px solid #ccc;
+        resize: none;
+        outline: none;
+        background-color: #f6f6f6;
+        font-size: 19px;
+        font-family: "Monaco", courier, monospace;
+        padding: 20px;
+        margin-left: 50px;
+    }
+</style>
+<body>
+<script type="text/javascript" src="./js/target/scala-2.13/featherweight_go-fastopt.js"></script>
+
+<h1 style="text-align: center">Featherweight Go implementation by Scala(.js)</h1>
+
+<div id="editor">
+    <textarea :value="input" @input="update" class="language-go">
+    </textarea>
+    <div>
+        <p><h2>AST</h2><pre v-html="ast"></pre></p>
+        <p><h2>Return value</h2><pre v-html="result"></pre></p>
+        <p><h2>Return type</h2><pre v-html="type"></pre></p>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: "#editor",
+        data: {
+            input:
+                "package main;\n\n" +
+                "type V struct { }\n" +
+                "type T struct {\n" +
+                "    field V\n" +
+                "}\n" +
+                "func main() {\n" +
+                "    _ = T{V{}}.field\n" +
+                "}"
+        },
+        computed: {
+            ast: function() {
+                return FeatherweightGoMain.parse(this.input);
+            },
+            result: function () {
+                return FeatherweightGoMain.eval(this.input);
+            },
+            type: function () {
+                return FeatherweightGoMain.typeCheck(this.input);
+            }
+        },
+        methods: {
+            update: _.debounce(function(e) {
+                this.input = e.target.value;
+            }, 300)
+        }
+    });
+</script>
+
+</body>
+</html>

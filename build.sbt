@@ -1,7 +1,15 @@
 import ReleaseTransformations._
 import UpdateReadme.updateReadme
 
-lazy val root = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Pure) in file("."))
+lazy val root = project.in(file(".")).aggregate(
+  featherweightGoJS,
+  featherweightGoJVM
+).settings(
+  publish := {},
+  publishLocal := {}
+)
+
+lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) in file("."))
   .settings(
     organization := "com.github.y-yu",
     name := "featherweight_go",
@@ -30,9 +38,12 @@ lazy val root = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Pure)
       s"-P:scalajs:mapSourceURI:$a->$g/"
     }
   )
+  .jvmSettings(
+    mainClass := Some("featherweightgo.Main")
+  )
 
-lazy val rootJVM = root.jvm
-lazy val rootJS = root.js
+lazy val featherweightGoJVM = featherweightGo.jvm
+lazy val featherweightGoJS = featherweightGo.js
 
 lazy val publishSettings = Seq(
   publishMavenStyle := true,
@@ -84,7 +95,3 @@ val tagOrHash = Def.setting {
   if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lineStream_!.head
   else tagName.value
 }
-
-sources in Compile := Nil
-sources in Test := Nil
-skip in publish := true
