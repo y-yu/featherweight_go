@@ -126,7 +126,7 @@ object ParserFGImpl {
       methodDefinition | typeDefinition
 
     def mainMethod: Parser[Main] =
-      (("""package *main;""".r ~> whiteSpace.? ~> (declaration <~ whiteSpace).* <~
+      ((whiteSpace.? ~> """package *main;""".r ~> whiteSpace.? ~> (declaration <~ whiteSpace).* <~
         """func +main\(\) *\{""".r <~ whiteSpace.? <~ """_ *= *""".r) ~
         (expression <~ whiteSpace.? <~ "}")).map {
         case ds ~ e =>

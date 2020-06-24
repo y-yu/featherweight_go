@@ -277,6 +277,26 @@ class ParserFGImplTest extends AnyFlatSpec with Diagrams {
     actual.get.declarations.foreach(d => assert(d.isInstanceOf[Method]))
   }
 
+
+  it should "parse the main function even if there are whitespaces behind `package main;`" in new SetUp {
+    val string =
+      """
+        |
+        |package main;
+        |func (this Tree) method(a int) int {
+        |  return a
+        |}
+        |func main() {
+        |  _ = method
+        |}
+        |""".stripMargin
+
+    val actual = parse(mainMethod, string)
+    assert(actual.successful)
+    assert(actual.get.main == Variable(VariableName("method")))
+    actual.get.declarations.foreach(d => assert(d.isInstanceOf[Method]))
+  }
+
   it should "parse structure literal" in new SetUp {
     val string =
       """package main;
