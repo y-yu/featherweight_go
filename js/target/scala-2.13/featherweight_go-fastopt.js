@@ -6474,29 +6474,32 @@ class $c_Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl extends $c_O {
     return this.methodDefinition__s_util_parsing_combinator_Parsers$Parser().$bar__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$1) => (() => this$1.typeDefinition__s_util_parsing_combinator_Parsers$Parser()))(this)))
   };
   mainMethod__s_util_parsing_combinator_Parsers$Parser() {
-    const groupNames = $m_sci_Nil$();
-    const r = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "package *main;", groupNames);
-    return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this, r).$tilde$greater__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$4) => (() => {
-      const r$1 = this$4.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
-      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$4, r$1).$qmark__s_util_parsing_combinator_Parsers$Parser()
-    }))(this))).$tilde$greater__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$2$1) => (() => this$2$1.declaration__s_util_parsing_combinator_Parsers$Parser().$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$5) => (() => {
-      const r$2 = this$5.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
-      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$5, r$2)
-    }))(this$2$1))).$times__s_util_parsing_combinator_Parsers$Parser()))(this))).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$3$1) => (() => {
+    const r = this.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
+    return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this, r).$qmark__s_util_parsing_combinator_Parsers$Parser().$tilde$greater__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$1) => (() => {
+      const groupNames = $m_sci_Nil$();
+      const r$1 = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "package *main;", groupNames);
+      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$1, r$1)
+    }))(this))).$tilde$greater__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$2$1) => (() => {
+      const r$2 = this$2$1.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
+      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$2$1, r$2).$qmark__s_util_parsing_combinator_Parsers$Parser()
+    }))(this))).$tilde$greater__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$3$1) => (() => this$3$1.declaration__s_util_parsing_combinator_Parsers$Parser().$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$5) => (() => {
+      const r$3 = this$5.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
+      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$5, r$3)
+    }))(this$3$1))).$times__s_util_parsing_combinator_Parsers$Parser()))(this))).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$4$1) => (() => {
       const groupNames$1 = $m_sci_Nil$();
-      const r$3 = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "func +main\\(\\) *\\{", groupNames$1);
-      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$3$1, r$3)
-    }))(this))).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$4$1) => (() => {
-      const r$4 = this$4$1.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
-      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$4$1, r$4).$qmark__s_util_parsing_combinator_Parsers$Parser()
+      const r$4 = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "func +main\\(\\) *\\{", groupNames$1);
+      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$4$1, r$4)
     }))(this))).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$5$1) => (() => {
+      const r$5 = this$5$1.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
+      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$5$1, r$5).$qmark__s_util_parsing_combinator_Parsers$Parser()
+    }))(this))).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$6$1) => (() => {
       const groupNames$2 = $m_sci_Nil$();
-      const r$5 = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "_ *= *", groupNames$2);
-      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$5$1, r$5)
-    }))(this))).$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$6$1) => (() => this$6$1.expression__s_util_parsing_combinator_Parsers$Parser().$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$12) => (() => {
-      const r$6 = this$12.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
-      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$12, r$6).$qmark__s_util_parsing_combinator_Parsers$Parser()
-    }))(this$6$1))).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$2$2) => (() => new $c_s_util_parsing_combinator_RegexParsers$$anon$1(this$2$2, "}")))(this$6$1)))))(this))).map__F1__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction1(((this$7$1) => ((x0$1$2) => {
+      const r$6 = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "_ *= *", groupNames$2);
+      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$6$1, r$6)
+    }))(this))).$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$7$1) => (() => this$7$1.expression__s_util_parsing_combinator_Parsers$Parser().$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$12) => (() => {
+      const r$7 = this$12.Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__f_whiteSpace;
+      return new $c_s_util_parsing_combinator_RegexParsers$$anon$2(this$12, r$7).$qmark__s_util_parsing_combinator_Parsers$Parser()
+    }))(this$7$1))).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$2$2) => (() => new $c_s_util_parsing_combinator_RegexParsers$$anon$1(this$2$2, "}")))(this$7$1)))))(this))).map__F1__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction1(((this$8$1) => ((x0$1$2) => {
       const x0$1 = $as_s_util_parsing_combinator_Parsers$$tilde(x0$1$2);
       if ((x0$1 !== null)) {
         const ds = $as_sci_List(x0$1.s_util_parsing_combinator_Parsers$$tilde__f__1);

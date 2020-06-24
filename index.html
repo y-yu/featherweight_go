@@ -1,106 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Featherweight Go implementation by Scala(.js)</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-prism-editor"></script>
+    <script src="https://unpkg.com/prismjs"></script>
+    <script src="https://unpkg.com/prismjs/components/prism-go"></script>
+    <script type="text/javascript" src="./js/target/scala-2.13/featherweight_go-fastopt.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/vue-prism-editor/dist/VuePrismEditor.css">
+    <link rel="stylesheet" href="https://unpkg.com/prismjs@1.15.0/themes/prism.css">
+    <style>
+        #editor {
+            font-size: large;
+            display: inline-block;
+            width: 50%;
+            height: 100%;
+            vertical-align: top;
+            box-sizing: border-box;
+            padding: 0 20px;
+            outline: none;
+            margin-left: 50px;
+        }
+
+        #result {
+            font-size: large;
+            display: inline-block;
+            width: 45%;
+            height: 100%;
+            vertical-align: top;
+            box-sizing: border-box;
+            padding: 0 20px;
+        }
+
+        #result pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        div#result pre {
+            padding-left: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
 </head>
-<style>
-    html, body,
-    #editor {
-        margin: 0;
-        height: 100%;
-        font-family: "Helvetica Neue", Arial, sans-serif;
-        color: #333;
-    }
-
-    textarea,
-    #editor div {
-        font-size: large;
-        display: inline-block;
-        width: 45%;
-        height: 100%;
-        vertical-align: top;
-        box-sizing: border-box;
-        padding: 0 20px;
-    }
-
-    #editor pre {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-
-    #editor div div {
-        display: inline-block;
-        width: 45%;
-        height: 20%;
-        vertical-align: top;
-        box-sizing: border-box;
-        padding: 0 20px;
-    }
-
-    textarea {
-        border: none;
-        border-right: 1px solid #ccc;
-        resize: none;
-        outline: none;
-        background-color: #f6f6f6;
-        font-size: 19px;
-        font-family: "Monaco", courier, monospace;
-        padding: 20px;
-        margin-left: 50px;
-    }
-</style>
 <body>
-<script type="text/javascript" src="./js/target/scala-2.13/featherweight_go-fastopt.js"></script>
 
 <a href="https://github.com/y-yu/featherweight_go"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_left_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
 
-<h1 style="text-align: center">Featherweight Go implementation by Scala(.js)</h1>
+<h1>Featherweight Go implementation by Scala(.js)</h1>
 
-<div id="editor">
-    <textarea :value="input" @input="update" class="language-go">
-    </textarea>
-    <div>
-        <p><h2>AST</h2><pre v-html="ast"></pre></p>
-        <p><h2>Return value</h2><pre v-html="result"></pre></p>
-        <p><h2>Return type</h2><pre v-html="type"></pre></p>
+<div id="app">
+    <div id="editor">
+        <p><input type="checkbox" v-model="lineNumbers"/>  Linenumbers</p>
+        <vue-prism-editor v-model="code" language="go" :line-numbers="lineNumbers"></vue-prism-editor>
+    </div>
+    <div id="result">
+        <p>
+            <h2>AST</h2>
+            <pre v-html="ast"></pre>
+        </p>
+        <p>
+            <h2>Return type of <code>main</code></h2>
+            <pre v-html="type"></pre>
+        </p>
+        <p>
+            <h2>Return value of <code>main</code></h2>
+            <pre v-html="result"></pre>
+        </p>
     </div>
 </div>
 
 <script>
+    Vue.component('vue-prism-editor', VuePrismEditor)
+
     new Vue({
-        el: "#editor",
-        data: {
-            input:
+        el: '#app',
+        data : {
+            code:
                 "package main;\n\n" +
                 "type V struct { }\n" +
                 "type T struct {\n" +
-                "    field V\n" +
-                "}\n" +
+                "  field V\n" +
+                "}\n\n" +
                 "func main() {\n" +
-                "    _ = T{V{}}.field\n" +
-                "}"
+                "  _ = T{V{}}.field\n" +
+                "}",
+            lineNumbers: true
         },
         computed: {
             ast: function() {
-                return FeatherweightGoMain.parse(this.input);
+                return FeatherweightGoMain.parse(this.code);
             },
             result: function () {
-                return FeatherweightGoMain.eval(this.input);
+                return FeatherweightGoMain.eval(this.code);
             },
             type: function () {
-                return FeatherweightGoMain.typeCheck(this.input);
+                return FeatherweightGoMain.typeCheck(this.code);
             }
-        },
-        methods: {
-            update: _.debounce(function(e) {
-                this.input = e.target.value;
-            }, 300)
         }
-    });
+    })
 </script>
+
+<h2>References</h2>
+
+<ul>
+    <li>The editor is created by <a href="https://github.com/koca/vue-prism-editor">Vue Prism Editor</a>.</li>
+</ul>
 
 </body>
 </html>
