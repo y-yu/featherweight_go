@@ -1,30 +1,30 @@
 package featherweightgo
 
-import featherweightgo.evaluator.fg.EvaluatorFG
-import featherweightgo.parser.fg.ParserFG
-import featherweightgo.typer.fg.TyperFG
+import featherweightgo.evaluator.fg.EvaluatorFGImpl
+import featherweightgo.parser.fg.ParserFGImpl
+import featherweightgo.typer.fg.TyperFGImpl
 
-object Main extends ParserFG {
-  val evaluatorFG = new EvaluatorFG()
-  val typerFG = new TyperFG()
+object Main {
+  val parserFG = new ParserFGImpl()
+  val evaluatorFG = new EvaluatorFGImpl()
+  val typerFG = new TyperFGImpl()
 
   private def pp(
     string: String
   ): Unit = {
     println("=========== Input ===========")
     println(string)
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
-    val ast = parseResult.get
 
-    println("=========== AST ===========")
-    pprint.pprintln(ast)
+    parserFG.parse(string).foreach { ast =>
+      println("=========== AST ===========")
+      pprint.pprintln(ast)
 
-    println("=========== Result ===========")
-    pprint.pprintln(evaluatorFG.eval(ast))
+      println("=========== Result ===========")
+      pprint.pprintln(evaluatorFG.eval(ast))
 
-    println("=========== Type ===========")
-    pprint.pprintln(typerFG.check(ast))
+      println("=========== Type ===========")
+      pprint.pprintln(typerFG.check(ast))
+    }
   }
 
   def runGetField(): Unit = {

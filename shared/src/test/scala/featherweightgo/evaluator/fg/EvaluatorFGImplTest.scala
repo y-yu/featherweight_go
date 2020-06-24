@@ -1,13 +1,19 @@
 package featherweightgo.evaluator.fg
 
-import featherweightgo.ast.fg._
+import featherweightgo.model.fg.ast._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.diagrams.Diagrams
-import featherweightgo.parser.fg.ParserFG
+import featherweightgo.parser.fg.ParserFGImpl
 
-class EvaluatorFGTest extends AnyFlatSpec with Diagrams {
-  trait SetUp extends ParserFG {
-    val sut = new EvaluatorFG()
+class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
+  trait SetUp {
+    // This test depends on `ParserFGImpl`(the other logic)
+    // so this is not a *unit test*!
+    // But it would take too time to mock parser or write the AST directory...
+    // That's the why this test depends on the parser implementation.
+    val parser = new ParserFGImpl
+
+    val sut = new EvaluatorFGImpl()
   }
 
   "EvaluatorFG" should "eval field selection of structure literal" in new SetUp {
@@ -22,14 +28,15 @@ class EvaluatorFGTest extends AnyFlatSpec with Diagrams {
         |}
         |""".stripMargin
 
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
 
-    val ast = parseResult.get
-    val actual = sut.eval(ast)
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
 
-    assert(actual.isRight)
-    assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
+      assert(actual.isRight)
+      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
+    }
   }
 
   it should "NOT eval field selection which doesn't exist" in new SetUp {
@@ -44,13 +51,14 @@ class EvaluatorFGTest extends AnyFlatSpec with Diagrams {
         |}
         |""".stripMargin
 
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
 
-    val ast = parseResult.get
-    val actual = sut.eval(ast)
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
 
-    assert(actual.isLeft)
+      assert(actual.isLeft)
+    }
   }
 
   it should "eval to call method" in new SetUp {
@@ -66,13 +74,14 @@ class EvaluatorFGTest extends AnyFlatSpec with Diagrams {
         |}
         |""".stripMargin
 
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
 
-    val ast = parseResult.get
-    val actual = sut.eval(ast)
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
 
-    assert(actual == Right(ValuedStructureLiteral(StructureTypeName("T"), Nil)))
+      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("T"), Nil)))
+    }
   }
 
 
@@ -91,13 +100,14 @@ class EvaluatorFGTest extends AnyFlatSpec with Diagrams {
         |}
         |""".stripMargin
 
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
 
-    val ast = parseResult.get
-    val actual = sut.eval(ast)
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
 
-    assert(actual == Right(ValuedStructureLiteral(StructureTypeName("T"), Nil)))
+      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("T"), Nil)))
+    }
   }
 
   it should "eval interface and struct" in new SetUp {
@@ -121,12 +131,13 @@ class EvaluatorFGTest extends AnyFlatSpec with Diagrams {
         |}
         |""".stripMargin
 
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
 
-    val ast = parseResult.get
-    val actual = sut.eval(ast)
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
 
-    assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
+      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
+    }
   }
 }
