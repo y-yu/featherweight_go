@@ -1,26 +1,25 @@
 package featherweightgo
 
-import featherweightgo.evaluator.fg.EvaluatorFG
-import featherweightgo.parser.fg.ParserFG
-import featherweightgo.typer.fg.TyperFG
+import featherweightgo.evaluator.fg.EvaluatorFGImpl
+import featherweightgo.parser.fg.ParserFGImpl
+import featherweightgo.typer.fg.TyperFGImpl
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 @JSExportTopLevel("FeatherweightGoMain")
 object Main {
-  val evaluatorFG = new EvaluatorFG()
-  val typerFG = new TyperFG()
-  val parserFG = new ParserFG()
-  import parserFG._
+  val evaluatorFG = new EvaluatorFGImpl()
+  val typerFG = new TyperFGImpl()
+  val parserFG = new ParserFGImpl()
 
   @JSExport
   def parse(
     source: String
   ): String =
-    parserFG.parse(mainMethod, source) match {
-      case parserFG.Success(result, _) =>
+    parserFG.parse(source) match {
+      case Right(result) =>
         s"$result"
-      case failure =>
-        s"Parse error!: $failure"
+      case Left(failure) =>
+        failure.getMessage
     }
 
   @JSExport
@@ -28,16 +27,11 @@ object Main {
     source: String
   ): String =
     (for {
-      ast <- parserFG.parse(parserFG.mainMethod, source) match {
-        case Success(result, _) =>
-          Right(result)
-        case failure =>
-          Left(new IllegalArgumentException(s"$failure"))
-      }
+      ast <- parserFG.parse(source)
       t <- typerFG.check(ast)
     } yield t) match {
       case Right(tn) => s"$tn"
-      case Left(t) => s"Type error!: $t"
+      case Left(t) => t.getMessage
     }
 
 
@@ -46,15 +40,10 @@ object Main {
     source: String
   ): String =
     (for {
-      ast <- parserFG.parse(parserFG.mainMethod, source) match {
-        case Success(result, _) =>
-          Right(result)
-        case failure =>
-          Left(new IllegalArgumentException(s"$failure"))
-      }
+      ast <- parserFG.parse(source)
       r <- evaluatorFG.eval(ast)
     } yield r) match {
       case Right(v) => s"$v"
-      case Left(t) => s"Evaluator error!: $t"
+      case Left(t) => t.getMessage
     }
 }

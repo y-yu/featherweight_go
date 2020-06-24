@@ -1,11 +1,12 @@
 package featherweightgo.parser.fg
 
-import featherweightgo.ast.fg._
+import featherweightgo.model.fg.ast._
 import org.scalatest.diagrams.Diagrams
 import org.scalatest.flatspec.AnyFlatSpec
 
-class ParserFGTest extends AnyFlatSpec with Diagrams {
-  trait SetUp extends ParserFG
+class ParserFGImplTest extends AnyFlatSpec with Diagrams {
+  trait SetUp extends ParserFGImpl.ParserImpl
+
   "ParserFG" should "parse a field name" in new SetUp {
     val string = "value"
 

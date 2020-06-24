@@ -1,6 +1,6 @@
 package featherweightgo.util
 
-import featherweightgo.ast.fg._
+import featherweightgo.model.fg.ast._
 import scala.annotation.tailrec
 
 object Utils {

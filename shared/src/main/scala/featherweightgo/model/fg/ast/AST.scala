@@ -1,4 +1,4 @@
-package featherweightgo.ast.fg
+package featherweightgo.model.fg.ast
 
 sealed trait AST extends Product with Serializable
 
