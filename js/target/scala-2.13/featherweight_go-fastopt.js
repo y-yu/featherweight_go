@@ -4106,13 +4106,29 @@ const $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweigh
           $$x1 = new $c_s_Some(x$5.Lfeatherweightgo_model_fg_ast_MethodSpecification__f_methodSignature)
         };
         const this$7 = $p_Lfeatherweightgo_typer_fg_TyperFGImpl__toEither__s_Option__O__s_util_Either($thiz, $$x1, $m_Lfeatherweightgo_model_fg_error_FGError$FGTypeError$().apply__Lfeatherweightgo_model_fg_ast_TypeName__Lfeatherweightgo_model_fg_ast_MethodName__Lfeatherweightgo_model_fg_error_FGError$FGTypeError(eType, methodName));
+        let this$10;
         if ((this$7 instanceof $c_s_util_Right)) {
           const x2$3 = $as_s_util_Right(this$7);
           const b$2 = x2$3.s_util_Right__f_value;
           const methodSignature = $as_Lfeatherweightgo_model_fg_ast_MethodSignature(b$2);
           const this$8 = methodSignature.Lfeatherweightgo_model_fg_ast_MethodSignature__f_arguments;
-          let this$15;
-          if ($as_sc_IterableOnceOps(argumentTypes.zip__sc_IterableOnce__O(new $c_sc_MapOps$$anon$1(this$8))).forall__F1__Z(new $c_sjsr_AnonFunction1(((this$9, declarations$1$2) => ((x0$1$2) => {
+          const this$9 = new $c_sc_MapOps$$anon$1(this$8);
+          const values = $m_sci_Seq$().from__sc_IterableOnce__sci_Seq(this$9);
+          this$10 = new $c_s_util_Right(new $c_T2(methodSignature, values))
+        } else {
+          this$10 = this$7
+        };
+        if ((this$10 instanceof $c_s_util_Right)) {
+          const x2$4 = $as_s_util_Right(this$10);
+          const b$3 = x2$4.s_util_Right__f_value;
+          const x$7 = $as_T2(b$3);
+          if ((x$7 === null)) {
+            throw new $c_s_MatchError(x$7)
+          };
+          const methodSignature$1 = $as_Lfeatherweightgo_model_fg_ast_MethodSignature(x$7.T2__f__1);
+          const values$1 = $as_sci_Seq(x$7.T2__f__2);
+          let this$17;
+          if (((argumentTypes.length__I() === values$1.length__I()) && $as_sc_IterableOnceOps(argumentTypes.zip__sc_IterableOnce__O(values$1)).forall__F1__Z(new $c_sjsr_AnonFunction1(((this$11, declarations$1$2) => ((x0$1$2) => {
             const x0$1 = $as_T2(x0$1$2);
             if ((x0$1 !== null)) {
               const l = $as_Lfeatherweightgo_model_fg_ast_TypeName(x0$1.T2__f__1);
@@ -4121,26 +4137,26 @@ const $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweigh
             } else {
               throw new $c_s_MatchError(x0$1)
             }
-          }))($thiz, declarations$1)))) {
+          }))($thiz, declarations$1))))) {
             $m_s_package$();
-            this$15 = new $c_s_util_Right((void 0))
+            this$17 = new $c_s_util_Right((void 0))
           } else {
             $m_s_package$();
             const $$x2 = $m_Lfeatherweightgo_model_fg_error_FGError$FGTypeError$();
-            const this$12 = methodSignature.Lfeatherweightgo_model_fg_ast_MethodSignature__f_arguments;
-            const this$13 = new $c_sc_MapOps$$anon$1(this$12);
-            const value = $$x2.apply__sci_Seq__sci_Seq__Lfeatherweightgo_model_fg_error_FGError$FGTypeError(argumentTypes, $m_sci_Seq$().from__sc_IterableOnce__sci_Seq(this$13));
-            this$15 = new $c_s_util_Left(value)
+            const this$14 = methodSignature$1.Lfeatherweightgo_model_fg_ast_MethodSignature__f_arguments;
+            const this$15 = new $c_sc_MapOps$$anon$1(this$14);
+            const value = $$x2.apply__sci_Seq__sci_Seq__Lfeatherweightgo_model_fg_error_FGError$FGTypeError(argumentTypes, $m_sci_Seq$().from__sc_IterableOnce__sci_Seq(this$15));
+            this$17 = new $c_s_util_Left(value)
           };
-          if ((this$15 instanceof $c_s_util_Right)) {
-            const x2$4 = $as_s_util_Right(this$15);
-            const b$3 = x2$4.s_util_Right__f_value;
-            return new $c_s_util_Right(($as_jl_Void(b$3), methodSignature.Lfeatherweightgo_model_fg_ast_MethodSignature__f_returnType))
+          if ((this$17 instanceof $c_s_util_Right)) {
+            const x2$5 = $as_s_util_Right(this$17);
+            const b$4 = x2$5.s_util_Right__f_value;
+            return new $c_s_util_Right(($as_jl_Void(b$4), methodSignature$1.Lfeatherweightgo_model_fg_ast_MethodSignature__f_returnType))
           } else {
-            return this$15
+            return this$17
           }
         } else {
-          return this$7
+          return this$10
         }
       } else {
         return this$4
@@ -4152,34 +4168,34 @@ const $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweigh
     const x6 = $as_Lfeatherweightgo_model_fg_ast_StructureLiteral(expression);
     const structureTypeName$2 = x6.Lfeatherweightgo_model_fg_ast_StructureLiteral__f_structureTypeName;
     const arguments$2 = x6.Lfeatherweightgo_model_fg_ast_StructureLiteral__f_arguments;
-    const this$16 = $m_Lfeatherweightgo_util_Utils$().sequence__sci_Seq__s_util_Either($as_sci_Seq(arguments$2.map__F1__O(new $c_sjsr_AnonFunction1(((this$2$1, environment$2, declarations$1$3) => ((arg$2$1) => {
+    const this$18 = $m_Lfeatherweightgo_util_Utils$().sequence__sci_Seq__s_util_Either($as_sci_Seq(arguments$2.map__F1__O(new $c_sjsr_AnonFunction1(((this$2$1, environment$2, declarations$1$3) => ((arg$2$1) => {
       const arg$1 = $as_Lfeatherweightgo_model_fg_ast_Expression(arg$2$1);
       return $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweightgo_model_fg_typer_Environment__Lfeatherweightgo_model_fg_ast_Expression__sci_Seq__s_util_Either(this$2$1, environment$2, arg$1, declarations$1$3)
     }))($thiz, environment, declarations$1)))));
-    let this$18;
-    if ((this$16 instanceof $c_s_util_Right)) {
-      const x2$5 = $as_s_util_Right(this$16);
-      const b$4 = x2$5.s_util_Right__f_value;
-      const argumentTypes$1 = $as_sci_Seq(b$4);
-      const this$17 = $m_Lfeatherweightgo_util_Utils$();
-      const fs = $p_Lfeatherweightgo_util_Utils$__loop$1__sci_Seq__Lfeatherweightgo_model_fg_ast_StructureTypeName__sci_Seq(this$17, declarations$1, structureTypeName$2);
-      this$18 = new $c_s_util_Right(new $c_T2(argumentTypes$1, fs))
-    } else {
-      this$18 = this$16
-    };
+    let this$20;
     if ((this$18 instanceof $c_s_util_Right)) {
       const x2$6 = $as_s_util_Right(this$18);
       const b$5 = x2$6.s_util_Right__f_value;
-      const x$10 = $as_T2(b$5);
-      if ((x$10 === null)) {
-        throw new $c_s_MatchError(x$10)
+      const argumentTypes$1 = $as_sci_Seq(b$5);
+      const this$19 = $m_Lfeatherweightgo_util_Utils$();
+      const fs = $p_Lfeatherweightgo_util_Utils$__loop$1__sci_Seq__Lfeatherweightgo_model_fg_ast_StructureTypeName__sci_Seq(this$19, declarations$1, structureTypeName$2);
+      this$20 = new $c_s_util_Right(new $c_T2(argumentTypes$1, fs))
+    } else {
+      this$20 = this$18
+    };
+    if ((this$20 instanceof $c_s_util_Right)) {
+      const x2$7 = $as_s_util_Right(this$20);
+      const b$6 = x2$7.s_util_Right__f_value;
+      const x$11 = $as_T2(b$6);
+      if ((x$11 === null)) {
+        throw new $c_s_MatchError(x$11)
       };
-      const argumentTypes$2 = $as_sci_Seq(x$10.T2__f__1);
-      const fs$1 = $as_sci_Seq(x$10.T2__f__2);
-      let this$23;
-      if (($p_Lfeatherweightgo_typer_fg_TyperFGImpl__typeCheck$1__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq__Z($thiz, structureTypeName$2, declarations$1) && $as_sc_IterableOnceOps(argumentTypes$2.zip__sc_IterableOnce__O($as_sc_IterableOnce(fs$1.map__F1__O(new $c_sjsr_AnonFunction1(((this$19) => ((x$7$2) => {
-        const x$7 = $as_Lfeatherweightgo_model_fg_ast_StructureField(x$7$2);
-        return x$7.Lfeatherweightgo_model_fg_ast_StructureField__f_typeName
+      const argumentTypes$2 = $as_sci_Seq(x$11.T2__f__1);
+      const fs$1 = $as_sci_Seq(x$11.T2__f__2);
+      let this$25;
+      if ((($p_Lfeatherweightgo_typer_fg_TyperFGImpl__typeCheck$1__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq__Z($thiz, structureTypeName$2, declarations$1) && (argumentTypes$2.length__I() === fs$1.length__I())) && $as_sc_IterableOnceOps(argumentTypes$2.zip__sc_IterableOnce__O($as_sc_IterableOnce(fs$1.map__F1__O(new $c_sjsr_AnonFunction1(((this$21) => ((x$8$2) => {
+        const x$8 = $as_Lfeatherweightgo_model_fg_ast_StructureField(x$8$2);
+        return x$8.Lfeatherweightgo_model_fg_ast_StructureField__f_typeName
       }))($thiz)))))).forall__F1__Z(new $c_sjsr_AnonFunction1(((this$2$2, declarations$1$4) => ((x0$2$2) => {
         const x0$2 = $as_T2(x0$2$2);
         if ((x0$2 !== null)) {
@@ -4191,95 +4207,111 @@ const $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweigh
         }
       }))($thiz, declarations$1))))) {
         $m_s_package$();
-        this$23 = new $c_s_util_Right((void 0))
+        this$25 = new $c_s_util_Right((void 0))
       } else {
         $m_s_package$();
-        const value$1 = $m_Lfeatherweightgo_model_fg_error_FGError$FGTypeError$().apply__sci_Seq__sci_Seq__Lfeatherweightgo_model_fg_error_FGError$FGTypeError(argumentTypes$2, $as_sci_Seq(fs$1.map__F1__O(new $c_sjsr_AnonFunction1(((this$3$1) => ((x$8$2) => {
-          const x$8 = $as_Lfeatherweightgo_model_fg_ast_StructureField(x$8$2);
-          return x$8.Lfeatherweightgo_model_fg_ast_StructureField__f_typeName
+        const value$1 = $m_Lfeatherweightgo_model_fg_error_FGError$FGTypeError$().apply__sci_Seq__sci_Seq__Lfeatherweightgo_model_fg_error_FGError$FGTypeError(argumentTypes$2, $as_sci_Seq(fs$1.map__F1__O(new $c_sjsr_AnonFunction1(((this$3$1) => ((x$9$2) => {
+          const x$9 = $as_Lfeatherweightgo_model_fg_ast_StructureField(x$9$2);
+          return x$9.Lfeatherweightgo_model_fg_ast_StructureField__f_typeName
         }))($thiz)))));
-        this$23 = new $c_s_util_Left(value$1)
+        this$25 = new $c_s_util_Left(value$1)
       };
-      if ((this$23 instanceof $c_s_util_Right)) {
-        const x2$7 = $as_s_util_Right(this$23);
-        const b$6 = x2$7.s_util_Right__f_value;
-        return new $c_s_util_Right(($as_jl_Void(b$6), structureTypeName$2))
+      if ((this$25 instanceof $c_s_util_Right)) {
+        const x2$8 = $as_s_util_Right(this$25);
+        const b$7 = x2$8.s_util_Right__f_value;
+        return new $c_s_util_Right(($as_jl_Void(b$7), structureTypeName$2))
       } else {
-        return this$23
+        return this$25
       }
     } else {
-      return this$18
+      return this$20
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_fg_ast_FieldSelect)) {
     const x7 = $as_Lfeatherweightgo_model_fg_ast_FieldSelect(expression);
     const e$2 = x7.Lfeatherweightgo_model_fg_ast_FieldSelect__f_expression;
     const fieldName = x7.Lfeatherweightgo_model_fg_ast_FieldSelect__f_fieldName;
-    const this$24 = $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweightgo_model_fg_typer_Environment__Lfeatherweightgo_model_fg_ast_Expression__sci_Seq__s_util_Either($thiz, environment, e$2, declarations$1);
-    if ((this$24 instanceof $c_s_util_Right)) {
-      const x2$8 = $as_s_util_Right(this$24);
-      const b$7 = x2$8.s_util_Right__f_value;
-      const eType$3 = $as_Lfeatherweightgo_model_fg_ast_TypeName(b$7);
-      let this$27;
+    const this$26 = $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweightgo_model_fg_typer_Environment__Lfeatherweightgo_model_fg_ast_Expression__sci_Seq__s_util_Either($thiz, environment, e$2, declarations$1);
+    if ((this$26 instanceof $c_s_util_Right)) {
+      const x2$9 = $as_s_util_Right(this$26);
+      const b$8 = x2$9.s_util_Right__f_value;
+      const eType$3 = $as_Lfeatherweightgo_model_fg_ast_TypeName(b$8);
+      let this$32;
       if ((eType$3 instanceof $c_Lfeatherweightgo_model_fg_ast_StructureTypeName)) {
-        const x2$9 = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(eType$3);
+        const x2$10 = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(eType$3);
         $m_s_package$();
-        this$27 = new $c_s_util_Right(x2$9)
+        this$32 = new $c_s_util_Right(x2$10)
       } else {
-        $m_s_package$();
-        const value$2 = new $c_Lfeatherweightgo_model_fg_error_FGError$FGTypeError((("The give type[" + eType$3.value__T()) + "] is not structure!"), null);
-        this$27 = new $c_s_util_Left(value$2)
+        const x1$2 = $as_sci_Seq(declarations$1.collect__s_PartialFunction__O(new $c_Lfeatherweightgo_util_Utils$$anonfun$tdecls$1())).find__F1__s_Option(new $c_sjsr_AnonFunction1(((this$29, x1) => ((x$12$2) => {
+          const x$12 = $as_Lfeatherweightgo_model_fg_ast_TypeName(x$12$2);
+          return (x$12.value__T() === x1.value__T())
+        }))($thiz, eType$3)));
+        matchEnd6: {
+          if ((x1$2 instanceof $c_s_Some)) {
+            const x2$2$1 = $as_s_Some(x1$2);
+            const stn = $as_Lfeatherweightgo_model_fg_ast_TypeName(x2$2$1.s_Some__f_value);
+            if ((stn instanceof $c_Lfeatherweightgo_model_fg_ast_StructureTypeName)) {
+              const x3 = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(stn);
+              $m_s_package$();
+              this$32 = new $c_s_util_Right(x3);
+              break matchEnd6
+            }
+          };
+          $m_s_package$();
+          const value$2 = new $c_Lfeatherweightgo_model_fg_error_FGError$FGTypeError((("The give type[" + eType$3.value__T()) + "] is not structure!"), null);
+          this$32 = new $c_s_util_Left(value$2)
+        }
       };
-      if ((this$27 instanceof $c_s_util_Right)) {
-        const x2$10 = $as_s_util_Right(this$27);
-        const b$8 = x2$10.s_util_Right__f_value;
-        const eStructureType = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(b$8);
-        const this$28 = $m_Lfeatherweightgo_util_Utils$();
-        const this$30 = $p_Lfeatherweightgo_typer_fg_TyperFGImpl__toEither__s_Option__O__s_util_Either($thiz, $p_Lfeatherweightgo_util_Utils$__loop$1__sci_Seq__Lfeatherweightgo_model_fg_ast_StructureTypeName__sci_Seq(this$28, declarations$1, eStructureType).find__F1__s_Option(new $c_sjsr_AnonFunction1(((this$29, fieldName$1) => ((x$11$2) => {
-          const x$11 = $as_Lfeatherweightgo_model_fg_ast_StructureField(x$11$2);
-          const x$1 = x$11.Lfeatherweightgo_model_fg_ast_StructureField__f_name;
+      if ((this$32 instanceof $c_s_util_Right)) {
+        const x2$11 = $as_s_util_Right(this$32);
+        const b$9 = x2$11.s_util_Right__f_value;
+        const eStructureType = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(b$9);
+        const this$33 = $m_Lfeatherweightgo_util_Utils$();
+        const this$35 = $p_Lfeatherweightgo_typer_fg_TyperFGImpl__toEither__s_Option__O__s_util_Either($thiz, $p_Lfeatherweightgo_util_Utils$__loop$1__sci_Seq__Lfeatherweightgo_model_fg_ast_StructureTypeName__sci_Seq(this$33, declarations$1, eStructureType).find__F1__s_Option(new $c_sjsr_AnonFunction1(((this$34, fieldName$1) => ((x$13$2) => {
+          const x$13 = $as_Lfeatherweightgo_model_fg_ast_StructureField(x$13$2);
+          const x$1 = x$13.Lfeatherweightgo_model_fg_ast_StructureField__f_name;
           return ((x$1 === null) ? (fieldName$1 === null) : x$1.equals__O__Z(fieldName$1))
         }))($thiz, fieldName))), $m_Lfeatherweightgo_model_fg_error_FGError$FGTypeError$().apply__Lfeatherweightgo_model_fg_ast_TypeName__Lfeatherweightgo_model_fg_ast_FieldName__Lfeatherweightgo_model_fg_error_FGError$FGTypeError(eStructureType, fieldName));
-        if ((this$30 instanceof $c_s_util_Right)) {
-          const x2$11 = $as_s_util_Right(this$30);
-          const b$9 = x2$11.s_util_Right__f_value;
-          const field = $as_Lfeatherweightgo_model_fg_ast_StructureField(b$9);
+        if ((this$35 instanceof $c_s_util_Right)) {
+          const x2$12 = $as_s_util_Right(this$35);
+          const b$10 = x2$12.s_util_Right__f_value;
+          const field = $as_Lfeatherweightgo_model_fg_ast_StructureField(b$10);
           return new $c_s_util_Right(field.Lfeatherweightgo_model_fg_ast_StructureField__f_typeName)
         } else {
-          return this$30
+          return this$35
         }
       } else {
-        return this$27
+        return this$32
       }
     } else {
-      return this$24
+      return this$26
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_fg_ast_TypeAssertion)) {
     const x8 = $as_Lfeatherweightgo_model_fg_ast_TypeAssertion(expression);
     const e$3 = x8.Lfeatherweightgo_model_fg_ast_TypeAssertion__f_expression;
     const typeName = x8.Lfeatherweightgo_model_fg_ast_TypeAssertion__f_typeName;
-    const this$31 = $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweightgo_model_fg_typer_Environment__Lfeatherweightgo_model_fg_ast_Expression__sci_Seq__s_util_Either($thiz, environment, e$3, declarations$1);
-    if ((this$31 instanceof $c_s_util_Right)) {
-      const x2$12 = $as_s_util_Right(this$31);
-      const b$10 = x2$12.s_util_Right__f_value;
-      $as_Lfeatherweightgo_model_fg_ast_TypeName(b$10);
-      let this$34;
+    const this$36 = $p_Lfeatherweightgo_typer_fg_TyperFGImpl__expressionCheck$1__Lfeatherweightgo_model_fg_typer_Environment__Lfeatherweightgo_model_fg_ast_Expression__sci_Seq__s_util_Either($thiz, environment, e$3, declarations$1);
+    if ((this$36 instanceof $c_s_util_Right)) {
+      const x2$13 = $as_s_util_Right(this$36);
+      const b$11 = x2$13.s_util_Right__f_value;
+      $as_Lfeatherweightgo_model_fg_ast_TypeName(b$11);
+      let this$39;
       if ($p_Lfeatherweightgo_typer_fg_TyperFGImpl__typeCheck$1__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq__Z($thiz, typeName, declarations$1)) {
         $m_s_package$();
-        this$34 = new $c_s_util_Right((void 0))
+        this$39 = new $c_s_util_Right((void 0))
       } else {
         $m_s_package$();
         const value$3 = new $c_Lfeatherweightgo_model_fg_error_FGError$FGTypeError((("The type[" + typeName.value__T()) + "] fail to check!"), null);
-        this$34 = new $c_s_util_Left(value$3)
+        this$39 = new $c_s_util_Left(value$3)
       };
-      if ((this$34 instanceof $c_s_util_Right)) {
-        const x2$13 = $as_s_util_Right(this$34);
-        const b$11 = x2$13.s_util_Right__f_value;
-        return new $c_s_util_Right(($as_jl_Void(b$11), typeName))
+      if ((this$39 instanceof $c_s_util_Right)) {
+        const x2$14 = $as_s_util_Right(this$39);
+        const b$12 = x2$14.s_util_Right__f_value;
+        return new $c_s_util_Right(($as_jl_Void(b$12), typeName))
       } else {
-        return this$34
+        return this$39
       }
     } else {
-      return this$31
+      return this$36
     }
   } else {
     throw new $c_s_MatchError(expression)
