@@ -82,4 +82,119 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
       assert(actual == Right(AnyTypeName("V")))
     }
   }
+
+  it should "be ill-typed if the arguments of structure literal is wrong" in new SetUp {
+    val string =
+      """package main;
+        |
+        |type T struct {
+        |  field T
+        |}
+        |
+        |func main() {
+        |  _ = T{}.field
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.check(ast)
+
+      assert(actual.isLeft)
+    }
+  }
+
+  it should "be well-typed if the arguments of structure literal is subtype of expected" in new SetUp {
+    val string =
+      """package main;
+        |type A struct { }
+        |type T struct {
+        |  field1 A
+        |  field2 A
+        |}
+        |type U struct {
+        |  field1 A
+        |}
+        |type V struct {
+        |  field U
+        |}
+        |func main() {
+        |  _ = V{T{A{}, A{}}}.field
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.check(ast)
+
+      assert(actual.isRight)
+    }
+  }
+
+  it should "be well-typed if the arguments of method is subtype of expected" in new SetUp {
+    val string =
+      """package main;
+        |type A struct { }
+        |type T struct {
+        |  field1 A
+        |  field2 A
+        |}
+        |type U struct {
+        |  field1 A
+        |}
+        |type V struct { }
+        |func (this V) method(u U) A {
+        |  return u.field1
+        |}
+        |func main() {
+        |  _ = V{}.method(T{A{}, A{}})
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.check(ast)
+
+      assert(actual.isRight)
+    }
+  }
+
+  it should "be ill-typed to call method even if the structure is subtype of the implementation of the interface" in new SetUp {
+    val string =
+      """package main;
+        |type A struct { }
+        |type T struct {
+        |  field1 A
+        |  field2 A
+        |}
+        |type U struct {
+        |  field1 A
+        |}
+        |type I interface {
+        |  Method() A
+        |}
+        |func (this U) Method() A {
+        |  return this.field1
+        |}
+        |func main() {
+        |  _ = T{ A{}, A{} }.Method()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.check(ast)
+
+      // Is it correct?
+      assert(actual.isLeft)
+    }
+  }
 }
