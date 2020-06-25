@@ -1037,6 +1037,9 @@ function $m_Lfeatherweightgo_util_Utils$() {
   };
   return $n_Lfeatherweightgo_util_Utils$
 }
+const $p_Lfeatherweightgo_util_Utils$WellFormedImplements__strictType$1__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq__s_Option = (function($thiz, t, declarations$2) {
+  return declarations$2.collectFirst__s_PartialFunction__s_Option(new $c_Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1($thiz, t))
+});
 class $c_Lfeatherweightgo_util_Utils$WellFormedImplements extends $c_O {
   constructor(leftHand) {
     super();
@@ -1044,15 +1047,58 @@ class $c_Lfeatherweightgo_util_Utils$WellFormedImplements extends $c_O {
     this.Lfeatherweightgo_util_Utils$WellFormedImplements__f_leftHand = leftHand
   };
   $colon$less__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq__Z(rightHand, declarations) {
-    const x = this.Lfeatherweightgo_util_Utils$WellFormedImplements__f_leftHand;
-    if (((x === null) ? (rightHand === null) : x.equals__O__Z(rightHand))) {
-      return true
-    } else {
-      const this$1 = $m_Lfeatherweightgo_util_Utils$().methods__sci_Seq__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq(declarations, rightHand);
-      const $$x1 = $m_sci_Set$().from__sc_IterableOnce__sci_Set(this$1);
-      const this$2 = $m_Lfeatherweightgo_util_Utils$().methods__sci_Seq__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq(declarations, this.Lfeatherweightgo_util_Utils$WellFormedImplements__f_leftHand);
-      return $$x1.subsetOf__sc_Set__Z($m_sci_Set$().from__sc_IterableOnce__sci_Set(this$2))
-    }
+    const _1 = $p_Lfeatherweightgo_util_Utils$WellFormedImplements__strictType$1__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq__s_Option(this, this.Lfeatherweightgo_util_Utils$WellFormedImplements__f_leftHand, declarations);
+    const _2 = $p_Lfeatherweightgo_util_Utils$WellFormedImplements__strictType$1__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq__s_Option(this, rightHand, declarations);
+    if ((_1 instanceof $c_s_Some)) {
+      const x4 = $as_s_Some(_1);
+      const p5 = $as_s_util_Either(x4.s_Some__f_value);
+      if ((p5 instanceof $c_s_util_Left)) {
+        const x6 = $as_s_util_Left(p5);
+        const lv = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(x6.s_util_Left__f_value);
+        if ((_2 instanceof $c_s_Some)) {
+          const x7 = $as_s_Some(_2);
+          const p8 = $as_s_util_Either(x7.s_Some__f_value);
+          if ((p8 instanceof $c_s_util_Left)) {
+            const x9 = $as_s_util_Left(p8);
+            const rv = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(x9.s_util_Left__f_value);
+            return ((lv === null) ? (rv === null) : lv.equals__O__Z(rv))
+          }
+        }
+      }
+    };
+    if ((_1 instanceof $c_s_Some)) {
+      const x12 = $as_s_Some(_1);
+      const l = $as_s_util_Either(x12.s_Some__f_value);
+      if ((_2 instanceof $c_s_Some)) {
+        const x13 = $as_s_Some(_2);
+        const p14 = $as_s_util_Either(x13.s_Some__f_value);
+        if ((p14 instanceof $c_s_util_Right)) {
+          const x15 = $as_s_util_Right(p14);
+          const rv$2 = $as_Lfeatherweightgo_model_fg_ast_InterfaceTypeName(x15.s_util_Right__f_value);
+          const $$x2 = $m_Lfeatherweightgo_util_Utils$();
+          let $$x1;
+          if ((l instanceof $c_s_util_Right)) {
+            const x2 = $as_s_util_Right(l);
+            const b = x2.s_util_Right__f_value;
+            const x$4 = $as_Lfeatherweightgo_model_fg_ast_InterfaceTypeName(b);
+            $$x1 = x$4
+          } else {
+            if ((!(l instanceof $c_s_util_Left))) {
+              throw new $c_s_MatchError(l)
+            };
+            const x3 = $as_s_util_Left(l);
+            const a = x3.s_util_Left__f_value;
+            const x$3 = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(a);
+            $$x1 = x$3
+          };
+          const this$3 = $$x2.methods__sci_Seq__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq(declarations, $as_Lfeatherweightgo_model_fg_ast_TypeName($$x1));
+          const $$x3 = $m_sci_Set$().from__sc_IterableOnce__sci_Set(this$3);
+          const this$4 = $m_Lfeatherweightgo_util_Utils$().methods__sci_Seq__Lfeatherweightgo_model_fg_ast_TypeName__sci_Seq(declarations, rv$2);
+          return $$x3.subsetOf__sc_Set__Z($m_sci_Set$().from__sc_IterableOnce__sci_Set(this$4))
+        }
+      }
+    };
+    return false
   };
 }
 const $d_Lfeatherweightgo_util_Utils$WellFormedImplements = new $TypeData().initClass({
@@ -1688,6 +1734,17 @@ const $f_sc_IterableOnceOps__copyToArray__O__I__I__I = (function($thiz, xs, star
     i = ((1 + i) | 0)
   };
   return ((i - start) | 0)
+});
+const $f_sc_IterableOnceOps__collectFirst__s_PartialFunction__s_Option = (function($thiz, pf) {
+  const sentinel = new $c_sc_IterableOnceOps$$anon$1($thiz);
+  const it = $as_sc_IterableOnce($thiz).iterator__sc_Iterator();
+  while (it.hasNext__Z()) {
+    const x = pf.applyOrElse__O__F1__O(it.next__O(), sentinel);
+    if ((x !== sentinel)) {
+      return new $c_s_Some(x)
+    }
+  };
+  return $m_s_None$()
 });
 const $f_sc_IterableOnceOps__mkString__T__T__T__T = (function($thiz, start, sep, end) {
   if ($thiz.isEmpty__Z()) {
@@ -6853,6 +6910,23 @@ class $c_sc_IterableFactory$Delegate extends $c_O {
     return this.sc_IterableFactory$Delegate__f_delegate.newBuilder__scm_Builder()
   };
 }
+class $c_sc_IterableOnceOps$$anon$1 extends $c_sr_AbstractFunction1 {
+  constructor(outer) {
+    super()
+  };
+  apply__O__O(v1) {
+    return this
+  };
+}
+const $d_sc_IterableOnceOps$$anon$1 = new $TypeData().initClass({
+  sc_IterableOnceOps$$anon$1: 0
+}, false, "scala.collection.IterableOnceOps$$anon$1", {
+  sc_IterableOnceOps$$anon$1: 1,
+  sr_AbstractFunction1: 1,
+  O: 1,
+  F1: 1
+});
+$c_sc_IterableOnceOps$$anon$1.prototype.$classData = $d_sc_IterableOnceOps$$anon$1;
 const $f_sc_IterableOps__sizeCompare__I__I = (function($thiz, otherSize) {
   if ((otherSize < 0)) {
     return 1
@@ -11186,6 +11260,90 @@ const $d_Lfeatherweightgo_util_Utils$$anonfun$tdecls$1 = new $TypeData().initCla
   Ljava_io_Serializable: 1
 });
 $c_Lfeatherweightgo_util_Utils$$anonfun$tdecls$1.prototype.$classData = $d_Lfeatherweightgo_util_Utils$$anonfun$tdecls$1;
+class $c_Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1 extends $c_sr_AbstractPartialFunction {
+  constructor(outer, t$1) {
+    super();
+    this.Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1__f_t$1 = null;
+    this.Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1__f_t$1 = t$1
+  };
+  applyOrElse__Lfeatherweightgo_model_fg_ast_Declaration__F1__O(x1, default$1) {
+    let rc13 = false;
+    let x2 = null;
+    if ((x1 instanceof $c_Lfeatherweightgo_model_fg_ast_Type)) {
+      rc13 = true;
+      x2 = $as_Lfeatherweightgo_model_fg_ast_Type(x1);
+      const stn = x2.Lfeatherweightgo_model_fg_ast_Type__f_name;
+      const p3 = x2.Lfeatherweightgo_model_fg_ast_Type__f_typeLiteral;
+      if ((stn instanceof $c_Lfeatherweightgo_model_fg_ast_StructureTypeName)) {
+        const x4 = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(stn);
+        const name = x4.Lfeatherweightgo_model_fg_ast_TypeName__f_value;
+        if (((p3 instanceof $c_Lfeatherweightgo_model_fg_ast_Structure) && (name === this.Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1__f_t$1.value__T()))) {
+          $m_s_package$();
+          return new $c_s_util_Left(x4)
+        }
+      }
+    };
+    if (rc13) {
+      const itn = x2.Lfeatherweightgo_model_fg_ast_Type__f_name;
+      const p8 = x2.Lfeatherweightgo_model_fg_ast_Type__f_typeLiteral;
+      if ((itn instanceof $c_Lfeatherweightgo_model_fg_ast_InterfaceTypeName)) {
+        const x9 = $as_Lfeatherweightgo_model_fg_ast_InterfaceTypeName(itn);
+        const name$2 = x9.Lfeatherweightgo_model_fg_ast_TypeName__f_value;
+        if (((p8 instanceof $c_Lfeatherweightgo_model_fg_ast_Interface) && (name$2 === this.Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1__f_t$1.value__T()))) {
+          $m_s_package$();
+          return new $c_s_util_Right(x9)
+        }
+      }
+    };
+    return default$1.apply__O__O(x1)
+  };
+  isDefinedAt__Lfeatherweightgo_model_fg_ast_Declaration__Z(x1) {
+    let rc13 = false;
+    let x2 = null;
+    if ((x1 instanceof $c_Lfeatherweightgo_model_fg_ast_Type)) {
+      rc13 = true;
+      x2 = $as_Lfeatherweightgo_model_fg_ast_Type(x1);
+      const stn = x2.Lfeatherweightgo_model_fg_ast_Type__f_name;
+      const p3 = x2.Lfeatherweightgo_model_fg_ast_Type__f_typeLiteral;
+      if ((stn instanceof $c_Lfeatherweightgo_model_fg_ast_StructureTypeName)) {
+        const x4 = $as_Lfeatherweightgo_model_fg_ast_StructureTypeName(stn);
+        const name = x4.Lfeatherweightgo_model_fg_ast_TypeName__f_value;
+        if (((p3 instanceof $c_Lfeatherweightgo_model_fg_ast_Structure) && (name === this.Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1__f_t$1.value__T()))) {
+          return true
+        }
+      }
+    };
+    if (rc13) {
+      const itn = x2.Lfeatherweightgo_model_fg_ast_Type__f_name;
+      const p8 = x2.Lfeatherweightgo_model_fg_ast_Type__f_typeLiteral;
+      if ((itn instanceof $c_Lfeatherweightgo_model_fg_ast_InterfaceTypeName)) {
+        const x9 = $as_Lfeatherweightgo_model_fg_ast_InterfaceTypeName(itn);
+        const name$2 = x9.Lfeatherweightgo_model_fg_ast_TypeName__f_value;
+        if (((p8 instanceof $c_Lfeatherweightgo_model_fg_ast_Interface) && (name$2 === this.Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1__f_t$1.value__T()))) {
+          return true
+        }
+      }
+    };
+    return false
+  };
+  isDefinedAt__O__Z(x) {
+    return this.isDefinedAt__Lfeatherweightgo_model_fg_ast_Declaration__Z($as_Lfeatherweightgo_model_fg_ast_Declaration(x))
+  };
+  applyOrElse__O__F1__O(x, default$1) {
+    return this.applyOrElse__Lfeatherweightgo_model_fg_ast_Declaration__F1__O($as_Lfeatherweightgo_model_fg_ast_Declaration(x), default$1)
+  };
+}
+const $d_Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1 = new $TypeData().initClass({
+  Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1: 0
+}, false, "featherweightgo.util.Utils$WellFormedImplements$$anonfun$strictType$1$1", {
+  Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1: 1,
+  sr_AbstractPartialFunction: 1,
+  O: 1,
+  F1: 1,
+  s_PartialFunction: 1,
+  Ljava_io_Serializable: 1
+});
+$c_Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1.prototype.$classData = $d_Lfeatherweightgo_util_Utils$WellFormedImplements$$anonfun$strictType$1$1;
 class $c_jl_ArithmeticException extends $c_jl_RuntimeException {
   constructor(s) {
     super();
@@ -16476,6 +16634,9 @@ class $c_sc_AbstractIterable extends $c_O {
   copyToArray__O__I__I(xs, start) {
     return $f_sc_IterableOnceOps__copyToArray__O__I__I(this, xs, start)
   };
+  collectFirst__s_PartialFunction__s_Option(pf) {
+    return $f_sc_IterableOnceOps__collectFirst__s_PartialFunction__s_Option(this, pf)
+  };
   addString__scm_StringBuilder__T__T__T__scm_StringBuilder(b, start, sep, end) {
     return $f_sc_IterableOnceOps__addString__scm_StringBuilder__T__T__T__scm_StringBuilder(this, b, start, sep, end)
   };
@@ -20817,6 +20978,23 @@ class $c_sci_LazyList extends $c_sci_AbstractSeq {
   collect__s_PartialFunction__sci_LazyList(pf) {
     return ((this.sci_LazyList__f_scala$collection$immutable$LazyList$$stateEvaluated && this.isEmpty__Z()) ? $m_sci_LazyList$().sci_LazyList$__f__empty : $m_sci_LazyList$().scala$collection$immutable$LazyList$$collectImpl__sci_LazyList__s_PartialFunction__sci_LazyList(this, pf))
   };
+  collectFirst__s_PartialFunction__s_Option(pf) {
+    let _$this = this;
+    while (true) {
+      if (_$this.isEmpty__Z()) {
+        return $m_s_None$()
+      } else {
+        const this$1 = _$this;
+        const res = pf.applyOrElse__O__F1__O(this$1.scala$collection$immutable$LazyList$$state__sci_LazyList$State().head__O(), $m_sci_LazyList$().sci_LazyList$__f_scala$collection$immutable$LazyList$$anyToMarker);
+        if ((res === $m_sr_Statics$PFMarker$())) {
+          const this$3 = _$this;
+          _$this = this$3.scala$collection$immutable$LazyList$$state__sci_LazyList$State().tail__sci_LazyList()
+        } else {
+          return new $c_s_Some(res)
+        }
+      }
+    }
+  };
   find__F1__s_Option(p) {
     let _$this = this;
     while (true) {
@@ -21105,6 +21283,24 @@ class $c_sci_Stream extends $c_sci_AbstractSeq {
         }))(_$this, newHead)));
         if ($uZ(runWith.apply__O__O(_$this.head__O()))) {
           return $m_sci_Stream$().collectedTail__O__sci_Stream__s_PartialFunction__sci_Stream(newHead.sr_ObjectRef__f_elem, _$this, pf)
+        } else {
+          _$this = $as_sci_Stream(_$this.tail__O())
+        }
+      }
+    }
+  };
+  collectFirst__s_PartialFunction__s_Option(pf) {
+    let _$this = this;
+    while (true) {
+      if (_$this.isEmpty__Z()) {
+        return $m_s_None$()
+      } else {
+        const newHead = new $c_sr_ObjectRef(null);
+        const runWith = pf.runWith__F1__F1(new $c_sjsr_AnonFunction1(((this$2, newHead$1) => ((b$2) => {
+          newHead$1.sr_ObjectRef__f_elem = b$2
+        }))(_$this, newHead)));
+        if ($uZ(runWith.apply__O__O(_$this.head__O()))) {
+          return new $c_s_Some(newHead.sr_ObjectRef__f_elem)
         } else {
           _$this = $as_sci_Stream(_$this.tail__O())
         }
@@ -21440,6 +21636,9 @@ class $c_sjsr_WrappedVarArgs extends $c_O {
   };
   copyToArray__O__I__I(xs, start) {
     return $f_sc_IterableOnceOps__copyToArray__O__I__I(this, xs, start)
+  };
+  collectFirst__s_PartialFunction__s_Option(pf) {
+    return $f_sc_IterableOnceOps__collectFirst__s_PartialFunction__s_Option(this, pf)
   };
   addString__scm_StringBuilder__T__T__T__scm_StringBuilder(b, start, sep, end) {
     return $f_sc_IterableOnceOps__addString__scm_StringBuilder__T__T__T__scm_StringBuilder(this, b, start, sep, end)
