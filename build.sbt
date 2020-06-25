@@ -26,8 +26,8 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
     ),
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %%% "scala-parser-combinators" % "1.1.2",
-      "org.scalatest" %%% "scalatest" % "3.1.2" % "test",
-      "com.lihaoyi" %%% "pprint" % "0.5.9"
+      "com.lihaoyi" %%% "pprint" % "0.5.9",
+      "org.scalatest" %%% "scalatest" % "3.1.2" % "test"
     )
   )
   .settings(publishSettings)

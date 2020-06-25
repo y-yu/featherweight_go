@@ -1,6 +1,7 @@
 package featherweightgo
 
 import featherweightgo.evaluator.fg.EvaluatorFGImpl
+import featherweightgo.model.fg.ast.ValuedStructureLiteral
 import featherweightgo.parser.fg.ParserFGImpl
 import featherweightgo.typer.fg.TyperFGImpl
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
@@ -30,10 +31,9 @@ object Main {
       ast <- parserFG.parse(source)
       t <- typerFG.check(ast)
     } yield t) match {
-      case Right(tn) => s"$tn"
+      case Right(tn) => s"${tn.value}"
       case Left(t) => t.getMessage
     }
-
 
   @JSExport
   def eval(
@@ -43,7 +43,15 @@ object Main {
       ast <- parserFG.parse(source)
       r <- evaluatorFG.eval(ast)
     } yield r) match {
-      case Right(v) => s"$v"
+      case Right(v) => valuePrinter(v)
       case Left(t) => t.getMessage
     }
+
+  private def valuePrinter(
+    value: ValuedStructureLiteral
+  ): String = {
+    val arguments = value.values.map(valuePrinter).mkString("{", ", ", "}")
+
+    s"${value.structureTypeName.value}$arguments"
+  }
 }
