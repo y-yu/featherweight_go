@@ -710,6 +710,15 @@ const $d_O = new $TypeData().initClass({
   O: 1
 }, (void 0), (void 0), $is_O, $isArrayOf_O);
 $c_O.prototype.$classData = $d_O;
+const $p_Lfeatherweightgo_Main$__valuePrinter__Lfeatherweightgo_model_fg_ast_ValuedStructureLiteral__T = (function($thiz, value) {
+  const this$2 = $as_sc_IterableOnceOps(value.Lfeatherweightgo_model_fg_ast_ValuedStructureLiteral__f_values.map__F1__O(new $c_sjsr_AnonFunction1(((this$1) => ((value$2$2) => {
+    const value$2 = $as_Lfeatherweightgo_model_fg_ast_ValuedStructureLiteral(value$2$2);
+    return $p_Lfeatherweightgo_Main$__valuePrinter__Lfeatherweightgo_model_fg_ast_ValuedStructureLiteral__T($m_Lfeatherweightgo_Main$(), value$2)
+  }))($thiz))));
+  const arguments$1 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$2, "{", ", ", "}");
+  const this$3 = value.Lfeatherweightgo_model_fg_ast_ValuedStructureLiteral__f_structureTypeName;
+  return (("" + this$3.Lfeatherweightgo_model_fg_ast_TypeName__f_value) + arguments$1)
+});
 class $c_Lfeatherweightgo_Main$ extends $c_O {
   constructor() {
     super();
@@ -757,7 +766,7 @@ class $c_Lfeatherweightgo_Main$ extends $c_O {
     if ((x1 instanceof $c_s_util_Right)) {
       const x2$2 = $as_s_util_Right(x1);
       const tn = $as_Lfeatherweightgo_model_fg_ast_TypeName(x2$2.s_util_Right__f_value);
-      return ("" + tn)
+      return ("" + tn.value__T())
     } else if ((x1 instanceof $c_s_util_Left)) {
       const x3 = $as_s_util_Left(x1);
       const t$1 = $as_Lfeatherweightgo_model_fg_error_FGError(x3.s_util_Left__f_value);
@@ -788,7 +797,7 @@ class $c_Lfeatherweightgo_Main$ extends $c_O {
     if ((x1 instanceof $c_s_util_Right)) {
       const x2$2 = $as_s_util_Right(x1);
       const v = $as_Lfeatherweightgo_model_fg_ast_ValuedStructureLiteral(x2$2.s_util_Right__f_value);
-      return ("" + v)
+      return $p_Lfeatherweightgo_Main$__valuePrinter__Lfeatherweightgo_model_fg_ast_ValuedStructureLiteral__T(this, v)
     } else if ((x1 instanceof $c_s_util_Left)) {
       const x3 = $as_s_util_Left(x1);
       const t = $as_Lfeatherweightgo_model_fg_error_FGError(x3.s_util_Left__f_value);
