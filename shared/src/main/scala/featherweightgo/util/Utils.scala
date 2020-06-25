@@ -153,10 +153,26 @@ object Utils {
       rightHand: TypeName
     )(
       implicit declarations: Seq[Declaration]
-    ): Boolean =
-      leftHand == rightHand ||
-        methods(declarations, rightHand).toSet.subsetOf(
-          methods(declarations, leftHand).toSet
-        )
+    ): Boolean = {
+      def strictType(t: TypeName): Option[StructureTypeName Either InterfaceTypeName] =
+        declarations.collectFirst {
+          case Type(stn @ StructureTypeName(name), Structure(_)) if name == t.value =>
+            Left(stn)
+          case Type(itn @ InterfaceTypeName(name), Interface(_)) if name == t.value =>
+            Right(itn)
+        }
+
+      (strictType(leftHand), strictType(rightHand)) match {
+        case (Some(Left(lv)), Some(Left(rv))) =>
+          lv == rv
+        case (Some(l), Some(Right(rv))) =>
+          methods(declarations, l.fold(identity, identity)).toSet.subsetOf(
+            methods(declarations, rv).toSet
+          )
+        case _ =>
+          false
+      }
+    }
+
   }
 }

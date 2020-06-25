@@ -106,7 +106,7 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
     }
   }
 
-  it should "be well-typed if the arguments of structure literal is subtype of expected" in new SetUp {
+  it should "be ill-typed even if the arguments of structure literal is subtype of expected" in new SetUp {
     val string =
       """package main;
         |type A struct { }
@@ -131,11 +131,11 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.check(ast)
 
-      assert(actual.isRight)
+      assert(actual.isLeft)
     }
   }
 
-  it should "be well-typed if the arguments of method is subtype of expected" in new SetUp {
+  it should "be ill-typed even if the arguments of method is subtype of expected" in new SetUp {
     val string =
       """package main;
         |type A struct { }
@@ -161,7 +161,7 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.check(ast)
 
-      assert(actual.isRight)
+      assert(actual.isLeft)
     }
   }
 
@@ -193,7 +193,28 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.check(ast)
 
-      // Is it correct?
+      assert(actual.isLeft)
+    }
+  }
+
+  it should "be ill-typed if the structure has a recursive type field" in new SetUp {
+    val string =
+      """package main;
+        |type V struct { }
+        |type T struct {
+        |  field T
+        |}
+        |func main() {
+        |  _ = T{V{}}
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.check(ast)
+
       assert(actual.isLeft)
     }
   }
