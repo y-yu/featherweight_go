@@ -88,11 +88,14 @@ class TyperFGImpl extends TyperFG {
               .map(_.methodSignature),
             FGTypeError(eType, methodName)
           )
+          values = methodSignature.arguments.values.toSeq
           _ <-
-            if ((argumentTypes zip methodSignature.arguments.values).forall {
-              case (l, r) =>
-                l :< r
-              }
+            if (
+              argumentTypes.length == values.length &&
+              (argumentTypes zip values).forall {
+                case (l, r) =>
+                  l :< r
+                }
             )
               Right(())
             else
@@ -112,6 +115,7 @@ class TyperFGImpl extends TyperFG {
           _ <-
             if (
               typeCheck(structureTypeName) &&
+              argumentTypes.length == fs.length &&
               (argumentTypes zip fs.map(_.typeName)).forall {
                 case (l, r) =>
                   l :< r
@@ -130,8 +134,13 @@ class TyperFGImpl extends TyperFG {
           eStructureType <- eType match {
             case stn @ StructureTypeName(_) =>
               Right(stn)
-            case _ =>
-              Left(FGTypeError(s"The give type[${eType.value}] is not structure!"))
+            case typename =>
+              tdecls(declarations).find(_.value == typename.value) match {
+                case Some(stn @ StructureTypeName(_)) =>
+                  Right(stn)
+                case _ =>
+                  Left(FGTypeError(s"The give type[${eType.value}] is not structure!"))
+              }
           }
           field <- toEither(
             fields(declarations, eStructureType)
