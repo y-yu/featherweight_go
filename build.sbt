@@ -1,7 +1,18 @@
 import ReleaseTransformations._
 import UpdateReadme.updateReadme
 
+val scala213Version = "2.13.2"
+val defaultScalacOptions = Seq(
+  "-deprecation",
+  "-encoding", "UTF-8",
+  "-Xlint",
+  "-language:implicitConversions", "-language:higherKinds", "-language:existentials",
+  "-unchecked"
+)
+
 lazy val root = project.in(file(".")).aggregate(
+  featherweightGoCoreJVM,
+  featherweightGoCoreJS,
   featherweightGoJS,
   featherweightGoJVM
 ).settings(
@@ -11,26 +22,15 @@ lazy val root = project.in(file(".")).aggregate(
 
 lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) in file("."))
   .settings(
-    organization := "com.github.y-yu",
-    name := "featherweight_go",
-    description := "Scala implementation of Featherweight Go",
-    homepage := Some(url("https://github.com/y-yu")),
-    licenses := Seq("MIT" -> url(s"https://github.com/y-yu/featherweight_go/blob/master/LICENSE")),
-    scalaVersion := "2.13.2",
-    scalacOptions ++= Seq(
-      "-deprecation",
-      "-encoding", "UTF-8",
-      "-Xlint",
-      "-language:implicitConversions", "-language:higherKinds", "-language:existentials",
-      "-unchecked"
-    ),
-    libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %%% "scala-parser-combinators" % "1.1.2",
-      "com.lihaoyi" %%% "pprint" % "0.5.9",
-      "org.scalatest" %%% "scalatest" % "3.1.2" % "test"
-    )
+    scalaVersion := scala213Version,
+    scalacOptions ++= defaultScalacOptions,
+    publish := {},
+    publishLocal := {},
+    libraryDependencies += "com.lihaoyi" %%% "pprint" % "0.5.9"
   )
-  .settings(publishSettings)
+  .dependsOn(
+    featherweightGoCore
+  )
   .jsSettings(
     scalacOptions += {
       val a = (baseDirectory in LocalRootProject).value.toURI.toString
@@ -41,6 +41,25 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
   .jvmSettings(
     mainClass := Some("featherweightgo.Main")
   )
+
+lazy val featherweightGoCore = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Pure) in file("./core"))
+  .settings(
+    organization := "com.github.y-yu",
+    name := "featherweight_go",
+    description := "Scala implementation of Featherweight Go",
+    homepage := Some(url("https://github.com/y-yu")),
+    licenses := Seq("MIT" -> url(s"https://github.com/y-yu/featherweight_go/blob/master/LICENSE")),
+    scalaVersion := scala213Version,
+    scalacOptions ++= defaultScalacOptions,
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %%% "scala-parser-combinators" % "1.1.2",
+      "org.scalatest" %%% "scalatest" % "3.1.2" % "test"
+    )
+  )
+  .settings(publishSettings)
+
+lazy val featherweightGoCoreJVM = featherweightGoCore.jvm
+lazy val featherweightGoCoreJS = featherweightGoCore.js
 
 lazy val featherweightGoJVM = featherweightGo.jvm
 lazy val featherweightGoJS = featherweightGo.js

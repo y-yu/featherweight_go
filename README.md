@@ -9,6 +9,12 @@ Featherweight Go implementation by Scala
 $ ./sbt run
 ```
 
+## How to install
+
+```console
+libraryDependencies += "com.github.y-yu" %% "featherweightgo" % "0.1.0"
+```
+
 ## References
 
 - [Featherweight Go](https://arxiv.org/abs/2005.11710)
