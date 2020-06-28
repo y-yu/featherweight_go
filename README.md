@@ -6,7 +6,7 @@ Featherweight Go implementation by Scala
 [Scala.js demo](https://y-yu.github.io/featherweight_go/) or
 
 ```console
-$ ./sbt run
+$ ./sbt featherweightGoJVM/run
 ```
 
 ## How to install
