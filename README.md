@@ -11,7 +11,7 @@ $ ./sbt run
 
 ## How to install
 
-```console
+```scala
 libraryDependencies += "com.github.y-yu" %% "featherweightgo" % "0.1.0"
 ```
 
