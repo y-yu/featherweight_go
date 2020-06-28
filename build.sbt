@@ -10,16 +10,19 @@ val defaultScalacOptions = Seq(
   "-unchecked"
 )
 
-lazy val root = project.in(file(".")).aggregate(
-  featherweightGoCoreJVM,
-  featherweightGoCoreJS,
-  featherweightGoJS,
-  featherweightGoJVM
-).settings(
-  publishArtifact := false,
-  publish := {},
-  publishLocal := {}
-).settings(publishSettings)
+lazy val root = project.in(file("."))
+  .settings(
+    publishArtifact := false,
+    publish := {},
+    publishLocal := {}
+  )
+  .settings(publishSettings)
+  .aggregate(
+    featherweightGoCoreJVM,
+    featherweightGoCoreJS,
+    featherweightGoJS,
+    featherweightGoJVM
+  )
 
 lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) in file("."))
   .settings(
