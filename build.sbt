@@ -18,7 +18,7 @@ lazy val root = project.in(file(".")).aggregate(
 ).settings(
   publish := {},
   publishLocal := {}
-)
+).settings(publishSettings)
 
 lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) in file("."))
   .settings(
