@@ -33,6 +33,7 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
     publishLocal := {},
     libraryDependencies += "com.lihaoyi" %%% "pprint" % "0.5.9"
   )
+  .settings(publishSettings)
   .dependsOn(
     featherweightGoCore
   )
@@ -92,7 +93,7 @@ lazy val publishSettings = Seq(
         <tag>{tagOrHash.value}</tag>
       </scm>,
   releaseTagName := tagName.value,
-  releaseCrossBuild := true,
+  releaseCrossBuild := false,
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
