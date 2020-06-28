@@ -12,7 +12,6 @@ val defaultScalacOptions = Seq(
 
 lazy val root = project.in(file("."))
   .settings(
-    scalaVersion := scala213Version,
     publishArtifact := false,
     publish := {},
     publishLocal := {}

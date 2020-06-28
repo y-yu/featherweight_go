@@ -52,7 +52,7 @@ object Utils {
                 receiver._2
               ) +:
                 methodSpecification.methodSignature.arguments.map {
-                  case (vn -> tn) =>
+                  case (vn, tn) =>
                     TypedVariable(
                       Variable(vn),
                       tn
