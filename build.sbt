@@ -16,6 +16,7 @@ lazy val root = project.in(file(".")).aggregate(
   featherweightGoJS,
   featherweightGoJVM
 ).settings(
+  publishArtifact := false,
   publish := {},
   publishLocal := {}
 ).settings(publishSettings)
@@ -24,6 +25,7 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
   .settings(
     scalaVersion := scala213Version,
     scalacOptions ++= defaultScalacOptions,
+    publishArtifact := false,
     publish := {},
     publishLocal := {},
     libraryDependencies += "com.lihaoyi" %%% "pprint" % "0.5.9"
