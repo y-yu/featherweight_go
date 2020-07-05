@@ -1853,6 +1853,11 @@ class $c_sc_StringOps$ extends $c_O {
     const y = $uI(this$.length);
     return $$x1.slice$extension__T__I__I__T(this$, 0, ((n < y) ? n : y))
   };
+  drop$extension__T__I__T(this$, n) {
+    const $$x1 = $m_sc_StringOps$();
+    const y = $uI(this$.length);
+    return $$x1.slice$extension__T__I__I__T(this$, ((n < y) ? n : y), $uI(this$.length))
+  };
 }
 const $d_sc_StringOps$ = new $TypeData().initClass({
   sc_StringOps$: 0
@@ -6690,7 +6695,22 @@ class $c_Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl extends $c_O {
                 const result = $as_Lfeatherweightgo_model_fg_ast_Expression(result$2);
                 return new $c_sjsr_AnonFunction1(((this$11, i$1$1, result$1, next$1$3, in$1$3) => ((j$2) => {
                   const j = $as_s_util_parsing_input_Reader(j$2);
-                  return ((i$1$1.atEnd__Z() && j.atEnd__Z()) ? new $c_s_util_parsing_combinator_Parsers$Success(this$11, result$1, next$1$3) : new $c_s_util_parsing_combinator_Parsers$Failure(this$11, "parse error!", in$1$3))
+                  if (i$1$1.atEnd__Z()) {
+                    let $$x1;
+                    if (j.atEnd__Z()) {
+                      $$x1 = next$1$3
+                    } else {
+                      const $$x4 = $m_sc_StringOps$();
+                      const x = $dp_toString__T(j.s_util_parsing_input_CharSequenceReader__f_source);
+                      const $$x3 = $$x4.drop$extension__T__I__T(x, j.s_util_parsing_input_CharSequenceReader__f_offset);
+                      const $$x2 = $m_sc_StringOps$();
+                      const x$1 = $dp_toString__T(next$1$3.s_util_parsing_input_CharSequenceReader__f_source);
+                      $$x1 = $ct_s_util_parsing_input_CharSequenceReader__jl_CharSequence__(new $c_s_util_parsing_input_CharSequenceReader(), (("" + $$x3) + $$x2.drop$extension__T__I__T(x$1, next$1$3.s_util_parsing_input_CharSequenceReader__f_offset)))
+                    };
+                    return new $c_s_util_parsing_combinator_Parsers$Success(this$11, result$1, $$x1)
+                  } else {
+                    return this$11.structureLiteral__s_util_parsing_combinator_Parsers$Parser().$bar__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$14) => (() => this$14.variable__s_util_parsing_combinator_Parsers$Parser()))(this$11))).apply__s_util_parsing_input_Reader__s_util_parsing_combinator_Parsers$ParseResult(in$1$3)
+                  }
                 }))(this$3$2, i$1, result, next$1$2, in$1$2))
               }))(this$9, i, next$1$1, in$1$1)))
             }))(this$3$1, e, r$3, next$1, in$3))
@@ -26512,4 +26532,4 @@ $c_sjs_js_WrappedArray.prototype.$classData = $d_sjs_js_WrappedArray;
 $L0 = new $c_RTLong(0, 0);
 FeatherweightGoMain = $m_Lfeatherweightgo_Main$();
 }).call(this);
-//# sourceMappingURL=featherweight_go-fastopt.js.map
+//# sourceMappingURL=featherweightgo-fastopt.js.map
