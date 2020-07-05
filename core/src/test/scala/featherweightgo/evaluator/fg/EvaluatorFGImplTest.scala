@@ -140,4 +140,27 @@ class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
       assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
     }
   }
+
+  it should "eval expression in the StructureLiteral" in new SetUp {
+    val string =
+      """package main;
+        |type Number interface { }
+        |type Zero struct { }
+        |type Succ struct {
+        |  pred Number
+        |}
+        |func main() {
+        |  _ = Succ{Succ{Zero{}}.pred}
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
+
+      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("Succ"),List(ValuedStructureLiteral(StructureTypeName("Zero"),Nil)))))
+    }
+  }
 }

@@ -218,4 +218,27 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
       assert(actual.isLeft)
     }
   }
+
+  it should "be well-typed if the expression in the StructureLiteral" in new SetUp {
+    val string =
+      """package main;
+        |type Number interface { }
+        |type Zero struct { }
+        |type Succ struct {
+        |  pred Number
+        |}
+        |func main() {
+        |  _ = Succ{Succ{Zero{}}.pred}
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.check(ast)
+
+      assert(actual.isRight)
+    }
+  }
 }

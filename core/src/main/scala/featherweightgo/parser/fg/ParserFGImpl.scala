@@ -191,10 +191,19 @@ object ParserFGImpl {
             (typeAssertion(e) | methodCall(e) | fieldSelect(e))(
               new CharSequenceReader(r)
             ).flatMapWithNext { result => j =>
-              if (i.atEnd && j.atEnd)
-                Success(result, next)
+              if (i.atEnd)
+                Success(
+                  result,
+                  if (j.atEnd)
+                    next
+                  else
+                    new CharSequenceReader(
+                      j.source.toString.drop(j.offset) +
+                        next.source.toString.drop(next.offset)
+                    )
+                )
               else
-                Failure("parse error!", in)
+                (structureLiteral | variable)(in)
             }
           }
         case _: NoSuccess =>
