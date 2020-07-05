@@ -393,7 +393,24 @@ class ParserFGImplTest extends AnyFlatSpec with Diagrams {
         |}
         |""".stripMargin
 
-    val parseResult = parse(mainMethod, string)
-    assert(parseResult.successful)
+    val actual = parse(mainMethod, string)
+    assert(actual.successful)
+  }
+
+  it should "parse expression in the StructureLiteral" in new SetUp {
+    val string =
+      """package main;
+        |type Number interface { }
+        |type Zero struct { }
+        |type Succ struct {
+        |  pred Number
+        |}
+        |func main() {
+        |  _ = Succ{Succ{Succ{Zero{}}}.pred}
+        |}
+        |""".stripMargin
+
+    val actual = parse(mainMethod, string)
+    assert(actual.successful)
   }
 }
