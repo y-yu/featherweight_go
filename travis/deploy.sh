@@ -12,10 +12,10 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_BRANCH}" == "master" && "${TRA
   git fetch origin gh-pages:gh-pages
   git stash -a
   git checkout gh-pages
-  git rm index.html ./js/target/scala-2.13/featherweight_go-fastopt.js
+  git rm index.html ./js/target/scala-2.13/featherweightgo-fastopt.js
   git checkout master index.html
   git stash pop
-  git add index.html ./js/target/scala-2.13/featherweight_go-fastopt.js
+  git add index.html ./js/target/scala-2.13/featherweightgo-fastopt.js
   git commit -a -m "auto commit on travis $TRAVIS_JOB_NUMBER $TRAVIS_COMMIT"
   git push git@github.com:y-yu/featherweight_go.git gh-pages:gh-pages
 fi
