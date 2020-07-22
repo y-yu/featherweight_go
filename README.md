@@ -1,4 +1,4 @@
-Featherweight Go implementation by Scala
+Featherweight Go implementation in Scala
 ===========================================
 
 [![Build Status](https://travis-ci.com/y-yu/featherweight_go.svg?branch=master)](https://travis-ci.com/y-yu/featherweight_go)
