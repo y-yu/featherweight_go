@@ -1,7 +1,7 @@
 Featherweight Go implementation in Scala
 ===========================================
 
-[![Build Status](https://travis-ci.com/y-yu/featherweight_go.svg?branch=master)](https://travis-ci.com/y-yu/featherweight_go)
+![CI](https://github.com/y-yu/featherweight_go/workflows/CI/badge.svg)
 
 [Scala.js demo](https://y-yu.github.io/featherweight_go/) or
 
