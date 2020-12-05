@@ -76,7 +76,7 @@
             <input type="checkbox" v-model="lineNumbers"/>
             LineNumbers
         </label>
-        <vue-prism-editor v-model="code" language="go" :line-numbers="lineNumbers"></vue-prism-editor>
+        <prism-editor v-model="code" language="go" :highlight="highlighter" :line-numbers="lineNumbers"></prism-editor>
     </div>
     <div id="result" class="col">
         <h2>Results</h2>
@@ -104,7 +104,7 @@
 </ul>
 
 <script>
-    Vue.component('vue-prism-editor', VuePrismEditor)
+    Vue.component('vue-prism-editor', PrismEditor);
 
     new Vue({
         el: '#app',
@@ -119,6 +119,11 @@
                 "  _ = T{V{}}.field\n" +
                 "}",
             lineNumbers: true
+        },
+        methods: {
+            highlighter(code) {
+                return Prism.highlight(code, Prism.languages.go, "go");
+            }
         },
         computed: {
             ast: function() {

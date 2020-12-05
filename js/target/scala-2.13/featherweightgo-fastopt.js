@@ -873,9 +873,9 @@ const $p_Lfeatherweightgo_util_Utils$__loop$1__sci_Seq__Lfeatherweightgo_model_f
       ds = ds$2;
       continue
     };
-    const x = $m_sci_Nil$();
-    if (x.equals__O__Z(x1)) {
-      return $m_sci_Nil$()
+    const x = $m_s_package$().s_package$__f_Nil;
+    if (((x === null) ? (x1 === null) : x.equals__O__Z(x1))) {
+      return $m_s_package$().s_package$__f_Nil
     };
     throw new $c_s_MatchError(x1)
   }
@@ -927,8 +927,8 @@ const $p_Lfeatherweightgo_util_Utils$__loop$2__sci_Seq__Lfeatherweightgo_model_f
       ds = ds$2;
       continue
     };
-    const x$5 = $m_sci_Nil$();
-    if (x$5.equals__O__Z(x1)) {
+    const x$5 = $m_s_package$().s_package$__f_Nil;
+    if (((x$5 === null) ? (x1 === null) : x$5.equals__O__Z(x1))) {
       return $m_s_None$()
     };
     throw new $c_s_MatchError(x1)
@@ -980,8 +980,8 @@ class $c_Lfeatherweightgo_util_Utils$ extends $c_O {
           return false
         }
       } else {
-        const x$1 = $m_sci_Nil$();
-        if (x$1.equals__O__Z(x1)) {
+        const x$1 = $m_s_package$().s_package$__f_Nil;
+        if (((x$1 === null) ? (x1 === null) : x$1.equals__O__Z(x1))) {
           return true
         } else {
           throw new $c_s_MatchError(x1)
@@ -1011,7 +1011,7 @@ class $c_Lfeatherweightgo_util_Utils$ extends $c_O {
   };
   sequence__sci_Seq__s_util_Either(seq) {
     $m_s_package$();
-    const value = $m_sci_Seq$().empty__sc_SeqOps();
+    const value = $m_s_package$().s_package$__f_Seq.empty__sc_SeqOps();
     return $as_s_util_Either(seq.foldLeft__O__F2__O(new $c_s_util_Right(value), new $c_sjsr_AnonFunction2(((this$2) => ((x$2, y$2) => {
       const x = $as_s_util_Either(x$2);
       const y = $as_s_util_Either(y$2);
@@ -3761,8 +3761,8 @@ const $p_Lfeatherweightgo_evaluator_fg_EvaluatorFGImpl__innerEval$1__Lfeatherwei
               this$23 = this$18
             }
           } else {
-            const x$3 = $m_sci_Nil$();
-            if ((!x$3.equals__O__Z(x1$1))) {
+            const x$3 = $m_s_package$().s_package$__f_Nil;
+            if ((!((x$3 === null) ? (x1$1 === null) : x$3.equals__O__Z(x1$1)))) {
               throw new $c_s_MatchError(x1$1)
             };
             this$23 = $p_Lfeatherweightgo_evaluator_fg_EvaluatorFGImpl__evalError$1__Lfeatherweightgo_model_fg_ast_Expression__s_util_Either($thiz, expression)
@@ -3833,7 +3833,7 @@ const $p_Lfeatherweightgo_evaluator_fg_EvaluatorFGImpl__evalAll$1__sci_Seq__sci_
     return $p_Lfeatherweightgo_evaluator_fg_EvaluatorFGImpl__innerEval$1__Lfeatherweightgo_model_fg_ast_Expression__sci_Seq__s_util_Either(this$1, expression, declarations$1$1)
   }))($thiz, declarations$1))));
   $m_s_package$();
-  const value = $m_sci_Nil$();
+  const value = $m_s_package$().s_package$__f_Nil;
   return $as_s_util_Either($$x1.foldLeft__O__F2__O(new $c_s_util_Right(value), new $c_sjsr_AnonFunction2(((this$2$1) => ((x$2, y$2) => {
     const x = $as_s_util_Either(x$2);
     const y = $as_s_util_Either(y$2);
@@ -6329,7 +6329,7 @@ const $p_Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__empty__T__s_util_pa
   const r = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "", groupNames);
   return new $c_s_util_parsing_combinator_RegexParsers$$anon$2($thiz, r).$less$tilde__F0__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction0(((this$4, end$1) => (() => new $c_s_util_parsing_combinator_RegexParsers$$anon$1(this$4, end$1)))($thiz, end))).map__F1__s_util_parsing_combinator_Parsers$Parser(new $c_sjsr_AnonFunction1(((this$2$1) => ((x$1$2) => {
     $as_T(x$1$2);
-    return $m_sci_Nil$()
+    return $m_s_package$().s_package$__f_Nil
   }))($thiz)))
 });
 const $p_Lfeatherweightgo_parser_fg_ParserFGImpl$ParserImpl__expressions__T__s_util_parsing_combinator_Parsers$Parser = (function($thiz, end) {
