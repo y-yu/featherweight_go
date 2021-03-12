@@ -10,7 +10,7 @@ class TyperFGImpl extends TyperFG {
   def check(
     main: Main
   ): Either[FGTypeError, TypeName] = {
-    implicit val declarations: Seq[Declaration] = main.declarations
+    implicit val declarations: List[Declaration] = main.declarations
 
     def typeCheck(
       typeName: TypeName
@@ -88,7 +88,7 @@ class TyperFGImpl extends TyperFG {
               .map(_.methodSignature),
             FGTypeError(eType, methodName)
           )
-          values = methodSignature.arguments.values.toSeq
+          values = methodSignature.arguments.values.toList
           _ <-
             if (
               argumentTypes.length == values.length &&
@@ -100,7 +100,7 @@ class TyperFGImpl extends TyperFG {
               Right(())
             else
               Left(
-                FGTypeError(argumentTypes, methodSignature.arguments.values.toSeq)
+                FGTypeError(argumentTypes, methodSignature.arguments.values.toList)
               )
         } yield methodSignature.returnType
 

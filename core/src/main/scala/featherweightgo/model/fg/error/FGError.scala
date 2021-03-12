@@ -60,8 +60,8 @@ object FGError {
     )
 
     def apply(
-      foundTypes: Seq[TypeName],
-      expectedTypes: Seq[TypeName]
+      foundTypes: List[TypeName],
+      expectedTypes: List[TypeName]
     ): FGTypeError = FGTypeError(
       s"Found types are [${foundTypes.map(_.value).mkString(", ")}] but expected type is [${expectedTypes.map(_.value).mkString(", ")}]!"
     )

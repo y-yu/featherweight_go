@@ -8,7 +8,7 @@ class EvaluatorFGImpl extends EvaluatorFG {
   def eval(
     main: Main
   ): Either[FGEvalError, ValuedStructureLiteral] = {
-    implicit val declarations: Seq[Declaration] = main.declarations
+    implicit val declarations: List[Declaration] = main.declarations
 
     def innerEval(
       expression: Expression
@@ -85,11 +85,11 @@ class EvaluatorFGImpl extends EvaluatorFG {
     }
 
     def evalAll(
-      expressions: Seq[Expression]
-    ): Either[FGEvalError, Seq[ValuedStructureLiteral]] =
+      expressions: List[Expression]
+    ): Either[FGEvalError, List[ValuedStructureLiteral]] =
       expressions
         .map(innerEval)
-        .foldLeft(Right(Nil): Either[FGEvalError, Seq[ValuedStructureLiteral]]) { (x, y) =>
+        .foldLeft(Right(Nil): Either[FGEvalError, List[ValuedStructureLiteral]]) { (x, y) =>
           for {
             xv <- x
             yv <- y

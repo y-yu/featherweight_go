@@ -1,6 +1,11 @@
 name: CI
+
 on:
-  [ pull_request, push ]
+  pull_request:
+  push:
+    branches:
+      - master
+
 jobs:
   build-test:
     strategy:
@@ -20,7 +25,7 @@ jobs:
         uses: coursier/cache-action@v4.1
 
       - name: Test
-        run: ./sbt featherweightGoJVM/test
+        run: ./sbt featherweightGoCoreJVM/test
 
       - name: Run `Main.main`
         run: ./sbt featherweightGoJVM/run

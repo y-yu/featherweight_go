@@ -17,7 +17,7 @@ class ParserFGImpl extends ParserFG {
 
     parserImpl.parse(mainMethod, string) match {
       case Success(result, _) => Right(result)
-      case NoSuccess(msg, _) => Left(FGParseError(msg))
+      case e: NoSuccess => Left(FGParseError(e.msg))
     }
   }
 }
@@ -52,7 +52,7 @@ object ParserFGImpl {
           (vn, stn)
       }
 
-    private def commaSeparatedSequence[A](parser: Parser[A]): Parser[Seq[A]] =
+    private def commaSeparatedSequence[A](parser: Parser[A]): Parser[List[A]] =
       ((parser <~ whiteSpace.? <~ "," <~ whiteSpace.?).* ~ parser.?).map {
         case pSeq ~ pOpt =>
           pSeq ++ pOpt
@@ -141,10 +141,10 @@ object ParserFGImpl {
         Variable(VariableName(vn))
       }
 
-    private def empty[A](end: String): Parser[Seq[A]] =
+    private def empty[A](end: String): Parser[List[A]] =
       ("".r <~ end).map(_ => Nil)
 
-    private def expressions(end: String): Parser[Seq[Expression]] =
+    private def expressions(end: String): Parser[List[Expression]] =
       empty(end) | (commaSeparatedSequence(expression) <~ end)
 
     def structureLiteral: Parser[StructureLiteral] =
