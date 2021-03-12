@@ -1,7 +1,7 @@
 import ReleaseTransformations._
 import UpdateReadme.updateReadme
 
-val scala213Version = "2.13.4"
+val scala213Version = "2.13.5"
 val defaultScalacOptions = Seq(
   "-deprecation",
   "-encoding", "UTF-8",
@@ -31,7 +31,7 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
     publishArtifact := false,
     publish := {},
     publishLocal := {},
-    libraryDependencies += "com.lihaoyi" %%% "pprint" % "0.6.0"
+    libraryDependencies += "com.lihaoyi" %%% "pprint" % "0.6.2"
   )
   .settings(publishSettings)
   .dependsOn(
@@ -59,7 +59,7 @@ lazy val featherweightGoCore = (crossProject(JVMPlatform, JSPlatform).crossType(
     scalacOptions ++= defaultScalacOptions,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %%% "scala-parser-combinators" % "1.1.2",
-      "org.scalatest" %%% "scalatest" % "3.1.2" % "test"
+      "org.scalatest" %%% "scalatest" % "3.2.5" % "test"
     )
   )
   .settings(publishSettings)
@@ -94,7 +94,7 @@ lazy val publishSettings = Seq(
       </scm>,
   releaseTagName := tagName.value,
   releaseCrossBuild := false,
-  releaseProcess := Seq[ReleaseStep](
+  releaseProcess := List[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
     runClean,

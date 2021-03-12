@@ -10,13 +10,13 @@ object Utils {
   )
 
   def fields(
-    declarations: Seq[Declaration],
+    declarations: List[Declaration],
     structureTypeName: StructureTypeName
-  ): Seq[StructureField] = {
+  ): List[StructureField] = {
     @tailrec
     def loop(
-      ds: Seq[Declaration]
-    ): Seq[StructureField] = ds match {
+      ds: List[Declaration]
+    ): List[StructureField] = ds match {
       case Type(name, Structure(fields)) :: ts =>
         if (name.value == structureTypeName.value) {
           fields
@@ -35,14 +35,14 @@ object Utils {
   ): StructureTypeName = valuedStructureLiteral.structureTypeName
 
   def body(
-    declarations: Seq[Declaration],
+    declarations: List[Declaration],
     structureTypeName: StructureTypeName,
     methodName: MethodName
-  ): Option[(Seq[TypedVariable], Expression)] = {
+  ): Option[(List[TypedVariable], Expression)] = {
     @tailrec
     def loop(
-      ds: Seq[Declaration]
-    ): Option[(Seq[TypedVariable], Expression)] = ds match {
+      ds: List[Declaration]
+    ): Option[(List[TypedVariable], Expression)] = ds match {
       case Method(receiver, methodSpecification, body) :: ts =>
         if (receiver._2 == structureTypeName && methodSpecification.methodName == methodName) {
           Some(
@@ -72,7 +72,7 @@ object Utils {
 
   @tailrec
   def unique(
-    methodSpecifications: Seq[MethodSpecification]
+    methodSpecifications: List[MethodSpecification]
   ): Boolean = methodSpecifications match {
     case h :: ts =>
       ts.forall { m =>
@@ -86,28 +86,28 @@ object Utils {
   }
 
   def tdecls(
-    declarations: Seq[Declaration]
-  ): Seq[TypeName] =
+    declarations: List[Declaration]
+  ): List[TypeName] =
     declarations.collect {
       case Type(name, _) =>
         name
     }
 
   def mdecls(
-    declarations: Seq[Declaration]
-  ): Seq[(StructureTypeName, MethodName)] =
+    declarations: List[Declaration]
+  ): List[(StructureTypeName, MethodName)] =
     declarations.collect {
       case Method(receiver, methodSpecification, _) =>
         (receiver._2, methodSpecification.methodName)
     }
 
   def methods(
-    declarations: Seq[Declaration],
+    declarations: List[Declaration],
     typeName: TypeName
-  ): Seq[MethodSpecification] = {
+  ): List[MethodSpecification] = {
     def ifStructureTypeName(
       structureTypeName: StructureTypeName
-    ): Seq[MethodSpecification] =
+    ): List[MethodSpecification] =
       declarations.collect {
         case Method(receiver, methodSpecification, _)
           if receiver._2 == structureTypeName =>
@@ -116,7 +116,7 @@ object Utils {
 
     def ifInterfaceTypeName(
       interfaceTypeName: InterfaceTypeName
-    ): Seq[MethodSpecification] =
+    ): List[MethodSpecification] =
       declarations.collect {
         case Type(typeName, Interface(methods))
           if typeName == interfaceTypeName =>
@@ -136,12 +136,12 @@ object Utils {
   }
 
   def distinct[A](
-    seq: Seq[A]
+    seq: List[A]
   ): Boolean =
     seq.distinct.length == seq.length
 
-  def sequence[A, E](seq : Seq[Either[E, A]]): Either[E, Seq[A]] =
-    seq.foldLeft(Right(Seq.empty[A]): Either[E, Seq[A]]) { (x, y) =>
+  def sequence[A, E](seq : List[Either[E, A]]): Either[E, List[A]] =
+    seq.foldLeft(Right(List.empty[A]): Either[E, List[A]]) { (x, y) =>
       for {
         a <- x
         b <- y
@@ -152,7 +152,7 @@ object Utils {
     def :<(
       rightHand: TypeName
     )(
-      implicit declarations: Seq[Declaration]
+      implicit declarations: List[Declaration]
     ): Boolean = {
       def strictType(t: TypeName): Option[StructureTypeName Either InterfaceTypeName] =
         declarations.collectFirst {

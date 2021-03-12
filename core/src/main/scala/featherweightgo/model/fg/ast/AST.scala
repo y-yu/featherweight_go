@@ -8,7 +8,7 @@ case class FieldName(value: String) extends AST
 
 case class MethodName(value: String) extends AST
 
-abstract class TypeName(val value: String) extends AST
+sealed abstract class TypeName(val value: String) extends AST
 
 case class MethodSignature(
   arguments: Map[VariableName, TypeName],
@@ -34,11 +34,11 @@ case class StructureField(
 )
 
 case class Structure(
-  fields: Seq[StructureField]
+  fields: List[StructureField]
 ) extends TypeLiteral
 
 case class Interface(
-  methods: Seq[MethodSpecification]
+  methods: List[MethodSpecification]
 ) extends TypeLiteral
 
 sealed trait Declaration extends AST
@@ -55,7 +55,7 @@ case class Method(
 ) extends Declaration
 
 case class Main(
-  declarations: Seq[Declaration],
+  declarations: List[Declaration],
   main: Expression
 ) extends AST
 
@@ -68,12 +68,12 @@ case class Variable(
 case class MethodCall(
   expression: Expression,
   methodName: MethodName,
-  arguments: Seq[Expression]
+  arguments: List[Expression]
 ) extends Expression
 
 case class StructureLiteral(
   structureTypeName: StructureTypeName,
-  arguments: Seq[Expression]
+  arguments: List[Expression]
 ) extends Expression
 
 case class FieldSelect(
@@ -88,5 +88,5 @@ case class TypeAssertion(
 
 case class ValuedStructureLiteral(
   structureTypeName: StructureTypeName,
-  values: Seq[ValuedStructureLiteral]
+  values: List[ValuedStructureLiteral]
 ) extends Expression // Does it make sense?
