@@ -1,19 +1,20 @@
-package featherweightgo.evaluator.fg
+package featherweightgo.evaluator
 
-import featherweightgo.model.fg.ast._
+import featherweightgo.model.ast._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.diagrams.Diagrams
-import featherweightgo.parser.fg.ParserFGImpl
+import featherweightgo.parser.ParserImpl
 
-class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
+
+class EvaluatorImplTest extends AnyFlatSpec with Diagrams {
   trait SetUp {
     // This test depends on `ParserFGImpl`(the other logic)
     // so this is not a *unit test*!
     // But it would take too time to mock parser or write the AST directory...
     // That's the why this test depends on the parser implementation.
-    val parser = new ParserFGImpl
+    val parser = new ParserImpl
 
-    val sut = new EvaluatorFGImpl()
+    val sut = new EvaluatorImpl()
   }
 
   "EvaluatorFG" should "eval field selection of structure literal" in new SetUp {
@@ -35,7 +36,7 @@ class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
       val actual = sut.eval(ast)
 
       assert(actual.isRight)
-      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
+      assert(actual == Right(ValuedStructureLiteral(StructureType(StructureTypeName("V"), Nil), Nil)))
     }
   }
 
@@ -80,7 +81,7 @@ class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.eval(ast)
 
-      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("T"), Nil)))
+      assert(actual == Right(ValuedStructureLiteral(StructureType(StructureTypeName("T"), Nil), Nil)))
     }
   }
 
@@ -106,7 +107,7 @@ class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.eval(ast)
 
-      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("T"), Nil)))
+      assert(actual == Right(ValuedStructureLiteral(StructureType(StructureTypeName("T"), Nil), Nil)))
     }
   }
 
@@ -137,7 +138,7 @@ class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.eval(ast)
 
-      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("V"), Nil)))
+      assert(actual == Right(ValuedStructureLiteral(StructureType(StructureTypeName("V"), Nil), Nil)))
     }
   }
 
@@ -160,7 +161,75 @@ class EvaluatorFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.eval(ast)
 
-      assert(actual == Right(ValuedStructureLiteral(StructureTypeName("Succ"),List(ValuedStructureLiteral(StructureTypeName("Zero"),Nil)))))
+      assert(actual == Right(ValuedStructureLiteral(
+        StructureType(StructureTypeName("Succ"), Nil),
+        List(ValuedStructureLiteral(
+          StructureType(StructureTypeName("Zero"), Nil),Nil))))
+      )
+    }
+  }
+
+  it should "eval expression with generics" in new SetUp {
+    val string =
+      """package main;
+        |type Number interface { }
+        |type Zero struct { }
+        |type Succ struct {
+        |  pred Number
+        |}
+        |type any interface { }
+        |type List[A any] interface {
+        |  Length() Number
+        |}
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |  head A
+        |  tail List[A]
+        |}
+        |func (this Nil[A any]) Length() Number {
+        |  return Zero{}
+        |}
+        |func (this Cons[A any]) Length() Number {
+        |  return Succ{this.tail.Length()}
+        |}
+        |type V struct { }
+        |type S struct { }
+        |type T struct { }
+        |func main() {
+        |  _ = Cons[V]{V{}, Cons[V]{V{}, Nil[V]{}}}.Length()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
+      assert(actual == Right(
+        ValuedStructureLiteral(
+          structureTypeName = StructureType(
+            structureTypeName = StructureTypeName(value = "Succ"),
+            types = List()
+          ),
+          values = List(
+            ValuedStructureLiteral(
+              structureTypeName = StructureType(
+                structureTypeName = StructureTypeName(value = "Succ"),
+                types = List()
+              ),
+              values = List(
+                ValuedStructureLiteral(
+                  structureTypeName = StructureType(
+                    structureTypeName = StructureTypeName(value = "Zero"),
+                    types = List()
+                  ),
+                  values = List()
+                )
+              )
+            )
+          )
+        )
+      ))
     }
   }
 }

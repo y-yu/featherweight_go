@@ -1,13 +1,13 @@
 package featherweightgo
 
-import featherweightgo.evaluator.fg.EvaluatorFGImpl
-import featherweightgo.parser.fg.ParserFGImpl
-import featherweightgo.typer.fg.TyperFGImpl
+import featherweightgo.evaluator.EvaluatorImpl
+import featherweightgo.parser.ParserImpl
+import featherweightgo.typer.TyperImpl
 
 object Main {
-  val parserFG = new ParserFGImpl()
-  val evaluatorFG = new EvaluatorFGImpl()
-  val typerFG = new TyperFGImpl()
+  val parserFG = new ParserImpl()
+  val evaluatorFG = new EvaluatorImpl()
+  val typerFG = new TyperImpl()
 
   private def pp(
     string: String
@@ -80,11 +80,45 @@ object Main {
     )
   }
 
+  def runGeneric(): Unit = {
+    pp(
+      """package main;
+        |type Number interface { }
+        |type Zero struct { }
+        |type Succ struct {
+        |  pred Number
+        |}
+        |type any interface { }
+        |type List[A any] interface {
+        |  Length() Number
+        |}
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |  head A
+        |  tail List[A]
+        |}
+        |func (this Nil[A any]) Length() Number {
+        |  return Zero{}
+        |}
+        |func (this Cons[A any]) Length() Number {
+        |  return Succ{this.tail.Length()}
+        |}
+        |type V struct { }
+        |type S struct { }
+        |func main() {
+        |  _ = Cons[V]{V{}, Cons[V]{V{}, Nil[V]{}}}.Length()
+        |}
+        |""".stripMargin
+    )
+  }
+
   def main(args: Array[String]): Unit = {
     runGetField()
 
     runMethodCall()
 
     runTypeCheck()
+
+    runGeneric()
   }
 }

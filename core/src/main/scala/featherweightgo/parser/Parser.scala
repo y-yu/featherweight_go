@@ -1,9 +1,9 @@
-package featherweightgo.parser.fg
+package featherweightgo.parser
 
-import featherweightgo.model.fg.ast.Main
-import featherweightgo.model.fg.error.FGError.FGParseError
+import featherweightgo.model.ast.Main
+import featherweightgo.model.error.FGError.FGParseError
 
-trait ParserFG {
+trait Parser {
   /**
     * Parse from `String` source code of Featherweight Go.
     *

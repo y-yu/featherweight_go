@@ -1,13 +1,18 @@
-package featherweightgo.evaluator.fg
+package featherweightgo.evaluator
 
-import featherweightgo.model.fg.ast._
-import featherweightgo.model.fg.error.FGError.FGEvalError
+import featherweightgo.model.ast._
+import featherweightgo.model.error.FGError.FGEvalError
+import featherweightgo.model.typer.Implement.ImplementSyntax
+import featherweightgo.model.typer.TypeBound
 import featherweightgo.util.Utils._
 
-class EvaluatorFGImpl extends EvaluatorFG {
+
+class EvaluatorImpl extends Evaluator {
   def eval(
     main: Main
   ): Either[FGEvalError, ValuedStructureLiteral] = {
+    // The operator `<:` requires this list. It's used like an operator
+    // taking 2 parameters so `declarations` is defined as `implicit`.
     implicit val declarations: List[Declaration] = main.declarations
 
     def innerEval(
@@ -43,11 +48,11 @@ class EvaluatorFGImpl extends EvaluatorFG {
               .getOrElse(evalError)
           } yield result
 
-        case MethodCall(e, methodName, arguments) =>
+        case MethodCall(e, methodName, types, arguments) =>
           for {
             leftHandResult <- innerEval(e)
             argumentResult <- evalAll(arguments)
-            vs <- body(declarations, `type`(leftHandResult), methodName) match {
+            vs <- body(declarations, `type`(leftHandResult), methodName, types) match {
               case Some(result) => Right(result)
               case None => evalError
             }
@@ -73,7 +78,7 @@ class EvaluatorFGImpl extends EvaluatorFG {
         case TypeAssertion(e, typeName) =>
           for {
             leftHand <- innerEval(e)
-            result <- if (`type`(leftHand) :< typeName)
+            result <- if ( TypeBound.empty |- `type`(leftHand) <:< typeName)
               Right(leftHand)
             else
               evalError
@@ -117,8 +122,8 @@ class EvaluatorFGImpl extends EvaluatorFG {
         case FieldSelect(expression, fn) =>
           FieldSelect(loop(expression), fn)
 
-        case MethodCall(expression, mn, arguments) =>
-          MethodCall(loop(expression), mn, arguments.map(loop))
+        case MethodCall(expression, mn, types, arguments) =>
+          MethodCall(loop(expression), mn, types, arguments.map(loop))
 
         case TypeAssertion(expression, tn) =>
           TypeAssertion(loop(expression), tn)

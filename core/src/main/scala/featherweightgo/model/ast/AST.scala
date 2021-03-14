@@ -1,4 +1,4 @@
-package featherweightgo.model.fg.ast
+package featherweightgo.model.ast
 
 sealed trait AST extends Product with Serializable
 
@@ -11,8 +11,9 @@ case class MethodName(value: String) extends AST
 sealed abstract class TypeName(val value: String) extends AST
 
 case class MethodSignature(
-  arguments: Map[VariableName, TypeName],
-  returnType: TypeName
+  typeFormals: List[TypeFormal],
+  arguments: Map[VariableName, Type],
+  returnType: Type
 ) extends AST
 
 case class MethodSpecification(
@@ -30,7 +31,7 @@ sealed trait TypeLiteral extends AST
 
 case class StructureField(
   name: FieldName,
-  typeName: TypeName
+  typ: Type
 )
 
 case class Structure(
@@ -43,13 +44,20 @@ case class Interface(
 
 sealed trait Declaration extends AST
 
-case class Type(
+case class TypeDeclaration(
   name: TypeName,
+  typeFormals: List[TypeFormal],
   typeLiteral: TypeLiteral
 ) extends Declaration
 
-case class Method(
-  receiver: (VariableName, StructureTypeName),
+case class MethodReceiver(
+  variableName: VariableName,
+  structureTypeName: StructureTypeName,
+  typeFormals: List[TypeFormal]
+)
+
+case class MethodDeclaration(
+  receiver: MethodReceiver,
   methodSpecification: MethodSpecification,
   body: Expression
 ) extends Declaration
@@ -68,11 +76,12 @@ case class Variable(
 case class MethodCall(
   expression: Expression,
   methodName: MethodName,
+  types: List[Type],
   arguments: List[Expression]
 ) extends Expression
 
 case class StructureLiteral(
-  structureTypeName: StructureTypeName,
+  structureType: StructureType,
   arguments: List[Expression]
 ) extends Expression
 
@@ -83,10 +92,50 @@ case class FieldSelect(
 
 case class TypeAssertion(
   expression: Expression,
-  typeName: TypeName
+  typ: Type
 ) extends Expression
 
 case class ValuedStructureLiteral(
-  structureTypeName: StructureTypeName,
+  structureTypeName: StructureType,
   values: List[ValuedStructureLiteral]
 ) extends Expression // Does it make sense?
+
+sealed trait Type extends AST {
+  def name: TypeName
+}
+
+case class TypeParameter(
+  typeName: String
+) extends Type {
+  def name: TypeName = AnyTypeName(typeName)
+}
+
+case class AnyNamedType(
+  typeName: TypeName,
+  types: List[Type]
+) extends Type {
+  def name: TypeName = typeName
+}
+
+case class StructureType(
+  structureTypeName: StructureTypeName,
+  types: List[Type]
+) extends Type {
+  def name: TypeName = structureTypeName
+}
+
+case class InterfaceType(
+  interfaceTypeName: InterfaceTypeName,
+  types: List[Type]
+) extends Type {
+  def name: TypeName = interfaceTypeName
+}
+
+case class TypeFormal(
+  typeParameter: TypeParameter,
+  interfaceType: InterfaceType
+) extends AST
+
+case class TypeActual(
+  types: List[Type]
+) extends AST
