@@ -1,19 +1,19 @@
-package featherweightgo.typer.fg
+package featherweightgo.typer
 
 import org.scalatest.diagrams.Diagrams
 import org.scalatest.flatspec.AnyFlatSpec
-import featherweightgo.parser.fg.ParserFGImpl
-import featherweightgo.model.fg.ast._
+import featherweightgo.parser.ParserImpl
+import featherweightgo.model.ast._
 
-class TyperFGImplTest extends AnyFlatSpec with Diagrams {
+class TyperImplTest extends AnyFlatSpec with Diagrams {
   trait SetUp {
     // This test depends on `ParserFGImpl`(the other logic)
     // so this is not a *unit test*!
     // But it would take too time to mock parser or write the AST directory...
     // That's the why this test depends on the parser implementation.
-    val parser = new ParserFGImpl
+    val parser = new ParserImpl
     
-    val sut = new TyperFGImpl
+    val sut = new TyperImpl
   }
 
   "TyperFG" should "be well-typed the Main" in new SetUp {
@@ -31,7 +31,9 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
     val parseResult = parser.parse(string)
     assert(parseResult.isRight)
 
-    parseResult.foreach(ast => assert(sut.check(ast).isRight))
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(AnyNamedType(AnyTypeName("V"), Nil)))
+    }
   }
 
   it should "NOT be well-typed Main if the code refer a non-exist field" in new SetUp {
@@ -79,7 +81,7 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
     parseResult.foreach { ast =>
       val actual = sut.check(ast)
 
-      assert(actual == Right(AnyTypeName("V")))
+      assert(actual == Right(AnyNamedType(AnyTypeName("V"), Nil)))
     }
   }
 
@@ -239,6 +241,55 @@ class TyperFGImplTest extends AnyFlatSpec with Diagrams {
       val actual = sut.check(ast)
 
       assert(actual.isRight)
+    }
+  }
+
+  it should "be well-typed generic function" in new SetUp {
+    """
+      |func (this Nil[A any]) Length() Number {
+      |  return Zero{}
+      |}
+      |func (this Cons[A any]) Length() Number {
+      |  return Succ{this.tail.Length()}
+      |}
+      |
+      |""".stripMargin
+
+    val string =
+      """package main;
+        |type Number interface { }
+        |type Zero struct { }
+        |type Succ struct {
+        |  pred Number
+        |}
+        |type any interface { }
+        |type List[A any] interface {
+        |  Length() Number
+        |}
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |  head A
+        |  tail List[A]
+        |}
+        |func (this Nil[A any]) Length() Number {
+        |  return Zero{}
+        |}
+        |func (this Cons[A any]) Length() Number {
+        |  return Succ{this.tail.Length()}
+        |}
+        |type V struct { }
+        |type S struct { }
+        |func main() {
+        |  _ = Cons[V]{V{}, Cons[V]{V{}, Nil[V]{}}}.Length()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.check(ast)
+      assert(actual == Right(AnyNamedType(typeName = AnyTypeName(value = "Number"), types = List())))
     }
   }
 }

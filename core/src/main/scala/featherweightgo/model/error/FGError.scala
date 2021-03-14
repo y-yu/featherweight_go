@@ -1,7 +1,7 @@
-package featherweightgo.model.fg.error
+package featherweightgo.model.error
 
-import featherweightgo.model.fg.ast._
-import featherweightgo.model.fg.typer.Environment
+import featherweightgo.model.ast._
+import featherweightgo.model.typer.Environment
 
 sealed abstract class FGError(
   message: String = null,

@@ -1,14 +1,14 @@
-package featherweightgo.parser.fg
+package featherweightgo.parser
 
-import featherweightgo.model.fg.ast._
-import featherweightgo.model.fg.error.FGError
-import featherweightgo.model.fg.error.FGError.FGParseError
+import featherweightgo.model.ast._
+import featherweightgo.model.error.FGError
+import featherweightgo.model.error.FGError.FGParseError
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.CharSequenceReader
 
 
-class ParserFGImpl extends ParserFG {
-  private val parserImpl = new ParserFGImpl.ParserImpl
+class ParserImpl extends Parser {
+  private val parserImpl = new ParserImpl.ParserImpl
 
   def parse(
     string: String
@@ -22,7 +22,7 @@ class ParserFGImpl extends ParserFG {
   }
 }
 
-object ParserFGImpl {
+object ParserImpl {
   private[parser] class ParserImpl extends RegexParsers { self =>
     override def skipWhitespace = false
 
@@ -46,10 +46,41 @@ object ParserFGImpl {
     val fieldName: Parser[FieldName] =
       name.map(FieldName.apply)
 
-    def receiver: Parser[(VariableName, StructureTypeName)] =
-      (("(" ~> variableName <~ whiteSpace) ~ (structureTypeName <~ ")")).map {
-        case vn ~ stn =>
-          (vn, stn)
+    private def flatten[A](asOpt: Option[List[A]]): List[A] =
+      asOpt.fold(List.empty[A])(identity)
+
+    def typ: Parser[Type] =
+      namedType
+
+    def typeParameter: Parser[TypeParameter] =
+      name.map(TypeParameter)
+
+    def typeParameters: Parser[List[Type]] =
+      "[" ~> commaSeparatedSequence(typ) <~ "]"
+
+    def namedType: Parser[AnyNamedType] = {
+      (typeName ~ typeParameters.?).map {
+        case tn ~ types =>
+          AnyNamedType(tn, flatten(types))
+      }
+    }
+
+    def structureType: Parser[StructureType] =
+      (structureTypeName ~ typeParameters.?).map {
+        case structureTypeName ~ types =>
+          StructureType(structureTypeName, flatten(types))
+      }
+
+    def interfaceType: Parser[InterfaceType] =
+      (interfaceTypeName ~ typeParameters.?).map {
+        case interfaceTypeName ~ types =>
+          InterfaceType(interfaceTypeName, flatten(types))
+      }
+
+    def receiver: Parser[MethodReceiver] =
+      (("(" ~> variableName <~ whiteSpace) ~ structureTypeName ~ typeFormals.? <~ ")").map {
+        case vn ~ stn ~ typeFormals =>
+          MethodReceiver(vn, stn, flatten(typeFormals))
       }
 
     private def commaSeparatedSequence[A](parser: Parser[A]): Parser[List[A]] =
@@ -58,11 +89,21 @@ object ParserFGImpl {
           pSeq ++ pOpt
       }
 
+    private def typeFormals: Parser[List[TypeFormal]] =
+      ("[" ~> whiteSpace.* ~> whiteSpace.* ~>
+        commaSeparatedSequence((typeParameter <~ whiteSpace.+) ~ interfaceType) <~ whiteSpace.* <~ "]"  ).map {
+          _.foldLeft(List.empty[TypeFormal]) { (acc, x) =>
+            acc :+ TypeFormal(x._1, x._2)
+          }
+      }
+
     def methodSignature: Parser[MethodSignature] =
-      (("(" ~> commaSeparatedSequence((variableName <~ whiteSpace) ~ typeName)
-        <~ whiteSpace.? <~ ")" <~ whiteSpace.?) ~ typeName).map {
-        case args ~ rt =>
+      (typeFormals.? ~
+        ("(" ~> commaSeparatedSequence((variableName <~ whiteSpace) ~ typ)
+        <~ whiteSpace.? <~ ")" <~ whiteSpace.?) ~ typ).map {
+        case typeFormals ~ args ~ rt =>
           MethodSignature(
+            typeFormals = flatten(typeFormals),
             arguments = args
               .map { case vn ~ tn => (vn, tn)}
               .toMap,
@@ -81,7 +122,7 @@ object ParserFGImpl {
 
     def structure: Parser[Structure] =
       ("struct" ~> whiteSpace.? ~> "{" ~> whiteSpace.? ~>
-        ((fieldName <~ whiteSpace) ~ typeName <~ whiteSpace.?).*
+        ((fieldName <~ whiteSpace) ~ typ <~ whiteSpace.?).*
         <~ whiteSpace.? <~ "}").map { fs =>
         Structure(
           fields = fs.map {
@@ -98,26 +139,30 @@ object ParserFGImpl {
         )
       }
 
-    def typeLiteral: Parser[~[TypeName, TypeLiteral]] =
-      ((structureTypeName <~ whiteSpace) ~ structure) |
-        ((interfaceTypeName <~ whiteSpace) ~ interface)
+    def typeLiteral: Parser[(TypeName, List[TypeFormal], TypeLiteral)] =
+      (((structureTypeName ~ typeFormals.? <~ whiteSpace) ~ structure) |
+        ((interfaceTypeName ~ typeFormals.? <~ whiteSpace) ~ interface)).map {
+        case tn ~ typeFormals ~ typeLiteral =>
+          (tn, flatten(typeFormals), typeLiteral)
+      }
 
-    def methodDefinition: Parser[Method] =
+    def methodDefinition: Parser[MethodDeclaration] =
       ((("func" ~> whiteSpace.? ~> receiver <~ whiteSpace.?) ~ methodSpecification <~ whiteSpace.? <~
         "{" <~ whiteSpace.? <~ "return" <~ whiteSpace) ~ expression <~ whiteSpace.? <~ "}").map {
         case r ~ ms ~ e =>
-          featherweightgo.model.fg.ast.Method(
+          MethodDeclaration(
             receiver = r,
             methodSpecification = ms,
             body = e
           )
       }
 
-    def typeDefinition: Parser[Type] =
+    def typeDefinition: Parser[TypeDeclaration] =
       ("type" ~> whiteSpace ~> typeLiteral).map {
-        case tn ~ tl =>
-          Type(
+        case (tn, tfs, tl) =>
+          TypeDeclaration(
             name = tn,
+            typeFormals = tfs,
             typeLiteral = tl
           )
       }
@@ -130,7 +175,7 @@ object ParserFGImpl {
         """func +main\(\) *\{""".r <~ whiteSpace.? <~ """_ *= *""".r) ~
         (expression <~ whiteSpace.? <~ "}")).map {
         case ds ~ e =>
-          featherweightgo.model.fg.ast.Main(
+          Main(
             declarations = ds,
             main = e
           )
@@ -148,21 +193,22 @@ object ParserFGImpl {
       empty(end) | (commaSeparatedSequence(expression) <~ end)
 
     def structureLiteral: Parser[StructureLiteral] =
-      ((structureTypeName <~ "{" <~ whiteSpace.?) ~
+      ((structureType <~ "{" <~ whiteSpace.?) ~
         expressions("}") <~ whiteSpace.?).map {
         case stn ~ es =>
           StructureLiteral(
-            structureTypeName = stn,
+            structureType = stn,
             arguments = es
           )
       }
 
     def methodCall(expression: Expression): Parser[MethodCall] =
-      ((whiteSpace.? ~> methodName <~ "(") ~ expressions(")")).map {
-        case mn ~ es =>
+      ((((whiteSpace.? ~> methodName <~ whiteSpace.*) ~ typeParameters.?) <~ "(") ~ expressions(")")).map {
+        case mn ~ types ~ es =>
           MethodCall(
             expression = expression,
             methodName = mn,
+            types = flatten(types),
             arguments = es
           )
       }
@@ -177,10 +223,10 @@ object ParserFGImpl {
 
     def typeAssertion(expression: Expression): Parser[TypeAssertion] =
       (whiteSpace.? ~> "(" ~> whiteSpace.? ~>
-        typeName <~ whiteSpace.? <~ ")").map { tn =>
+        typ <~ whiteSpace.? <~ ")").map { tn =>
         TypeAssertion(
           expression = expression,
-          typeName = tn
+          typ = tn
         )
       }
 
