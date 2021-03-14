@@ -1,4 +1,4 @@
-Featherweight Go implementation in Scala
+Featherweight Generics Go implementation in Scala
 ===========================================
 
 ![CI](https://github.com/y-yu/featherweight_go/workflows/CI/badge.svg)
