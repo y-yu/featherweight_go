@@ -51,7 +51,7 @@ lazy val featherweightGoCore = (crossProject(JVMPlatform, JSPlatform).crossType(
   .settings(
     organization := "com.github.y-yu",
     name := "featherweight_go",
-    description := "Scala implementation of Featherweight Go",
+    description := "Scala implementation of Featherweight (Generics) Go",
     homepage := Some(url("https://github.com/y-yu")),
     licenses := Seq("MIT" -> url(s"https://github.com/y-yu/featherweight_go/blob/master/LICENSE")),
     scalaVersion := scala213Version,
