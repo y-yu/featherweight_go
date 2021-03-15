@@ -289,16 +289,17 @@ class TyperImpl extends Typer {
         for {
           eType <- expressionCheck(environment, typeBound, e)
           eStructureType <- eType match {
-            case stn: StructureType =>
-              Right(stn)
-            case typename =>
-              tdecls(declarations).find(_ == typename.name) match {
-                case Some(stn: StructureTypeName) =>
-                  ???
-                  ///Right(stn)
+            case st: StructureType =>
+              Right(st)
+            case anyNamedType: AnyNamedType =>
+              lookupAnyType(anyNamedType) match {
+                case Some(typ: StructureType) =>
+                  Right(typ)
                 case _ =>
                   Left(FGTypeError(s"The give type[${eType.name.value}] is not structure!"))
               }
+            case _ =>
+              Left(FGTypeError(s"The give type[${eType.name.value}] is not structure!"))
           }
           field <- toEither(
             fields(declarations, eStructureType)

@@ -4,6 +4,7 @@ import featherweightgo.evaluator.EvaluatorImpl
 import featherweightgo.model.ast.ValuedStructureLiteral
 import featherweightgo.parser.ParserImpl
 import featherweightgo.typer.TyperImpl
+import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 @JSExportTopLevel("FeatherweightGoMain")
@@ -26,13 +27,20 @@ object Main {
   @JSExport
   def typeCheck(
     source: String
-  ): String =
-    (for {
-      ast <- parserFG.parse(source)
-      t <- typerFG.check(ast)
-    } yield t) match {
-      case Right(tn) => s"${tn.name.value}"
-      case Left(t) => t.getMessage
+  ): js.Tuple2[Boolean, String] =
+    try {
+      (for {
+        ast <- parserFG.parse(source)
+        t <- typerFG.check(ast)
+      } yield t) match {
+        case Right(tn) =>
+          (true, s"${tn.name.value}")
+        case Left(t) =>
+          (false, t.getMessage)
+      }
+    } catch {
+      case e: Throwable =>
+        (false, e.getMessage)
     }
 
   @JSExport

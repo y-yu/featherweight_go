@@ -347,9 +347,6 @@ object Utils {
           .get(typeParameter)
           .map(ifInterfaceType)
           .getOrElse(throw FGTypeError("methods error!"))
-        /*
-        ifStructureTypeName(StructureTypeName(value)) ++
-          ifInterfaceTypeName(InterfaceTypeName(value)) */
     }
   }
 
