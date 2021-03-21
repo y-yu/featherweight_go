@@ -246,7 +246,7 @@ object Utils {
       Right(structureType)
 
     case anyNamedType: AnyNamedType =>
-      ???
+      throw FGTypeError(s"`bounds` cannot accept AnyNamedType(${anyNamedType.name})!")
   }
 
   def lookupAnyType(

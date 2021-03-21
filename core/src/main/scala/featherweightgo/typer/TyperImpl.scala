@@ -308,6 +308,25 @@ class TyperImpl extends Typer {
           )
         } yield field.typ
 
+      case TypeAssertion(e, anyNamedType: AnyNamedType) =>
+        lookupAnyType(anyNamedType) match {
+          case Some(typ) =>
+            expressionCheck(
+              environment,
+              typeBound,
+              TypeAssertion(e, typ)
+            )
+          case None =>
+            if (anyNamedType.types.isEmpty)
+              expressionCheck(
+                environment,
+                typeBound,
+                TypeAssertion(e, TypeParameter(anyNamedType.name.value))
+              )
+            else
+              Left(FGTypeError(s"assert target ${anyNamedType.name} is invalid!"))
+        }
+
       case TypeAssertion(e, typ) =>
         for {
           _ <-
@@ -320,15 +339,32 @@ class TyperImpl extends Typer {
             else Left(FGTypeError(s"assert ${typ.name} error!"))
           eType <- expressionCheck(environment, typeBound, e)
           _ <- typ match {
+            case st: StructureType =>
+              if (
+                typeBound |- (
+                  st <:< bounds(typeBound, eType).fold(identity, identity)
+                )
+              ) Right(())
+              else Left(FGTypeError(s"assert ${st.name}(StructureType) error!"))
+
             case it: InterfaceType =>
               if (
                 typeBound |- (
-                  it <:< bounds(typeBound, eType).fold(identity, identity)
+                  eType <:< it
                 )
               ) Right(())
-              else Left(FGTypeError(s"assert ${typ.name} error!(2)"))
-            case _ =>
-              Right(())
+              else Left(FGTypeError(s"assert ${it.name}(InterfaceType) error!"))
+
+            case tp: TypeParameter =>
+              if (
+                typeBound |- (
+                  eType <:< tp
+                  )
+              ) Right(())
+              else Left(FGTypeError(s"assert ${tp.name}(TypeParameter) error!"))
+
+            case _: AnyNamedType =>
+              Left(FGTypeError(s"assert is ${typ.name} any named type"))
           }
         } yield typ
     }
