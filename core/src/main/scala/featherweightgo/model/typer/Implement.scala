@@ -20,6 +20,7 @@ object Implement {
       Implement(lhs, rhs)
   }
 
+
   implicit def checkingInstance(implicit
     declarations: List[Declaration]
   ): Checking[Implement] = {
@@ -53,36 +54,38 @@ object Implement {
           n1 == n2
 
         case (lhs: StructureType, rhs: StructureType) =>
-          lhs.structureTypeName == rhs.structureTypeName
+          lhs.structureTypeName == rhs.structureTypeName &&
+            checkTypesRecursive(lhs.types, rhs.types)
 
         case (lhs: StructureType, rhs: InterfaceType) =>
-          methods(lhs, typeBound).toSet.subsetOf(
-            methods(rhs, typeBound).toSet
+          methods(rhs, typeBound).toSet.subsetOf(
+            methods(lhs, typeBound).toSet
           ) &&
-            lhs.types.length == rhs.types.length &&
-            (lhs.types zip rhs.types).forall {
-              case (l, r) =>
-                loop(l, r)
-            }
+            checkTypesRecursive(lhs.types, rhs.types)
 
         case (lhs: InterfaceType, rhs: InterfaceType) =>
-          methods(lhs, typeBound).toSet.subsetOf(
-            methods(rhs, typeBound).toSet
+          methods(rhs, typeBound).toSet.subsetOf(
+            methods(lhs, typeBound).toSet
           ) &&
-            lhs.types.length == rhs.types.length &&
-            (lhs.types zip rhs.types).forall {
-              case (l, r) =>
-                loop(l, r)
-            }
+            checkTypesRecursive(lhs.types, rhs.types)
 
         case (lhs: TypeParameter, rhs: InterfaceType) =>
-          methods(lhs, typeBound).toSet.subsetOf(
-            methods(rhs, typeBound).toSet
+          methods(rhs, typeBound).toSet.subsetOf(
+            methods(lhs, typeBound).toSet
           )
 
         case _ =>
           false
       }
+
+      def checkTypesRecursive(
+        ltypse: List[Type], rtypes: List[Type]
+      ): Boolean =
+        ltypse.length == rtypes.length &&
+          (ltypse zip rtypes).forall {
+            case (l, r) =>
+              loop(l, r)
+          }
 
       loop(value.lhs, value.rhs)
   }

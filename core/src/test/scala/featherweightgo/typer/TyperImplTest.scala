@@ -292,4 +292,175 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
       assert(actual == Right(AnyNamedType(typeName = AnyTypeName(value = "Number"), types = List())))
     }
   }
+
+  it should "be well-typed valid type assertion" in new SetUp {
+    val string =
+      """package main;
+        |type A interface {
+        |  Method() V
+        |}
+        |type V struct { }
+        |type T struct {
+        |  field V
+        |}
+        |func (this T) Method() V {
+        |  return this.field
+        |}
+        |func main() {
+        |  _ = T{V{}}.(A)
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(InterfaceType(InterfaceTypeName("A"),List())))
+    }
+  }
+
+  it should "NOT be well-typed type assertion which is not confirmed given interface" in new SetUp {
+    val string =
+      """package main;
+        |type A interface {
+        |  Method() V
+        |}
+        |type V struct { }
+        |type T struct {
+        |  field V
+        |}
+        |func main() {
+        |  _ = T{V{}}.(A)
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast).isLeft)
+    }
+  }
+
+  it should "be well-typed valid type assertion which has type parameter" in new SetUp {
+    val string =
+      """package main;
+        |type any interface { }
+        |type List[A any] interface { }
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |  head A
+        |  tail List[A]
+        |}
+        |type V struct { }
+        |func main() {
+        |  _ = Cons[V]{V{}, Nil[V]{}}.(Cons[V])
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(
+        sut.check(ast) == Right(
+          StructureType(
+            StructureTypeName("Cons"),
+            List(AnyNamedType(AnyTypeName("V"), List()))
+          )
+        )
+      )
+    }
+  }
+
+  it should "NOT be well-typed invalid generic type assertion" in new SetUp {
+    val string =
+      """package main;
+        |type any interface { }
+        |type List[A any] interface { }
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |  head A
+        |  tail List[A]
+        |}
+        |type V struct { }
+        |type T struct {
+        |  field V
+        |}
+        |func main() {
+        |  _ = Cons[V]{V{}, Nil[V]{}}.(Cons[T])
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast).isLeft)
+    }
+  }
+
+  it should "be well-typed valid generic type assertion" in new SetUp {
+    val string =
+      """package main;
+        |type any interface { }
+        |type List[A any] interface { }
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |  head A
+        |  tail List[A]
+        |}
+        |type V struct { }
+        |type A interface {
+        |  Method() V
+        |}
+        |type T struct {
+        |  field V
+        |}
+        |func (this T) Method() V {
+        |  return this.field
+        |}
+        |func main() {
+        |  _ = Cons[T]{T{V{}}, Nil[T]{}}.(Cons[T])
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(
+        sut.check(ast) ==
+          Right(
+            StructureType(
+              StructureTypeName("Cons"),
+              List(AnyNamedType(AnyTypeName("T"), List()))
+            )
+          )
+      )
+    }
+  }
+
+  it should "be well-typed type assertion for the type parameter" in new SetUp {
+    val string =
+      """package main;
+        |type any interface { }
+        |type List[A any] interface { }
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |  head A
+        |  tail List[A]
+        |}
+        |func (this Cons[A any]) Head() A {
+        |  return this.head.(A)
+        |}
+        |type V struct { }
+        |func main() {
+        |  _ = Cons[V]{V{}, Nil[V]{}}.Head()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(
+        sut.check(ast).isRight
+      )
+    }
+  }
 }
