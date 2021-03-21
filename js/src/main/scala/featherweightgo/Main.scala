@@ -46,13 +46,18 @@ object Main {
   @JSExport
   def eval(
     source: String
-  ): String =
-    (for {
-      ast <- parserFG.parse(source)
-      r <- evaluatorFG.eval(ast)
-    } yield r) match {
-      case Right(v) => valuePrinter(v)
-      case Left(t) => t.getMessage
+  ): js.Tuple2[Boolean, String] =
+    try {
+      (for {
+        ast <- parserFG.parse(source)
+        r <- evaluatorFG.eval(ast)
+      } yield r) match {
+        case Right(v) => (true, valuePrinter(v))
+        case Left(t) => (false, t.getMessage)
+      }
+    } catch {
+      case e: Throwable =>
+        (false, e.getMessage)
     }
 
   private def valuePrinter(
