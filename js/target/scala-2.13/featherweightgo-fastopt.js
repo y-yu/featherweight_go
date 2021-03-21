@@ -1050,35 +1050,47 @@ $c_Lfeatherweightgo_Main$.prototype.typeCheck__T__sjs_js_Tuple2 = (function(sour
     }
   }
 });
-$c_Lfeatherweightgo_Main$.prototype.eval__T__T = (function(source) {
-  var this$1 = this.Lfeatherweightgo_Main$__f_parserFG.parse__T__s_util_Either(source);
-  var x1;
-  if ((this$1 instanceof $c_s_util_Right)) {
-    var x2 = $as_s_util_Right(this$1);
-    var b = x2.s_util_Right__f_value;
-    var ast = $as_Lfeatherweightgo_model_ast_Main(b);
-    var this$2 = $m_Lfeatherweightgo_Main$().Lfeatherweightgo_Main$__f_evaluatorFG.eval__Lfeatherweightgo_model_ast_Main__s_util_Either(ast);
-    if ((this$2 instanceof $c_s_util_Right)) {
-      var x2$1 = $as_s_util_Right(this$2);
-      var b$1 = x2$1.s_util_Right__f_value;
-      var r = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral(b$1);
-      x1 = new $c_s_util_Right(r)
+$c_Lfeatherweightgo_Main$.prototype.eval__T__sjs_js_Tuple2 = (function(source) {
+  try {
+    var this$1 = this.Lfeatherweightgo_Main$__f_parserFG.parse__T__s_util_Either(source);
+    var x1;
+    if ((this$1 instanceof $c_s_util_Right)) {
+      var x2 = $as_s_util_Right(this$1);
+      var b = x2.s_util_Right__f_value;
+      var ast = $as_Lfeatherweightgo_model_ast_Main(b);
+      var this$2 = $m_Lfeatherweightgo_Main$().Lfeatherweightgo_Main$__f_evaluatorFG.eval__Lfeatherweightgo_model_ast_Main__s_util_Either(ast);
+      if ((this$2 instanceof $c_s_util_Right)) {
+        var x2$1 = $as_s_util_Right(this$2);
+        var b$1 = x2$1.s_util_Right__f_value;
+        var r = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral(b$1);
+        x1 = new $c_s_util_Right(r)
+      } else {
+        x1 = this$2
+      }
     } else {
-      x1 = this$2
+      x1 = this$1
+    };
+    if ((x1 instanceof $c_s_util_Right)) {
+      var x2$2 = $as_s_util_Right(x1);
+      var v = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral(x2$2.s_util_Right__f_value);
+      var _2 = $p_Lfeatherweightgo_Main$__valuePrinter__Lfeatherweightgo_model_ast_ValuedStructureLiteral__T(this, v);
+      return [true, _2]
+    } else if ((x1 instanceof $c_s_util_Left)) {
+      var x3 = $as_s_util_Left(x1);
+      var t = $as_Lfeatherweightgo_model_error_FGError(x3.s_util_Left__f_value);
+      var _2$1 = t.jl_Throwable__f_s;
+      return [false, _2$1]
+    } else {
+      throw new $c_s_MatchError(x1)
     }
-  } else {
-    x1 = this$1
-  };
-  if ((x1 instanceof $c_s_util_Right)) {
-    var x2$2 = $as_s_util_Right(x1);
-    var v = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral(x2$2.s_util_Right__f_value);
-    return $p_Lfeatherweightgo_Main$__valuePrinter__Lfeatherweightgo_model_ast_ValuedStructureLiteral__T(this, v)
-  } else if ((x1 instanceof $c_s_util_Left)) {
-    var x3 = $as_s_util_Left(x1);
-    var t = $as_Lfeatherweightgo_model_error_FGError(x3.s_util_Left__f_value);
-    return t.jl_Throwable__f_s
-  } else {
-    throw new $c_s_MatchError(x1)
+  } catch (e) {
+    var e$2 = $m_sjsr_package$().wrapJavaScriptException__O__jl_Throwable(e);
+    if ((e$2 !== null)) {
+      var _2$2 = e$2.getMessage__T();
+      return [false, _2$2]
+    } else {
+      throw e
+    }
   }
 });
 $c_Lfeatherweightgo_Main$.prototype.$js$exported$meth$parse__T__O = (function(source) {
@@ -1088,7 +1100,7 @@ $c_Lfeatherweightgo_Main$.prototype.$js$exported$meth$typeCheck__T__O = (functio
   return this.typeCheck__T__sjs_js_Tuple2(source)
 });
 $c_Lfeatherweightgo_Main$.prototype.$js$exported$meth$eval__T__O = (function(source) {
-  return this.eval__T__T(source)
+  return this.eval__T__sjs_js_Tuple2(source)
 });
 $c_Lfeatherweightgo_Main$.prototype["eval"] = (function(arg) {
   var prep0 = $as_T(arg);

@@ -69,7 +69,7 @@
             font-size: x-large;
         }
 
-        .typeCheckError {
+        .error {
             color: orangered;
         }
     </style>
@@ -97,7 +97,7 @@
         </p>
         <p>
             <h3>Return value of <code>main</code></h3>
-            <pre v-html="result"></pre>
+            <pre v-html="result" v-bind:class="isEvaluationSuccess"></pre>
         </p>
         <p>
             <h3>AST</h3>
@@ -155,7 +155,11 @@
             store: { },
 
             isTypeCheckSuccess: {
-                typeCheckError: false
+                error: false
+            },
+
+            isEvaluationSuccess: {
+                error: false
             }
         },
         methods: {
@@ -165,20 +169,33 @@
         },
         computed: {
             ast: function() {
-                const ast = FeatherweightGoMain.parse(this.code);
-                const result = FeatherweightGoMain.eval(this.code);
-                const [isSuccess, type] = FeatherweightGoMain.typeCheck(this.code);
+                try {
+                    const ast = FeatherweightGoMain.parse(this.code);
+                    const [isTypeCheckSuccess, type] = FeatherweightGoMain.typeCheck(this.code);
+                    const [isEvaluationSuccess, result] = FeatherweightGoMain.eval(this.code);
 
-                this.store = {
-                    ast: ast,
-                    result: result,
-                    type: type
-                };
-                this.isTypeCheckSuccess = {
-                    typeCheckError: !isSuccess
-                };
+                    this.store = {
+                        ast: ast,
+                        result: result,
+                        type: type
+                    };
+                    this.isEvaluationSuccess = {
+                        error: !isEvaluationSuccess
+                    };
+                    this.isTypeCheckSuccess = {
+                        error: !isTypeCheckSuccess
+                    };
 
-                return ast;
+                    return ast;
+                } catch(error) {
+                    this.isEvaluationSuccess = {
+                        error: true
+                    };
+                    this.isTypeCheckSuccess = {
+                        error: true
+                    };
+                    return error.message;
+                }
             },
 
             result: function () {
