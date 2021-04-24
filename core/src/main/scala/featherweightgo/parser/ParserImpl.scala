@@ -4,7 +4,6 @@ import featherweightgo.model.ast._
 import featherweightgo.model.error.FGError
 import featherweightgo.model.error.FGError.FGParseError
 import scala.util.parsing.combinator.RegexParsers
-import scala.util.parsing.input.CharSequenceReader
 
 
 class ParserImpl extends Parser {
@@ -230,30 +229,27 @@ object ParserImpl {
         )
       }
 
-    def expression: Parser[Expression] = Parser { in =>
-      ((""".+(?=\.)""".r <~ ".") ~ """.+""".r)(in) match {
-        case Success(l ~ r, next) =>
-          expression(new CharSequenceReader(l)).flatMapWithNext { e => i =>
-            (typeAssertion(e) | methodCall(e) | fieldSelect(e))(
-              new CharSequenceReader(r)
-            ).flatMapWithNext { result => j =>
-              if (i.atEnd)
-                Success(
-                  result,
-                  if (j.atEnd)
-                    next
-                  else
-                    new CharSequenceReader(
-                      j.source.toString.drop(j.offset) +
-                        next.source.toString.drop(next.offset)
-                    )
-                )
-              else
-                (structureLiteral | variable)(in)
-            }
-          }
+    def dotSequence(
+      e: Expression
+    ): Parser[Expression] = Parser { in =>
+      ("." ~> (typeAssertion(e) | methodCall(e) | fieldSelect(e)))(in) match {
+        case Success(exp, next) =>
+          dotSequence(exp)(next)
+
         case _: NoSuccess =>
-          (structureLiteral | variable)(in)
+          Success(e, in)
+      }
+    }
+
+    def expression: Parser[Expression] = Parser { in =>
+      structureLiteral(in) match {
+        case Success(e, next) =>
+          dotSequence(e)(next)
+
+        case _: NoSuccess =>
+          variable(in).flatMapWithNext( e => next =>
+            dotSequence(e)(next)
+          )
       }
     }
   }

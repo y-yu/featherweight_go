@@ -359,6 +359,13 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     assert(fc.fieldName == FieldName("value"))
   }
 
+  it should "parse a filed select in structure literal " in new SetUp {
+    val string = "Point{a.b, b.c}"
+
+    val actual = parse(expression, string)
+    assert(actual.successful)
+  }
+
   it should "parse a type assertion" in new SetUp {
     val string = "t.(int)"
 
@@ -578,5 +585,47 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
           ()
       }
     }
+  }
+
+  it should "parse a function which returns a generic value" in new SetUp {
+    val string =
+      """func (this Cons[A any]) Concat(a List[A]) List[A] {
+        |    return Cons[A]{this.head, this.tail.Concat(a)}
+        |}
+        |""".stripMargin
+
+    val actual = parse(methodDefinition, string)
+    assert(actual.successful)
+    assert(
+      actual.get.receiver ==
+        MethodReceiver(
+          VariableName("this"),
+          StructureTypeName("Cons"),
+          List(TypeFormal(TypeParameter("A"),
+            InterfaceType(InterfaceTypeName("any"),List()))))
+    )
+    assert(
+      actual.get.body == StructureLiteral(
+        structureType = StructureType(
+          structureTypeName = StructureTypeName(value = "Cons"),
+          types = List(AnyNamedType(typeName = AnyTypeName(value = "A"), types = List()))
+        ),
+        arguments = List(
+          FieldSelect(
+            expression = Variable(variableName = VariableName(value = "this")),
+            fieldName = FieldName(value = "head")
+          ),
+          MethodCall(
+            expression = FieldSelect(
+              expression = Variable(variableName = VariableName(value = "this")),
+              fieldName = FieldName(value = "tail")
+            ),
+            methodName = MethodName(value = "Concat"),
+            types = List(),
+            arguments = List(Variable(variableName = VariableName(value = "a")))
+          )
+        )
+      )
+    )
   }
 }

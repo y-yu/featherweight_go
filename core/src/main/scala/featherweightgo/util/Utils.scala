@@ -299,11 +299,14 @@ object Utils {
       declarations.collect {
         case MethodDeclaration(receiver, methodSpecification, _)
           if receiver.structureTypeName == structureType.structureTypeName =>
+          /*
           updateMethodsType(
             receiver.typeFormals,
             structureType.types,
             methodSpecification
           )
+          */
+          methodSpecification
       }
 
     def ifInterfaceType(
@@ -313,11 +316,14 @@ object Utils {
         case TypeDeclaration(typeName, typeFormals, Interface(methods))
           if typeName == interfaceType.interfaceTypeName =>
           methods.map { method =>
+            /*
             updateMethodsType(
               typeFormals,
               interfaceType.types,
               method
             )
+            */
+            method
           }
       }
       .flatten
