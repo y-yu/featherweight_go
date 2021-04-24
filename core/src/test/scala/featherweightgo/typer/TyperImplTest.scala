@@ -463,4 +463,38 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
       )
     }
   }
+
+  it should "be well-typed a function which returns type that has type parameter" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type any interface { }
+        |type List[A any] interface {
+        |    Concat(a List[A]) List[A]
+        |}
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |    head A
+        |    tail List[A]
+        |}
+        |func (this Nil[A any]) Concat(a List[A]) List[A] {
+        |    return a
+        |}
+        |func (this Cons[A any]) Concat(a List[A]) List[A] {
+        |    return Cons[A]{this.head, this.tail.Concat(a)}
+        |}
+        |type V struct {}
+        |func main() {
+        |  _ = Cons[V]{V{}, Nil[V]{}}
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(
+        sut.check(ast).isRight
+      )
+    }
+  }
 }

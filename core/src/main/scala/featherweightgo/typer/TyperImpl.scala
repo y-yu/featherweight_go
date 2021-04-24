@@ -162,7 +162,7 @@ class TyperImpl extends Typer {
               methodSignature.typeFormals
             ) &&
             typeActualCheck(typeBound, methodSignature.returnType :: arguments.values.toList) &&
-            expressionCheck(
+            (expressionCheck(
               environment = Environment(
                   Map(
                     receiver.variableName -> StructureType(
@@ -173,9 +173,13 @@ class TyperImpl extends Typer {
               ),
               typeBound = typeBound,
               expression = body
-            ).exists { typ =>
-              typeBound |- typ <:< methodSignature.returnType
-            }
+            ) match {
+              case Right(typ) =>
+                typeBound |- typ <:< methodSignature.returnType
+
+              case Left(e) =>
+                throw e
+            })
       }
     }
 
@@ -226,8 +230,8 @@ class TyperImpl extends Typer {
               argumentTypes.length == methodSignatureArgumentTypes.length &&
                 (typeBound |-
                   (argumentTypes zip methodSignatureArgumentTypes).map {
-                    case (argumentType, methodSignatureArgumentTypes) =>
-                      argumentType <:< methodSignatureArgumentTypes
+                    case (argumentType, methodSignatureArgumentType) =>
+                      argumentType <:< methodSignatureArgumentType
                   }
                 )
             )
