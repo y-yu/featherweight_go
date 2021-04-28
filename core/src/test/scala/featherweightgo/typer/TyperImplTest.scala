@@ -340,6 +340,32 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
     }
   }
 
+  it should "NOT be well-typed if the function body type is not equal of its defined return type" in new SetUp {
+    val string =
+      """package main;
+        |type A struct { }
+        |type V struct {
+        |  a A
+        |}
+        |type T struct {
+        |  b A
+        |}
+        |type S struct { }
+        |func (this S) F() V {
+        |  return T{A{}}
+        |}
+        |func main() {
+        |  _ = S{}.F()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast).isLeft)
+    }
+  }
+
   it should "be well-typed valid type assertion which has type parameter" in new SetUp {
     val string =
       """package main;
@@ -485,7 +511,7 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
         |}
         |type V struct {}
         |func main() {
-        |  _ = Cons[V]{V{}, Nil[V]{}}
+        |  _ = Cons[V]{V{}, Nil[V]{}}.Concat(Nil[V]{})
         |}
         |""".stripMargin
 
@@ -495,6 +521,56 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
       assert(
         sut.check(ast).isRight
       )
+    }
+  }
+
+  it should "be well-typed a function which has ad-hoc polymorphism" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type any interface { }
+        |
+        |type N struct {
+        |    f any
+        |}
+        |
+        |type List[A any] interface {
+        |    Concat(a List[A]) List[A]
+        |}
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |    head A
+        |    tail List[A]
+        |}
+        |func (this Nil[A any]) Concat(a List[A]) List[A] {
+        |    return a
+        |}
+        |func (this Cons[A any]) Concat(a List[A]) List[A] {
+        |    return Cons[A]{this.head, this.tail.Concat(a)}
+        |}
+        |
+        |type Combiner[A any] struct {
+        |    left A
+        |    right A
+        |}
+        |func (this Combiner[A List[B]]) Combine[B any]() A {
+        |    return this.left.Concat(this.right)
+        |}
+        |
+        |type V struct {}
+        |func main() {
+        |  _ = Combiner[List[V]]{Cons[V]{V{}, Nil[V]{}}, Nil[V]{}}.Combine[V]()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(
+        AnyNamedType(
+        typeName = AnyTypeName(value = "List"),
+        types = List(AnyNamedType(typeName = AnyTypeName(value = "V"), types = List()))
+      )))
     }
   }
 }
