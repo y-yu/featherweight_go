@@ -573,4 +573,34 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
       )))
     }
   }
+
+  it should "be well-typed a same name functions which has ad-hoc polymorphism" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type any interface { }
+        |
+        |type List[A any] interface { }
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |    head A
+        |    tail List[A]
+        |}
+        |
+        |type Expr interface {
+        |   EvalList[A any]() List[A]
+        |}
+        |
+        |type V struct {}
+        |func main() {
+        |  _ = V{}
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast).isRight)
+    }
+  }
 }

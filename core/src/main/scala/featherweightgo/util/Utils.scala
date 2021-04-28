@@ -53,7 +53,13 @@ object Utils {
         typeReplace(typeMap, typeFormal.typeParameter) <:< typeFormal.interfaceType
       }
     ) typeMap
-    else throw FGTypeError("Type bound error!")
+    else throw FGTypeError(
+      s"""Type bound error!
+         |  typeBound: $typeBound
+         |  typeFormals: $typeFormals
+         |  typeMap: $typeMap
+         |  types: $types
+         |""".stripMargin)
   }
 
   def typeReplace(

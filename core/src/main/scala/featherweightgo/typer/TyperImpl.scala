@@ -41,6 +41,7 @@ class TyperImpl extends Typer {
               true
             } catch {
               case e: FGTypeError =>
+                e.printStackTrace()
                 false
             }
           case _ =>
@@ -99,7 +100,7 @@ class TyperImpl extends Typer {
       methodSpecification: MethodSpecification,
     ): Boolean = {
       val methodSignature = methodSpecification.methodSignature
-      val typeBound = TypeBound.fromTypeFormals(typeFormals)
+      val typeBound = TypeBound.fromTypeFormals(typeFormals ++ methodSignature.typeFormals)
 
       formalsCheck(
         typeFormals,
