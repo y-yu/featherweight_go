@@ -1918,7 +1918,8 @@ $c_Lfeatherweightgo_util_Utils$.prototype.typeSubstitute__sci_List__sci_List__Lf
   if (typeBound.$bar$minus__sci_List__Lfeatherweightgo_model_typer_Checking__Z($$x1, $m_Lfeatherweightgo_model_typer_Implement$().checkingInstance__sci_List__Lfeatherweightgo_model_typer_Checking(declarations))) {
     return typeMap
   } else {
-    throw new $c_Lfeatherweightgo_model_error_FGError$FGTypeError("Type bound error!", null)
+    var x = (((((((("Type bound error!\n         |  typeBound: " + typeBound) + "\n         |  typeFormals: ") + typeFormals) + "\n         |  typeMap: ") + typeMap) + "\n         |  types: ") + types) + "\n         |");
+    throw new $c_Lfeatherweightgo_model_error_FGError$FGTypeError($m_sc_StringOps$().stripMargin$extension__T__C__T(x, 124), null)
   }
 });
 $c_Lfeatherweightgo_util_Utils$.prototype.typeReplace__Lfeatherweightgo_model_typer_TypeMap__Lfeatherweightgo_model_ast_Type__Lfeatherweightgo_model_ast_Type = (function(typeMap, typ) {
@@ -9203,7 +9204,8 @@ function $p_Lfeatherweightgo_typer_TyperImpl__namedTypeCheck$1__Lfeatherweightgo
                 break matchEnd5
               } catch (e) {
                 if ((e instanceof $c_Lfeatherweightgo_model_error_FGError$FGTypeError)) {
-                  $as_Lfeatherweightgo_model_error_FGError$FGTypeError(e);
+                  var e$2 = $as_Lfeatherweightgo_model_error_FGError$FGTypeError(e);
+                  e$2.printStackTrace__Ljava_io_PrintStream__V($m_jl_System$Streams$().jl_System$Streams$__f_err);
                   $$x2 = false;
                   break matchEnd5
                 } else {
@@ -9395,18 +9397,20 @@ function $p_Lfeatherweightgo_typer_TyperImpl__formalsCheck$1__sci_List__sci_List
 }
 function $p_Lfeatherweightgo_typer_TyperImpl__methodSpecificationCheck$1__sci_List__Lfeatherweightgo_model_ast_MethodSpecification__sci_List__Z($thiz, typeFormals, methodSpecification, declarations$1) {
   var methodSignature = methodSpecification.Lfeatherweightgo_model_ast_MethodSpecification__f_methodSignature;
-  var typeBound = $m_Lfeatherweightgo_model_typer_TypeBound$().fromTypeFormals__sci_List__Lfeatherweightgo_model_typer_TypeBound(typeFormals);
-  var $$x1;
+  var $$x1 = $m_Lfeatherweightgo_model_typer_TypeBound$();
+  var suffix = methodSignature.Lfeatherweightgo_model_ast_MethodSignature__f_typeFormals;
+  var typeBound = $$x1.fromTypeFormals__sci_List__Lfeatherweightgo_model_typer_TypeBound(typeFormals.appendedAll__sc_IterableOnce__sci_List(suffix));
+  var $$x2;
   if ($p_Lfeatherweightgo_typer_TyperImpl__formalsCheck$1__sci_List__sci_List__sci_List__Z($thiz, typeFormals, methodSignature.Lfeatherweightgo_model_ast_MethodSignature__f_typeFormals, declarations$1)) {
-    var $$x2 = $m_Lfeatherweightgo_util_Utils$();
+    var $$x3 = $m_Lfeatherweightgo_util_Utils$();
     var this$1 = methodSignature.Lfeatherweightgo_model_ast_MethodSignature__f_arguments;
     var this$2 = this$1.keySet__sc_Set();
     $m_sci_List$();
-    $$x1 = $$x2.distinct__sci_List__Z($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$2))
+    $$x2 = $$x3.distinct__sci_List__Z($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$2))
   } else {
-    $$x1 = false
+    $$x2 = false
   };
-  if ($$x1) {
+  if ($$x2) {
     var rassoc$1 = methodSignature.Lfeatherweightgo_model_ast_MethodSignature__f_returnType;
     var this$4 = methodSignature.Lfeatherweightgo_model_ast_MethodSignature__f_arguments;
     var this$5 = new $c_sc_MapOps$$anon$1(this$4);
