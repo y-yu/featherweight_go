@@ -7,7 +7,10 @@ import featherweightgo.model.ast.StructureType
 import featherweightgo.model.ast.Type
 import featherweightgo.model.ast.TypeParameter
 import featherweightgo.util.Utils.lookupAnyType
-import featherweightgo.util.Utils.methods
+import featherweightgo.util.Utils.methodsInSet
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
 
 case class Implement(
   lhs: Type,
@@ -20,12 +23,27 @@ object Implement {
       Implement(lhs, rhs)
   }
 
+  private case class CheckingError(
+    lhs: Type,
+    rhs: Type,
+    message: String = null,
+    cause: Throwable = null
+  ) extends Throwable(
+    s"""
+       |lhs: $lhs
+       |rhs: $rhs
+       |""".stripMargin,
+    cause
+  )
+
+  private val success: Try[Unit] = Success()
+  private def failure(lhs: Type, rhs: Type): Try[Unit] = Failure(CheckingError(lhs, rhs))
 
   implicit def checkingInstance(implicit
     declarations: List[Declaration]
   ): Checking[Implement] = {
     (value: Implement, typeBound: TypeBound) =>
-      def loop(lhs: Type, rhs: Type): Boolean = (lhs, rhs) match {
+      def loop(lhs: Type, rhs: Type): Try[Unit] = (lhs, rhs) match {
         case (anyNameType: AnyNamedType, rhs) =>
           lookupAnyType(anyNameType) match {
             case Some(typ) =>
@@ -35,7 +53,7 @@ object Implement {
               loop(TypeParameter(anyNameType.name.value), rhs)
 
             case _ =>
-              false
+              failure(lhs, rhs)
           }
 
         case (lhs, anyNameType: AnyNamedType) =>
@@ -47,35 +65,50 @@ object Implement {
               loop(lhs, TypeParameter(anyNameType.name.value))
 
             case _ =>
-              false
+              failure(lhs, rhs)
           }
 
         case (TypeParameter(n1), TypeParameter(n2)) =>
-          n1 == n2
+          if (n1 == n2)
+            success
+          else
+            failure(lhs, rhs)
 
         case (lhs: StructureType, rhs: StructureType) =>
-          lhs.structureTypeName == rhs.structureTypeName &&
-            checkTypesRecursive(lhs.types, rhs.types)
+          if(lhs.structureTypeName == rhs.structureTypeName && checkTypesRecursive(lhs.types, rhs.types))
+            success
+          else
+            failure(lhs, rhs)
 
         case (lhs: StructureType, rhs: InterfaceType) =>
-          methods(rhs, typeBound).toSet.subsetOf(
-            methods(lhs, typeBound).toSet
-          ) &&
-            checkTypesRecursive(lhs.types, rhs.types)
+          if (methodsInSet(lhs, rhs, typeBound))
+            success
+          else
+            failure(lhs, rhs)
 
         case (lhs: InterfaceType, rhs: InterfaceType) =>
-          methods(rhs, typeBound).toSet.subsetOf(
-            methods(lhs, typeBound).toSet
-          ) &&
-            checkTypesRecursive(lhs.types, rhs.types)
+          if (methodsInSet(lhs, rhs, typeBound))
+            success
+          else
+            failure(lhs, rhs)
 
         case (lhs: TypeParameter, rhs: InterfaceType) =>
-          methods(rhs, typeBound).toSet.subsetOf(
-            methods(lhs, typeBound).toSet
-          )
+          if (methodsInSet(lhs, rhs, typeBound))
+            success
+          else
+            failure(lhs, rhs)
 
-        case _ =>
-          false
+        case (lhs: InterfaceType, rhs: TypeParameter) =>
+          if (methodsInSet(lhs, rhs, typeBound))
+            success
+          else
+            failure(lhs, rhs)
+
+        case (lhs, rhs) =>
+          println("matching failed!")
+          pprint.pprintln(lhs)
+          pprint.pprintln(rhs)
+          failure(lhs, rhs)
       }
 
       def checkTypesRecursive(
@@ -84,9 +117,16 @@ object Implement {
         ltypse.length == rtypes.length &&
           (ltypse zip rtypes).forall {
             case (l, r) =>
-              loop(l, r)
+              getAndPrintError(loop(l, r))
           }
 
-      loop(value.lhs, value.rhs)
+      getAndPrintError(loop(value.lhs, value.rhs))
   }
+
+  private def getAndPrintError(t: Try[Unit]): Boolean =
+    t.recoverWith {
+      case e: Throwable =>
+        e.printStackTrace()
+        Failure(e)
+    }.isSuccess
 }

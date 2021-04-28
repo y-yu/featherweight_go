@@ -22,7 +22,14 @@ object Utils {
     typeFormals: List[TypeFormal],
     types: List[Type]
   ): TypeMap = {
-    require(typeFormals.length == types.length)
+    if (typeFormals.length != types.length) {
+      throw new RuntimeException(
+        s"""
+           |typeFormals: $typeFormals
+           |types: $types
+           |""".stripMargin
+      )
+    }
 
     TypeMap(
       (typeFormals zip types).map {
@@ -39,7 +46,6 @@ object Utils {
   )(implicit
     declarations: List[Declaration]
   ): TypeMap = {
-    require(typeFormals.length == types.length)
     val typeMap = typeSubstitute(typeFormals, types)
 
     if (
@@ -269,9 +275,19 @@ object Utils {
     }
   }
 
+  def methodsInSet(
+    lhs: Type,
+    rhs: Type,
+    typeBound: TypeBound
+  )(implicit
+    declarations: List[Declaration]
+  ): Boolean =
+    methods(rhs, typeBound, ifUpdate = false).toSet.subsetOf(methods(lhs, typeBound, ifUpdate = false).toSet)
+
   def methods(
     typ: Type,
-    typeBound: TypeBound
+    typeBound: TypeBound,
+    ifUpdate: Boolean = true
   )(implicit
     declarations: List[Declaration]
   ): List[MethodSpecification] = {
@@ -279,19 +295,22 @@ object Utils {
       typeFormals: List[TypeFormal],
       types: List[Type],
       methodSpecification: MethodSpecification
-    ): MethodSpecification = {
-      val typeMap = typeSubstitute(typeFormals, types, typeBound)
+    ): MethodSpecification =
+      if (ifUpdate) {
+        val typeMap = typeSubstitute(typeFormals, types, typeBound)
 
-      methodSpecification.copy(
-        methodSignature = methodSpecification.methodSignature.copy(
-          arguments = methodSpecification.methodSignature.arguments.map {
-            case variableName -> typ =>
-              variableName -> typeReplace(typeMap, typ)
-          },
-          returnType = typeReplace(typeMap, methodSpecification.methodSignature.returnType)
+        methodSpecification.copy(
+          methodSignature = methodSpecification.methodSignature.copy(
+            arguments = methodSpecification.methodSignature.arguments.map {
+              case variableName -> typ =>
+                variableName -> typeReplace(typeMap, typ)
+            },
+            returnType = typeReplace(typeMap, methodSpecification.methodSignature.returnType)
+          )
         )
-      )
-    }
+      } else {
+        methodSpecification
+      }
 
     def ifStructureType(
       structureType: StructureType
@@ -299,14 +318,11 @@ object Utils {
       declarations.collect {
         case MethodDeclaration(receiver, methodSpecification, _)
           if receiver.structureTypeName == structureType.structureTypeName =>
-          /*
           updateMethodsType(
             receiver.typeFormals,
             structureType.types,
             methodSpecification
           )
-          */
-          methodSpecification
       }
 
     def ifInterfaceType(
@@ -316,14 +332,11 @@ object Utils {
         case TypeDeclaration(typeName, typeFormals, Interface(methods))
           if typeName == interfaceType.interfaceTypeName =>
           methods.map { method =>
-            /*
             updateMethodsType(
               typeFormals,
               interfaceType.types,
               method
             )
-            */
-            method
           }
       }
       .flatten
@@ -352,7 +365,11 @@ object Utils {
         typeBound
           .get(typeParameter)
           .map(ifInterfaceType)
-          .getOrElse(throw FGTypeError("methods error!"))
+          .getOrElse(throw FGTypeError(
+            s""" method error!
+               | typeBound: $typeBound
+               | typeParameter: $typeParameter
+               |""".stripMargin))
     }
   }
 
