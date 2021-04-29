@@ -752,7 +752,7 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
     }
   }
 
-  it should "be well-typed a function call which returns its primitive receiver" in new SetUp {
+  it should "be well-typed a function call which returns generic field value" in new SetUp {
     val string =
       """
         |package main;
