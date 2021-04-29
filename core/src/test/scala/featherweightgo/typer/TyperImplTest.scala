@@ -1,5 +1,8 @@
 package featherweightgo.typer
 
+import featherweightgo.model.ast.AbstractStructureType.IntegerType
+import featherweightgo.model.ast.AbstractStructureType.StringType
+import featherweightgo.model.ast.AbstractStructureType.StructureType
 import org.scalatest.diagrams.Diagrams
 import org.scalatest.flatspec.AnyFlatSpec
 import featherweightgo.parser.ParserImpl
@@ -601,6 +604,62 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
     assert(parseResult.isRight)
     parseResult.foreach { ast =>
       assert(sut.check(ast).isRight)
+    }
+  }
+
+  it should "be well-typed for primitive string value" in new SetUp {
+    val string =
+      """
+        |package main;
+        |func main() {
+        |  _ = "hoge"
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(StringType))
+    }
+  }
+
+  it should "be well-typed for primitive integer value" in new SetUp {
+    val string =
+      """
+        |package main;
+        |func main() {
+        |  _ = 123
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(IntegerType))
+    }
+  }
+
+  it should "be well-typed for function returns a primitive value" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type V struct { }
+        |func (this V) F() int {
+        |  return 1
+        |}
+        |func (this V) G(a int) string {
+        |  return "hoge"
+        |}
+        |
+        |func main() {
+        |  _ = V{}.G(V{}.F())
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(StringType))
     }
   }
 }

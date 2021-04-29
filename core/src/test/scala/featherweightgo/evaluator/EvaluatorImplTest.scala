@@ -1,6 +1,7 @@
 package featherweightgo.evaluator
 
 import featherweightgo.model.ast._
+import featherweightgo.model.ast.AbstractStructureType._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.diagrams.Diagrams
 import featherweightgo.parser.ParserImpl
@@ -230,6 +231,118 @@ class EvaluatorImplTest extends AnyFlatSpec with Diagrams {
           )
         )
       ))
+    }
+  }
+
+  it should "eval a function which takes generic types" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type any interface { }
+        |
+        |type N struct {
+        |    f any
+        |}
+        |
+        |type List[A any] interface {
+        |    Concat(a List[A]) List[A]
+        |}
+        |type Nil[A any] struct { }
+        |type Cons[A any] struct {
+        |    head A
+        |    tail List[A]
+        |}
+        |func (this Nil[A any]) Concat(a List[A]) List[A] {
+        |    return a
+        |}
+        |func (this Cons[A any]) Concat(a List[A]) List[A] {
+        |    return Cons[A]{this.head, this.tail.Concat(a)}
+        |}
+        |
+        |type Combiner[A any] struct {
+        |    left A
+        |    right A
+        |}
+        |func (this Combiner[A List[B]]) Combine[B any]() A {
+        |    return this.left.Concat(this.right)
+        |}
+        |
+        |type V struct {}
+        |func main() {
+        |  _ = Combiner[List[V]]{Cons[V]{V{}, Nil[V]{}}, Cons[V]{V{}, Nil[V]{}}}.Combine[V]()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
+      assert(actual == Right(
+        value = ValuedStructureLiteral(
+          structureTypeName = StructureType(
+            structureTypeName = StructureTypeName(value = "Cons"),
+            types = List(AnyNamedType(typeName = AnyTypeName(value = "V"), types = List()))
+          ),
+          values = List(
+            ValuedStructureLiteral(
+              structureTypeName = StructureType(
+                structureTypeName = StructureTypeName(value = "V"),
+                types = List()
+              ),
+              values = List()
+            ),
+            ValuedStructureLiteral(
+              structureTypeName = StructureType(
+                structureTypeName = StructureTypeName(value = "Cons"),
+                types = List(AnyNamedType(typeName = AnyTypeName(value = "V"), types = List()))
+              ),
+              values = List(
+                ValuedStructureLiteral(
+                  structureTypeName = StructureType(
+                    structureTypeName = StructureTypeName(value = "V"),
+                    types = List()
+                  ),
+                  values = List()
+                ),
+                ValuedStructureLiteral(
+                  structureTypeName = StructureType(
+                    structureTypeName = StructureTypeName(value = "Nil"),
+                    types = List(AnyNamedType(typeName = AnyTypeName(value = "V"), types = List()))
+                  ),
+                  values = List()
+                )
+              )
+            )
+          )
+        )
+      ))
+    }
+  }
+
+  it should "eval a function which returns a primitive string" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type V struct { }
+        |func (this V) F() int {
+        |  return 1
+        |}
+        |func (this V) G(a int) string {
+        |  return "hoge"
+        |}
+        |
+        |func main() {
+        |  _ = V{}.G(V{}.F())
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
+      assert(actual == Right(StringValue("hoge")))
     }
   }
 }

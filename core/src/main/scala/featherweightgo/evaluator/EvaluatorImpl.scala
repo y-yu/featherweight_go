@@ -10,18 +10,18 @@ import featherweightgo.util.Utils._
 class EvaluatorImpl extends Evaluator {
   def eval(
     main: Main
-  ): Either[FGEvalError, ValuedStructureLiteral] = {
+  ): Either[FGEvalError, Primitive] = {
     // The operator `<:` requires this list. It's used like an operator
     // taking 2 parameters so `declarations` is defined as `implicit`.
     implicit val declarations: List[Declaration] = main.declarations
 
     def innerEval(
       expression: Expression
-    ): Either[FGEvalError, ValuedStructureLiteral] = {
+    ): Either[FGEvalError, Primitive] = {
       def evalError[A]: Either[FGEvalError, A] = Left(FGEvalError(expression))
 
       expression match {
-        case v: ValuedStructureLiteral => Right(v)
+        case v: Primitive => Right(v)
 
         case StructureLiteral(structureTypeName, arguments) =>
           evalAll(arguments)
@@ -32,12 +32,20 @@ class EvaluatorImpl extends Evaluator {
               )
             }
 
-        case FieldSelect(e, fieldName) =>
+        case fs @ FieldSelect(e, fieldName) =>
           for {
             leftHandResult <- innerEval(e)
-            fs = fields(declarations, leftHandResult.structureTypeName)
+            valuedStructureLiteral <- leftHandResult match {
+              case vsl: ValuedStructureLiteral =>
+                Right(vsl)
+              case p =>
+                Left(FGEvalError(fs,
+                  message = Some(s"Primitive type $p doesn't have any fields!")
+                ))
+            }
+            fs = fields(declarations, valuedStructureLiteral.structureTypeName)
             result <- fs
-              .zip(leftHandResult.values)
+              .zip(valuedStructureLiteral.values)
               .find {
                 case (sf, _) =>
                   sf.name == fieldName
@@ -91,10 +99,10 @@ class EvaluatorImpl extends Evaluator {
 
     def evalAll(
       expressions: List[Expression]
-    ): Either[FGEvalError, List[ValuedStructureLiteral]] =
+    ): Either[FGEvalError, List[Primitive]] =
       expressions
         .map(innerEval)
-        .foldLeft(Right(Nil): Either[FGEvalError, List[ValuedStructureLiteral]]) { (x, y) =>
+        .foldLeft(Right(Nil): Either[FGEvalError, List[Primitive]]) { (x, y) =>
           for {
             xv <- x
             yv <- y
@@ -103,7 +111,7 @@ class EvaluatorImpl extends Evaluator {
 
     def substitute(
       expression: Expression,
-      variables: Map[TypedVariable, ValuedStructureLiteral]
+      variables: Map[TypedVariable, Primitive]
     ): Expression = {
       def loop(
         e: Expression
@@ -118,6 +126,9 @@ class EvaluatorImpl extends Evaluator {
 
         case ValuedStructureLiteral(_, _) =>
           e
+
+        case v: Primitive =>
+          v
 
         case FieldSelect(expression, fn) =>
           FieldSelect(loop(expression), fn)

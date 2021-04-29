@@ -1,7 +1,7 @@
 package featherweightgo.evaluator
 
 import featherweightgo.model.ast.Main
-import featherweightgo.model.ast.ValuedStructureLiteral
+import featherweightgo.model.ast.Primitive
 import featherweightgo.model.error.FGError.FGEvalError
 
 trait Evaluator {
@@ -14,5 +14,5 @@ trait Evaluator {
    */
   def eval(
     main: Main
-  ): Either[FGEvalError, ValuedStructureLiteral]
+  ): Either[FGEvalError, Primitive]
 }

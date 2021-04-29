@@ -1,5 +1,6 @@
 package featherweightgo.parser
 
+import featherweightgo.model.ast.AbstractStructureType._
 import featherweightgo.model.ast._
 import featherweightgo.model.error.FGError
 import featherweightgo.model.error.FGError.FGParseError
@@ -25,7 +26,7 @@ object ParserImpl {
   private[parser] class ParserImpl extends RegexParsers { self =>
     override def skipWhitespace = false
 
-    val name: Parser[String] = """\w+""".r
+    val name: Parser[String] = """[a-zA-Z_]\w*""".r
 
     val variableName: Parser[VariableName] =
       name.map(VariableName.apply)
@@ -45,11 +46,17 @@ object ParserImpl {
     val fieldName: Parser[FieldName] =
       name.map(FieldName.apply)
 
+    val integerValue: Parser[IntegerValue] =
+      """\d+""".r.map(i => IntegerValue(i.toInt))
+
+    val stringValue: Parser[StringValue] =
+      ('"' ~> """[^\n"]*""".r <~ '"').map(StringValue.apply)
+
     private def flatten[A](asOpt: Option[List[A]]): List[A] =
       asOpt.fold(List.empty[A])(identity)
 
     def typ: Parser[Type] =
-      namedType
+      integerType | stringType | namedType
 
     def typeParameter: Parser[TypeParameter] =
       name.map(TypeParameter)
@@ -63,6 +70,16 @@ object ParserImpl {
           AnyNamedType(tn, flatten(types))
       }
     }
+
+    def integerType: Parser[IntegerType.type] =
+      "int".r.map { _ =>
+          IntegerType
+      }
+
+    def stringType: Parser[StringType.type] =
+      "string".r.map { _ =>
+        StringType
+      }
 
     def structureType: Parser[StructureType] =
       (structureTypeName ~ typeParameters.?).map {
@@ -247,7 +264,7 @@ object ParserImpl {
           dotSequence(e)(next)
 
         case _: NoSuccess =>
-          variable(in).flatMapWithNext( e => next =>
+          (variable | integerValue | stringValue)(in).flatMapWithNext( e => next =>
             dotSequence(e)(next)
           )
       }

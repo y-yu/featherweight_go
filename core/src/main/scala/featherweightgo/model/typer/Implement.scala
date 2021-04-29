@@ -3,7 +3,7 @@ package featherweightgo.model.typer
 import featherweightgo.model.ast.AnyNamedType
 import featherweightgo.model.ast.Declaration
 import featherweightgo.model.ast.InterfaceType
-import featherweightgo.model.ast.StructureType
+import featherweightgo.model.ast.AbstractStructureType
 import featherweightgo.model.ast.Type
 import featherweightgo.model.ast.TypeParameter
 import featherweightgo.util.Utils.lookupAnyType
@@ -36,7 +36,7 @@ object Implement {
     cause
   )
 
-  private val success: Try[Unit] = Success()
+  private val success: Try[Unit] = Success(())
   private def failure(lhs: Type, rhs: Type): Try[Unit] = Failure(CheckingError(lhs, rhs))
 
   implicit def checkingInstance(implicit
@@ -74,13 +74,13 @@ object Implement {
           else
             failure(lhs, rhs)
 
-        case (lhs: StructureType, rhs: StructureType) =>
+        case (lhs: AbstractStructureType, rhs: AbstractStructureType) =>
           if(lhs.structureTypeName == rhs.structureTypeName && checkTypesRecursive(lhs.types, rhs.types))
             success
           else
             failure(lhs, rhs)
 
-        case (lhs: StructureType, rhs: InterfaceType) =>
+        case (lhs: AbstractStructureType, rhs: InterfaceType) =>
           if (methodsInSet(lhs, rhs, typeBound))
             success
           else

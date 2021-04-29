@@ -1,5 +1,7 @@
 package featherweightgo.model.ast
 
+import featherweightgo.model.ast.AbstractStructureType.StructureType
+
 sealed trait AST extends Product with Serializable
 
 case class VariableName(value: String) extends AST
@@ -95,10 +97,20 @@ case class TypeAssertion(
   typ: Type
 ) extends Expression
 
+sealed trait Primitive extends Expression
+
 case class ValuedStructureLiteral(
   structureTypeName: StructureType,
-  values: List[ValuedStructureLiteral]
-) extends Expression // Does it make sense?
+  values: List[Primitive]
+) extends Primitive // Does it make sense?
+
+case class IntegerValue(
+  value: Int
+) extends Primitive
+
+case class StringValue(
+  value: String
+) extends Primitive
 
 sealed trait Type extends AST {
   def name: TypeName
@@ -117,11 +129,28 @@ case class AnyNamedType(
   def name: TypeName = typeName
 }
 
-case class StructureType(
-  structureTypeName: StructureTypeName,
-  types: List[Type]
+sealed abstract class AbstractStructureType(
+  val structureTypeName: StructureTypeName,
+  val types: List[Type]
 ) extends Type {
   def name: TypeName = structureTypeName
+}
+
+object AbstractStructureType {
+  case class StructureType(
+    override val structureTypeName: StructureTypeName,
+    override val types: List[Type]
+  ) extends AbstractStructureType(
+    structureTypeName, types
+  )
+
+  case object IntegerType extends AbstractStructureType(
+    StructureTypeName("int"), Nil
+  )
+
+  case object StringType extends AbstractStructureType(
+    StructureTypeName("string"), Nil
+  )
 }
 
 case class InterfaceType(

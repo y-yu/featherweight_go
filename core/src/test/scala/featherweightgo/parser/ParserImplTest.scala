@@ -1,6 +1,7 @@
 package featherweightgo.parser
 
 import featherweightgo.model.ast._
+import featherweightgo.model.ast.AbstractStructureType._
 import org.scalatest.diagrams.Diagrams
 import org.scalatest.flatspec.AnyFlatSpec
 
@@ -17,12 +18,12 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   }
 
   it should "parse a type name" in new SetUp {
-    val string = "int"
+    val string = "t1"
 
     val actual = parse(typeName, string)
 
     assert(actual.successful)
-    assert(actual.get.value == "int")
+    assert(actual.get.value == "t1")
   }
 
   it should "parse a empty struct definition" in new SetUp {
@@ -40,7 +41,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   }
 
   it should "parse a struct definition with a single field" in new SetUp {
-    val string = "struct { value int }"
+    val string = "struct { value A }"
 
     val actual = parse(structure, string)
 
@@ -49,14 +50,14 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     assert(
       actual.get.fields.map(_.name) == List(FieldName("value"))
     )
-    assert(actual.get.fields.map(_.typ) == List(AnyNamedType(AnyTypeName("int"), List())))
+    assert(actual.get.fields.map(_.typ) == List(AnyNamedType(AnyTypeName("A"), List())))
   }
 
   it should "parse a struct definition with multiple fields" in new SetUp {
     val string =
       """struct {
-        |  f1 int
-        |  f2 string
+        |  f1 A
+        |  f2 B
         |}""".stripMargin
 
     val actual = parse(structure, string)
@@ -67,11 +68,11 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
       actual.get.fields.map(_.name) == List(FieldName("f1"), FieldName("f2"))
     )
 
-    assert(actual.get.fields.map(_.typ) == List(AnyNamedType(AnyTypeName("int"), List()), AnyNamedType(AnyTypeName("string"), List())))
+    assert(actual.get.fields.map(_.typ) == List(AnyNamedType(AnyTypeName("A"), List()), AnyNamedType(AnyTypeName("B"), List())))
   }
 
   it should "parse a struct definition with a single named type field" in new SetUp {
-    val string = "struct { value List[int] }"
+    val string = "struct { value List[A] }"
 
     val actual = parse(structure, string)
 
@@ -80,16 +81,16 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     assert(
       actual.get.fields.map(_.name) == List(FieldName("value"))
     )
-    assert(actual.get.fields.map(_.typ) == List(AnyNamedType(AnyTypeName("List"), List(AnyNamedType(AnyTypeName("int"), List())))))
+    assert(actual.get.fields.map(_.typ) == List(AnyNamedType(AnyTypeName("List"), List(AnyNamedType(AnyTypeName("A"), List())))))
   }
 
   it should "parse a method signature with empty argument" in new SetUp {
-    val string = "() int"
+    val string = "() A"
 
     val actual = parse(methodSignature, string)
     assert(actual.successful)
     assert(actual.get.arguments == Map.empty)
-    assert(actual.get.returnType == AnyNamedType(AnyTypeName("int"), List()))
+    assert(actual.get.returnType == AnyNamedType(AnyTypeName("A"), List()))
 
 
     val string2 = "()string"
@@ -97,47 +98,47 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     val actual2 = parse(methodSignature, string2)
     assert(actual2.successful)
     assert(actual2.get.arguments == Map.empty)
-    assert(actual2.get.returnType == AnyNamedType(AnyTypeName("string"), List()))
+    assert(actual2.get.returnType == StringType)
   }
 
   it should "parse a method signature with some arguments" in new SetUp {
-    val string = "(v1 int, v2 string) int"
+    val string = "(v1 A, v2 B) A"
 
     val actual = parse(methodSignature, string)
     assert(actual.successful)
     assert(actual.get.arguments.keys.toList == List(VariableName("v1"), VariableName("v2")))
-    assert(actual.get.arguments.values.toList == List(AnyNamedType(AnyTypeName("int"), List()), AnyNamedType(AnyTypeName("string"), List())))
-    assert(actual.get.returnType == AnyNamedType(AnyTypeName("int"), List()))
+    assert(actual.get.arguments.values.toList == List(AnyNamedType(AnyTypeName("A"), List()), AnyNamedType(AnyTypeName("B"), List())))
+    assert(actual.get.returnType == AnyNamedType(AnyTypeName("A"), List()))
   }
 
   it should "NOT parse a method signature with comma at the end" in new SetUp {
     pending
 
-    val string = "(v1 int, v2 string,) int"
+    val string = "(v1 A, v2 B,) A"
 
     val actual = parse(methodSignature, string)
     assert(! actual.successful)
   }
 
   it should "parse a method signature with a named type argument" in new SetUp {
-    val string = "(v1 List[string]) int"
+    val string = "(v1 List[B]) A"
 
     val actual = parse(methodSignature, string)
     assert(actual.successful)
     assert(actual.get.arguments.keys.toList == List(VariableName("v1")))
-    assert(actual.get.arguments.values.toList == List(AnyNamedType(AnyTypeName("List"), List(AnyNamedType(AnyTypeName("string"), List())))))
-    assert(actual.get.returnType == AnyNamedType(AnyTypeName("int"), List()))
+    assert(actual.get.arguments.values.toList == List(AnyNamedType(AnyTypeName("List"), List(AnyNamedType(AnyTypeName("B"), List())))))
+    assert(actual.get.returnType == AnyNamedType(AnyTypeName("A"), List()))
   }
 
   it should "parse a method signature with the method name" in new SetUp {
-    val string = "method1(v1 int, v2 string) int"
+    val string = "method1(v1 A, v2 B) A"
 
     val actual = parse(methodSpecification, string)
     assert(actual.successful)
     assert(actual.get.methodName == MethodName("method1"))
     assert(actual.get.methodSignature.arguments.keys.toList == List(VariableName("v1"), VariableName("v2")))
-    assert(actual.get.methodSignature.arguments.values.toList == List(AnyNamedType(AnyTypeName("int"), List()), AnyNamedType(AnyTypeName("string"), List())))
-    assert(actual.get.methodSignature.returnType == AnyNamedType(AnyTypeName("int"), List()))
+    assert(actual.get.methodSignature.arguments.values.toList == List(AnyNamedType(AnyTypeName("A"), List()), AnyNamedType(AnyTypeName("B"), List())))
+    assert(actual.get.methodSignature.returnType == AnyNamedType(AnyTypeName("A"), List()))
   }
 
   it should "parse a empty interface definition" in new SetUp {
@@ -158,43 +159,43 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   it should "parse a interface definition with a single method" in new SetUp {
     val string =
       """interface {
-        |  method1(v int) string
+        |  method1(v A) B
         |}""".stripMargin
 
     val actual = parse(interface, string)
     assert(actual.successful)
     assert(actual.get.methods.map(_.methodName) == List(MethodName("method1")))
     assert(actual.get.methods.flatMap(_.methodSignature.arguments.keys.toList) == List(VariableName("v")))
-    assert(actual.get.methods.flatMap(_.methodSignature.arguments.values.toList) ==  List(AnyNamedType(AnyTypeName("int"), List())))
-    assert(actual.get.methods.map(_.methodSignature.returnType) == List(AnyNamedType(AnyTypeName("string"), List())))
+    assert(actual.get.methods.flatMap(_.methodSignature.arguments.values.toList) ==  List(AnyNamedType(AnyTypeName("A"), List())))
+    assert(actual.get.methods.map(_.methodSignature.returnType) == List(AnyNamedType(AnyTypeName("B"), List())))
   }
 
   it should "parse a interface definition with multiple single methods" in new SetUp {
     val string =
       """interface {
-        |  m1(v1 int) string
-        |  m2(v2 string) int
+        |  m1(v1 A) B
+        |  m2(v2 B) A
         |}""".stripMargin
 
     val actual = parse(interface, string)
     assert(actual.successful)
     assert(actual.get.methods.map(_.methodName) == List(MethodName("m1"), MethodName("m2")))
     assert(actual.get.methods.map(_.methodSignature.arguments.keys.toList) == List(List(VariableName("v1")), List(VariableName("v2"))))
-    assert(actual.get.methods.map(_.methodSignature.arguments.values.toList) == List(List(AnyNamedType(AnyTypeName("int"), List())), List(AnyNamedType(AnyTypeName("string"), List()))))
-    assert(actual.get.methods.map(_.methodSignature.returnType) ==  List(AnyNamedType(AnyTypeName("string"), List()), AnyNamedType(AnyTypeName("int"), List())))
+    assert(actual.get.methods.map(_.methodSignature.arguments.values.toList) == List(List(AnyNamedType(AnyTypeName("A"), List())), List(AnyNamedType(AnyTypeName("B"), List()))))
+    assert(actual.get.methods.map(_.methodSignature.returnType) ==  List(AnyNamedType(AnyTypeName("B"), List()), AnyNamedType(AnyTypeName("A"), List())))
   }
 
   it should "parse a interface definition with a single named type method" in new SetUp {
     val string =
       """interface {
-        |  method1[T any](v int) List[T]
+        |  method1[T any](v A) List[T]
         |}""".stripMargin
 
     val actual = parse(interface, string)
     assert(actual.successful)
     assert(actual.get.methods.map(_.methodName) == List(MethodName("method1")))
     assert(actual.get.methods.flatMap(_.methodSignature.arguments.keys.toList) == List(VariableName("v")))
-    assert(actual.get.methods.flatMap(_.methodSignature.arguments.values.toList) == List(AnyNamedType(AnyTypeName("int"), List())))
+    assert(actual.get.methods.flatMap(_.methodSignature.arguments.values.toList) == List(AnyNamedType(AnyTypeName("A"), List())))
     assert(actual.get.methods.flatMap(_.methodSignature.typeFormals) == List(TypeFormal(TypeParameter("T"), InterfaceType(InterfaceTypeName("any"), Nil))))
     assert(actual.get.methods.map(_.methodSignature.returnType) == List(AnyNamedType(AnyTypeName("List"), List(AnyNamedType(AnyTypeName("T"), List())))))
   }
@@ -202,7 +203,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   it should "parse type declaration by structure" in new SetUp {
     val string =
       """type t1 struct {
-        |  f1 int
+        |  f1 A
         |}""".stripMargin
 
     val actual = parse(typeDefinition, string)
@@ -213,7 +214,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   it should "parse type declaration by interface" in new SetUp {
     val string =
       """type t1 interface {
-        |  f1(v1 int) string
+        |  f1(v1 A) string
         |}""".stripMargin
 
     val actual = parse(typeDefinition, string)
@@ -224,7 +225,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   it should "parse type declaration by interface with generics" in new SetUp {
     val string =
       """type t1[A any] interface {
-        |  f1(v1 int) string
+        |  f1(v1 A) string
         |}""".stripMargin
 
     val actual = parse(typeDefinition, string)
@@ -249,7 +250,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
 
   it should "parse a method declaration" in new SetUp {
     val string =
-      """func (this Tree) method(v int) string {
+      """func (this Tree) method(v A) B {
         |  return v
         |}""".stripMargin
 
@@ -261,13 +262,13 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     )
     assert(actual.get.methodSpecification.methodName == MethodName("method"))
     assert(actual.get.methodSpecification.methodSignature.arguments.keys.toList == List(VariableName("v")))
-    assert(actual.get.methodSpecification.methodSignature.arguments.values.toList == List(AnyNamedType(AnyTypeName("int"), List())))
-    assert(actual.get.methodSpecification.methodSignature.returnType == AnyNamedType(AnyTypeName("string"), List()))
+    assert(actual.get.methodSpecification.methodSignature.arguments.values.toList == List(AnyNamedType(AnyTypeName("A"), List())))
+    assert(actual.get.methodSpecification.methodSignature.returnType == AnyNamedType(AnyTypeName("B"), List()))
   }
 
   it should "parse a method declaration with generics" in new SetUp {
     val string =
-      """func (this Tree[V any]) method[A any](v int) string {
+      """func (this Tree[V any]) method[A any](v A) B {
         |  return v
         |}""".stripMargin
 
@@ -284,8 +285,8 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     assert(actual.get.methodSpecification.methodName == MethodName("method"))
     assert(actual.get.methodSpecification.methodSignature.typeFormals == List(TypeFormal(TypeParameter("A"), InterfaceType(InterfaceTypeName("any"), Nil))))
     assert(actual.get.methodSpecification.methodSignature.arguments.keys.toList == List(VariableName("v")))
-    assert(actual.get.methodSpecification.methodSignature.arguments.values.toList ==  List(AnyNamedType(AnyTypeName("int"), List())))
-    assert(actual.get.methodSpecification.methodSignature.returnType == AnyNamedType(AnyTypeName("string"), List()))
+    assert(actual.get.methodSpecification.methodSignature.arguments.values.toList ==  List(AnyNamedType(AnyTypeName("A"), List())))
+    assert(actual.get.methodSpecification.methodSignature.returnType == AnyNamedType(AnyTypeName("B"), List()))
   }
 
   it should "parse a method call without any argument" in new SetUp {
@@ -315,7 +316,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   }
 
   it should "parse a generic method call with a argument" in new SetUp {
-    val string = "v.method[int](a)"
+    val string = "v.method[A](a)"
 
     val actual = parse(expression, string)
     assert(actual.successful)
@@ -325,7 +326,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     assert(mc.expression == Variable(VariableName("v")))
     assert(mc.methodName == MethodName("method"))
     assert(mc.arguments == List(Variable(VariableName("a"))))
-    assert(mc.types == List(AnyNamedType(AnyTypeName("int"), List())))
+    assert(mc.types == List(AnyNamedType(AnyTypeName("A"), List())))
   }
 
   it should "parse a structure literal" in new SetUp {
@@ -338,11 +339,11 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   }
 
   it should "parse a structure literal with a type parameter" in new SetUp {
-    val string = "Point[int]{a, b}"
+    val string = "Point[A]{a, b}"
 
     val actual = parse(structureLiteral, string)
     assert(actual.successful)
-    assert(actual.get.structureType == StructureType(StructureTypeName("Point"), List(AnyNamedType(AnyTypeName("int"), List()))))
+    assert(actual.get.structureType == StructureType(StructureTypeName("Point"), List(AnyNamedType(AnyTypeName("A"), List()))))
     assert(actual.get.arguments == List(Variable(VariableName("a")), Variable(VariableName("b"))))
   }
 
@@ -367,7 +368,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   }
 
   it should "parse a type assertion" in new SetUp {
-    val string = "t.(int)"
+    val string = "t.(A)"
 
     val actual = parse(expression, string)
     assert(actual.successful)
@@ -375,12 +376,12 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
 
     val ta = actual.get.asInstanceOf[TypeAssertion]
 
-    assert(ta.typ == AnyNamedType(AnyTypeName("int"), List()))
+    assert(ta.typ == AnyNamedType(AnyTypeName("A"), List()))
     assert(ta.expression == Variable(VariableName("t")))
   }
 
   it should "parse a named type assertion" in new SetUp {
-    val string = "t.(List[int])"
+    val string = "t.(List[A])"
 
     val actual = parse(expression, string)
     assert(actual.successful)
@@ -388,14 +389,38 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
 
     val ta = actual.get.asInstanceOf[TypeAssertion]
 
-    assert(ta.typ == AnyNamedType(AnyTypeName("List"), List(AnyNamedType(AnyTypeName("int"), List()))))
+    assert(ta.typ == AnyNamedType(AnyTypeName("List"), List(AnyNamedType(AnyTypeName("A"), List()))))
     assert(ta.expression == Variable(VariableName("t")))
+  }
+
+  it should "parse a primitive string" in new SetUp {
+    val string = "\"hoge\""
+
+    val actual = parse(expression, string)
+    assert(actual.successful)
+    assert(actual.get.isInstanceOf[StringValue])
+
+    val s = actual.get.asInstanceOf[StringValue]
+
+    assert(s == StringValue("hoge"))
+  }
+
+  it should "parse a primitive integer" in new SetUp {
+    val string = "123"
+
+    val actual = parse(expression, string)
+    assert(actual.successful)
+    assert(actual.get.isInstanceOf[IntegerValue])
+
+    val s = actual.get.asInstanceOf[IntegerValue]
+
+    assert(s == IntegerValue(123))
   }
 
   it should "parse the main function" in new SetUp {
     val string =
       """package main;
-        |func (this Tree) method(a int) int {
+        |func (this Tree) method(a A) A {
         |  return a
         |}
         |func main() {
@@ -414,7 +439,7 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
       """
         |
         |package main;
-        |func (this Tree) method(a int) int {
+        |func (this Tree) method(a A) A {
         |  return a
         |}
         |func main() {
@@ -595,7 +620,6 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
         |""".stripMargin
 
     val actual = parse(methodDefinition, string)
-    pprint.pprintln(actual)
     assert(actual.successful)
   }
 }

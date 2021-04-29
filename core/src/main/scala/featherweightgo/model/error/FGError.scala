@@ -19,9 +19,10 @@ object FGError {
 
   case class FGEvalError(
     ast: AST,
+    message: Option[String] = None,
     cause: Throwable = null
   ) extends FGError(
-    s"Given AST[$ast] cannot evaluate!",
+    (List(s"Given AST[$ast] cannot evaluate!") ++ message).mkString("\n"),
     cause
   )
 

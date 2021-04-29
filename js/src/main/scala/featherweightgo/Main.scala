@@ -1,6 +1,9 @@
 package featherweightgo
 
 import featherweightgo.evaluator.EvaluatorImpl
+import featherweightgo.model.ast.IntegerValue
+import featherweightgo.model.ast.Primitive
+import featherweightgo.model.ast.StringValue
 import featherweightgo.model.ast.ValuedStructureLiteral
 import featherweightgo.parser.ParserImpl
 import featherweightgo.typer.TyperImpl
@@ -61,10 +64,17 @@ object Main {
     }
 
   private def valuePrinter(
-    value: ValuedStructureLiteral
-  ): String = {
-    val arguments = value.values.map(valuePrinter).mkString("{", ", ", "}")
+    primitive: Primitive
+  ): String = primitive match {
+    case value: ValuedStructureLiteral =>
+      val arguments = value.values.map(valuePrinter).mkString("{", ", ", "}")
 
-    s"${value.structureTypeName.name.value}$arguments"
+      s"${value.structureTypeName.name.value}$arguments"
+
+    case StringValue(value) =>
+      value
+
+    case IntegerValue(value) =>
+      value.toString
   }
 }

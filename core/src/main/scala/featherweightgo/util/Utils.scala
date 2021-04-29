@@ -1,5 +1,8 @@
 package featherweightgo.util
 
+import featherweightgo.model.ast.AbstractStructureType.IntegerType
+import featherweightgo.model.ast.AbstractStructureType.StringType
+import featherweightgo.model.ast.AbstractStructureType.StructureType
 import featherweightgo.model.ast._
 import featherweightgo.model.error.FGError.FGTypeError
 import featherweightgo.model.typer.Implement._
@@ -97,11 +100,14 @@ object Utils {
       it.copy(
         types = types.map(t => typeReplace(typeMap, t))
       )
+
+    case IntegerType | StringType =>
+      typ
   }
 
   def fields(
     declarations: List[Declaration],
-    structureType: StructureType
+    structureType: AbstractStructureType
   ): List[StructureField] = {
     @tailrec
     def loop(
@@ -127,8 +133,17 @@ object Utils {
   }
 
   def `type`(
-    valuedStructureLiteral: ValuedStructureLiteral
-  ): StructureType = valuedStructureLiteral.structureTypeName
+    primitive: Primitive
+  ): AbstractStructureType = primitive match {
+    case vsl: ValuedStructureLiteral =>
+      vsl.structureTypeName
+
+    case _: IntegerValue =>
+      IntegerType
+
+    case _: StringValue =>
+      StringType
+  }
 
   def expressionTypeReplace(
     typeMap: TypeMap,
@@ -168,7 +183,7 @@ object Utils {
 
   def body(
     declarations: List[Declaration],
-    structureType: StructureType,
+    structureType: AbstractStructureType,
     methodName: MethodName,
     methodTypes: List[Type]
   ): Option[(List[TypedVariable], Expression)] = {
@@ -247,14 +262,14 @@ object Utils {
   def bounds(
     typeBound: TypeBound,
     typ: Type
-  ): Either[InterfaceType, StructureType] = typ match {
+  ): Either[InterfaceType, AbstractStructureType] = typ match {
     case typeParameter: TypeParameter =>
       Left(typeBound.get(typeParameter).get)
 
     case interfaceType: InterfaceType =>
       Left(interfaceType)
 
-    case structureType: StructureType =>
+    case structureType: AbstractStructureType =>
       Right(structureType)
 
     case anyNamedType: AnyNamedType =>
@@ -319,7 +334,7 @@ object Utils {
       }
 
     def ifStructureType(
-      structureType: StructureType
+      structureType: AbstractStructureType
     ): List[MethodSpecification] =
       declarations.collect {
         case MethodDeclaration(receiver, methodSpecification, _)
@@ -349,21 +364,23 @@ object Utils {
 
     typ match {
       case anyNamedType: AnyNamedType =>
-        lookupAnyType(anyNamedType).map { typ =>
+        lookupAnyType(anyNamedType).map { ty =>
           methods(
-            typ,
-            typeBound
+            ty,
+            typeBound,
+            ifUpdate
           )
         }.getOrElse(
           if (anyNamedType.types.isEmpty)
             methods(
               TypeParameter(anyNamedType.name.value),
-              typeBound
+              typeBound,
+              ifUpdate
             )
           else
             throw FGTypeError("type lookup in methods error!")
         )
-      case stn: StructureType =>
+      case stn: AbstractStructureType =>
         ifStructureType(stn)
       case itn: InterfaceType =>
         ifInterfaceType(itn)

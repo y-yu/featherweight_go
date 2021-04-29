@@ -1,5 +1,8 @@
 package featherweightgo.typer
 
+import featherweightgo.model.ast.AbstractStructureType.IntegerType
+import featherweightgo.model.ast.AbstractStructureType.StringType
+import featherweightgo.model.ast.AbstractStructureType.StructureType
 import featherweightgo.model.ast._
 import featherweightgo.model.error.FGError.FGTypeError
 import featherweightgo.model.typer.Environment
@@ -62,6 +65,9 @@ class TyperImpl extends Typer {
 
         case anyNamedType : AnyNamedType =>
           namedTypeCheck(typeBound, anyNamedType)
+
+        case IntegerType | StringType =>
+          true
 
         case StructureType(structureTypeName, ts) =>
           declarations.exists {
@@ -192,6 +198,12 @@ class TyperImpl extends Typer {
       case ValuedStructureLiteral(structureTypeName, _) =>
         Right(structureTypeName)
 
+      case IntegerValue(_) =>
+        Right(IntegerType)
+
+      case StringValue(_) =>
+        Right(StringType)
+
       case Variable(name) =>
         toEither(
           environment.get(name),
@@ -294,11 +306,11 @@ class TyperImpl extends Typer {
         for {
           eType <- expressionCheck(environment, typeBound, e)
           eStructureType <- eType match {
-            case st: StructureType =>
+            case st: AbstractStructureType =>
               Right(st)
             case anyNamedType: AnyNamedType =>
               lookupAnyType(anyNamedType) match {
-                case Some(typ: StructureType) =>
+                case Some(typ: AbstractStructureType) =>
                   Right(typ)
                 case _ =>
                   Left(FGTypeError(s"The give type[${eType.name.value}] is not structure!"))
@@ -344,7 +356,7 @@ class TyperImpl extends Typer {
             else Left(FGTypeError(s"assert ${typ.name} error!"))
           eType <- expressionCheck(environment, typeBound, e)
           _ <- typ match {
-            case st: StructureType =>
+            case st: AbstractStructureType =>
               if (
                 typeBound |- (
                   st <:< bounds(typeBound, eType).fold(identity, identity)
