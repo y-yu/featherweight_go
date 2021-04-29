@@ -710,4 +710,68 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
       assert(sut.check(ast) == Right(StringType))
     }
   }
+
+  it should "be well-typed a function call which returns its receiver" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type V struct {}
+        |func (this V) F() V {
+        |  return this
+        |}
+        |
+        |func main() {
+        |  _ = V{}.F()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(AnyNamedType(AnyTypeName("V"), List())))
+    }
+  }
+
+  it should "be well-typed a function call which returns its primitive receiver" in new SetUp {
+    val string =
+      """
+        |package main;
+        |func (this string) F() string {
+        |  return this
+        |}
+        |
+        |func main() {
+        |  _ = "hoge".F()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(StringType))
+    }
+  }
+
+  it should "be well-typed a function call which returns its primitive receiver" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type any interface { }
+        |type P[A any] struct {
+        |    value A
+        |}
+        |func (this P[A string]) Write() string {
+        |    return this.value
+        |}
+        |func main() {
+        |    _ = P[string]{"hoge"}.Write()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(StringType))
+    }
+  }
 }

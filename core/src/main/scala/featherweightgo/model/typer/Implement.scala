@@ -4,6 +4,7 @@ import featherweightgo.model.ast.AnyNamedType
 import featherweightgo.model.ast.Declaration
 import featherweightgo.model.ast.InterfaceType
 import featherweightgo.model.ast.AbstractStructureType
+import featherweightgo.model.ast.AbstractStructureType._
 import featherweightgo.model.ast.Type
 import featherweightgo.model.ast.TypeParameter
 import featherweightgo.util.Utils.lookupAnyType
@@ -103,6 +104,9 @@ object Implement {
             success
           else
             failure(lhs, rhs)
+
+        case (_: TypeParameter, (IntegerType | StringType)) =>
+          success
 
         case (lhs, rhs) =>
           println("matching failed!")

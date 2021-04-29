@@ -153,14 +153,29 @@ class TyperImpl extends Typer {
           val typeBound = TypeBound.fromTypeFormals(
             receiver.typeFormals ++ methodSignature.typeFormals
           )
-          val receiverDeclaration = declarations.collectFirst {
-            case td@TypeDeclaration(name, typeFormals, _) if
-            receiver.structureTypeName == name &&
-              formalsImplementCheck(
-                receiver.typeFormals,
-                typeFormals
-              ) => td
-          }
+          val primitiveTypes = List(IntegerType, StringType)
+          val receiverDeclaration =
+            primitiveTypes
+              .collectFirst {
+                case primitiveType if
+                  primitiveType.structureTypeName == receiver.structureTypeName &&
+                  receiver.typeFormals.isEmpty =>
+                    TypeDeclaration(
+                      primitiveType.structureTypeName,
+                      Nil,
+                      Structure(Nil)
+                    )
+              }
+              .orElse(
+                declarations.collectFirst {
+                  case td@TypeDeclaration(name, typeFormals, _) if
+                    receiver.structureTypeName == name &&
+                      formalsImplementCheck(
+                        receiver.typeFormals,
+                        typeFormals
+                      ) => td
+                }
+              )
 
           distinct(receiver.variableName :: arguments.keys.toList) &&
             receiverDeclaration.isDefined &&
