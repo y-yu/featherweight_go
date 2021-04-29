@@ -17,6 +17,29 @@ object Main {
   val parserFG = new ParserImpl()
 
   @JSExport
+  val exampleSourceCode: String =
+    """package main;
+      |type any interface { }
+      |type List[A any] interface {
+      |    Length() int
+      |}
+      |type Nil[A any] struct { }
+      |type Cons[A any] struct {
+      |    head A
+      |    tail List[A]
+      |}
+      |func (this Nil[A any]) Length() int {
+      |    return 0
+      |}
+      |func (this Cons[A any]) Length() int {
+      |    return this.tail.Length() + 1
+      |}
+      |func main() {
+      |    _ = Cons[int]{1, Cons[int]{2, Nil[int]{}}}.Length()
+      |}
+      |""".stripMargin
+
+  @JSExport
   def parse(
     source: String
   ): String =
