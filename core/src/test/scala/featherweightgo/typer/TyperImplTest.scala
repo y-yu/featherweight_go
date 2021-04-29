@@ -662,4 +662,52 @@ class TyperImplTest extends AnyFlatSpec with Diagrams {
       assert(sut.check(ast) == Right(StringType))
     }
   }
+
+  it should "be well-typed to integer plus" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type V struct { }
+        |func (this V) F() int {
+        |  return 1
+        |}
+        |func (this V) G() int {
+        |  return 2
+        |}
+        |
+        |func main() {
+        |  _ = V{}.G() + V{}.F()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(IntegerType))
+    }
+  }
+
+  it should "be well-typed to string concat" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type V struct { }
+        |func (this V) F() string {
+        |  return "hoge"
+        |}
+        |func (this V) G() string {
+        |  return "fuga"
+        |}
+        |
+        |func main() {
+        |  _ = V{}.F() ++ V{}.G()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+    parseResult.foreach { ast =>
+      assert(sut.check(ast) == Right(StringType))
+    }
+  }
 }

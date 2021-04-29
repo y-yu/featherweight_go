@@ -345,4 +345,56 @@ class EvaluatorImplTest extends AnyFlatSpec with Diagrams {
       assert(actual == Right(StringValue("hoge")))
     }
   }
+
+  it should "eval a primitive integer plus" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type V struct { }
+        |func (this V) F() int {
+        |  return 123
+        |}
+        |func (this V) G() int {
+        |  return 456
+        |}
+        |
+        |func main() {
+        |  _ = V{}.F() + V{}.G()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
+      assert(actual == Right(IntegerValue(579)))
+    }
+  }
+
+  it should "eval a primitive string concat" in new SetUp {
+    val string =
+      """
+        |package main;
+        |type V struct { }
+        |func (this V) F() string {
+        |  return "hoge"
+        |}
+        |func (this V) G() string {
+        |  return "fuga"
+        |}
+        |
+        |func main() {
+        |  _ = V{}.F() ++ V{}.G()
+        |}
+        |""".stripMargin
+
+    val parseResult = parser.parse(string)
+    assert(parseResult.isRight)
+
+    parseResult.foreach { ast =>
+      val actual = sut.eval(ast)
+      assert(actual == Right(StringValue("hogefuga")))
+    }
+  }
 }

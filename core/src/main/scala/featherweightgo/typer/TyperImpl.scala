@@ -204,6 +204,61 @@ class TyperImpl extends Typer {
       case StringValue(_) =>
         Right(StringType)
 
+      case Plus(lhs, rhs) =>
+        for {
+          lhsType <- expressionCheck(
+            environment,
+            typeBound,
+            lhs
+          )
+          rhsType <- expressionCheck(
+            environment,
+            typeBound,
+            rhs
+          )
+          _ <- (lhsType, rhsType) match {
+            case (IntegerType, IntegerType) =>
+              Right(())
+            case _ =>
+              Left(
+                FGTypeError(
+                  s"""
+                     |Primitive integer + takes integer type arguments!
+                     | lhs type: $lhsType
+                     | rhs type: $rhsType
+                     |""".stripMargin)
+              )
+          }
+        } yield IntegerType
+
+
+      case Concat(lhs, rhs) =>
+        for {
+          lhsType <- expressionCheck(
+            environment,
+            typeBound,
+            lhs
+          )
+          rhsType <- expressionCheck(
+            environment,
+            typeBound,
+            rhs
+          )
+          _ <- (lhsType, rhsType) match {
+            case (StringType, StringType) =>
+              Right(())
+            case _ =>
+              Left(
+                FGTypeError(
+                  s"""
+                     |Primitive string ++ takes string type arguments!
+                     | lhs type: $lhsType
+                     | rhs type: $rhsType
+                     |""".stripMargin)
+              )
+          }
+        } yield StringType
+
       case Variable(name) =>
         toEither(
           environment.get(name),

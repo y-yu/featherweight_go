@@ -23,6 +23,44 @@ class EvaluatorImpl extends Evaluator {
       expression match {
         case v: Primitive => Right(v)
 
+        case p @ Plus(lhs, rhs) =>
+          for {
+            l <- innerEval(lhs)
+            r <- innerEval(rhs)
+            result <- (l, r) match {
+              case (IntegerValue(lv), IntegerValue(rv)) =>
+                Right(IntegerValue(lv + rv))
+
+              case _ =>
+                Left(FGEvalError(p,
+                  message = Some(
+                    s"""Integer primitive + error!
+                       | lhs: $l
+                       | rhs: $r
+                       |""".stripMargin)
+                ))
+            }
+          } yield result
+
+        case p @ Concat(lhs, rhs) =>
+          for {
+            l <- innerEval(lhs)
+            r <- innerEval(rhs)
+            result <- (l, r) match {
+              case (StringValue(lv), StringValue(rv)) =>
+                Right(StringValue(lv + rv))
+
+              case _ =>
+                Left(FGEvalError(p,
+                  message = Some(
+                    s"""String primitive + error!
+                       | lhs: $l
+                       | rhs: $r
+                       |""".stripMargin)
+                ))
+            }
+          } yield result
+
         case StructureLiteral(structureTypeName, arguments) =>
           evalAll(arguments)
             .map { vs =>
@@ -129,6 +167,12 @@ class EvaluatorImpl extends Evaluator {
 
         case v: Primitive =>
           v
+
+        case Plus(lhs, rhs) =>
+          Plus(loop(lhs), loop(rhs))
+
+        case Concat(lhs, rhs) =>
+          Concat(loop(lhs), loop(rhs))
 
         case FieldSelect(expression, fn) =>
           FieldSelect(loop(expression), fn)

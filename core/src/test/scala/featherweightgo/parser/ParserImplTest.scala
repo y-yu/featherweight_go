@@ -417,6 +417,42 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
     assert(s == IntegerValue(123))
   }
 
+  it should "parse a minus integer" in new SetUp {
+    val string = "-1"
+
+    val actual = parse(expression, string)
+    assert(actual.successful)
+    assert(actual.get.isInstanceOf[IntegerValue])
+
+    val s = actual.get.asInstanceOf[IntegerValue]
+
+    assert(s == IntegerValue(-1))
+  }
+
+  it should "parse a integer plus" in new SetUp {
+    val string = "123 + 456"
+
+    val actual = parse(expression, string)
+    assert(actual.successful)
+    assert(actual.get.isInstanceOf[Plus])
+
+    val r = actual.get.asInstanceOf[Plus]
+
+    assert(r == Plus(IntegerValue(123), IntegerValue(456)))
+  }
+
+  it should "parse a string concat" in new SetUp {
+    val string = "\"hoge\" ++ \"fuga\""
+
+    val actual = parse(expression, string)
+    assert(actual.successful)
+    assert(actual.get.isInstanceOf[Concat])
+
+    val r = actual.get.asInstanceOf[Concat]
+
+    assert(r == Concat(StringValue("hoge"), StringValue("fuga")))
+  }
+
   it should "parse the main function" in new SetUp {
     val string =
       """package main;
@@ -437,7 +473,6 @@ class ParserImplTest extends AnyFlatSpec with Diagrams {
   it should "parse the main function even if there are whitespaces behind `package main;`" in new SetUp {
     val string =
       """
-        |
         |package main;
         |func (this Tree) method(a A) A {
         |  return a

@@ -47,7 +47,7 @@ object ParserImpl {
       name.map(FieldName.apply)
 
     val integerValue: Parser[IntegerValue] =
-      """\d+""".r.map(i => IntegerValue(i.toInt))
+      """-?\d+""".r.map(i => IntegerValue(i.toInt))
 
     val stringValue: Parser[StringValue] =
       ('"' ~> """[^\n"]*""".r <~ '"').map(StringValue.apply)
@@ -246,15 +246,45 @@ object ParserImpl {
         )
       }
 
+    def integerPlus(lhs: Expression): Parser[Plus] =
+      (whiteSpace.? ~> "+" ~> whiteSpace.? ~> expression).map { rhs =>
+        Plus(lhs, rhs)
+      }
+
+    def stringConcat(lhs: Expression): Parser[Concat] =
+      (whiteSpace.? ~> "++" ~> whiteSpace.? ~> expression).map { rhs =>
+        Concat(lhs, rhs)
+      }
+
     def dotSequence(
       e: Expression
     ): Parser[Expression] = Parser { in =>
       ("." ~> (typeAssertion(e) | methodCall(e) | fieldSelect(e)))(in) match {
         case Success(exp, next) =>
-          dotSequence(exp)(next)
+          dotSequenceOrPrimitiveOps(exp)(next)
 
         case _: NoSuccess =>
           Success(e, in)
+      }
+    }
+
+    def primitiveOps(
+      e: Expression
+    ): Parser[Expression] = Parser { in =>
+      (stringConcat(e) | integerPlus(e))(in) match {
+        case Success(exp, next) =>
+          dotSequenceOrPrimitiveOps(exp)(next)
+
+        case _: NoSuccess =>
+          Success(e, in)
+      }
+    }
+
+    def dotSequenceOrPrimitiveOps(
+      e1: Expression
+    ): Parser[Expression] = Parser { in =>
+      dotSequence(e1)(in).flatMapWithNext { e2 => next =>
+        primitiveOps(e2)(next)
       }
     }
 
@@ -264,8 +294,8 @@ object ParserImpl {
           dotSequence(e)(next)
 
         case _: NoSuccess =>
-          (variable | integerValue | stringValue)(in).flatMapWithNext( e => next =>
-            dotSequence(e)(next)
+          (variable | integerValue | stringValue)(in).flatMapWithNext( e1 => n1 =>
+            dotSequenceOrPrimitiveOps(e1)(n1)
           )
       }
     }

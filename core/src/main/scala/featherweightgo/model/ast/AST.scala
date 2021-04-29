@@ -97,6 +97,20 @@ case class TypeAssertion(
   typ: Type
 ) extends Expression
 
+sealed trait IntegerOps extends Expression
+
+case class Plus(
+  lhs: Expression,
+  rhs: Expression
+) extends IntegerOps
+
+sealed trait StringOps extends Expression
+
+case class Concat(
+  lhs: Expression,
+  rhs: Expression
+) extends IntegerOps
+
 sealed trait Primitive extends Expression
 
 case class ValuedStructureLiteral(
