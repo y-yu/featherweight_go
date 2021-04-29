@@ -12,7 +12,7 @@ $ ./sbt featherweightGoJVM/run
 ## How to install
 
 ```scala
-libraryDependencies += "com.github.y-yu" %% "featherweightgo" % "0.1.1"
+libraryDependencies += "com.github.y-yu" %% "featherweightgo" % "0.2.0"
 ```
 
 ## References
