@@ -35,7 +35,7 @@
             }
         }
 
-        #editor {
+        #editor-col {
             text-align: center;
             padding-bottom: 100px;
         }
@@ -82,7 +82,7 @@
 </div>
 
 <div id="app" class="container">
-    <div id="editor" class="col">
+    <div id="editor-col" class="col">
         <label>
             <input type="checkbox" v-model="lineNumbers"/>
             LineNumbers
@@ -123,33 +123,7 @@
     new Vue({
         el: '#app',
         data : {
-            code:
-                "package main;\n" +
-                "type Number interface { }\n" + 
-                "type Zero struct { }\n" + 
-                "type Succ struct {\n" + 
-                "    pred Number\n" + 
-                "}\n" + 
-                "type any interface { }\n" + 
-                "type List[A any] interface {\n" + 
-                "    Length() Number\n" + 
-                "}\n" + 
-                "type Nil[A any] struct { }\n" + 
-                "type Cons[A any] struct {\n" + 
-                "    head A\n" + 
-                "    tail List[A]\n" + 
-                "}\n" + 
-                "func (this Nil[A any]) Length() Number {\n" + 
-                "    return Zero{}\n" + 
-                "}\n" + 
-                "func (this Cons[A any]) Length() Number {\n" + 
-                "    return Succ{this.tail.Length()}\n" + 
-                "}\n" + 
-                "type V struct { }\n" + 
-                "type S struct { }\n" + 
-                "func main() {\n" + 
-                "    _ = Cons[V]{V{}, Cons[V]{V{}, Nil[V]{}}}.Length()\n" + 
-                "}",
+            code: FeatherweightGoMain.exampleSourceCode,
             lineNumbers: true,
 
             store: { },

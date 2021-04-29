@@ -1527,10 +1527,12 @@ function $c_Lfeatherweightgo_Main$() {
   this.Lfeatherweightgo_Main$__f_evaluatorFG = null;
   this.Lfeatherweightgo_Main$__f_typerFG = null;
   this.Lfeatherweightgo_Main$__f_parserFG = null;
+  this.Lfeatherweightgo_Main$__f_exampleSourceCode = null;
   $n_Lfeatherweightgo_Main$ = this;
   this.Lfeatherweightgo_Main$__f_evaluatorFG = new $c_Lfeatherweightgo_evaluator_EvaluatorImpl();
   this.Lfeatherweightgo_Main$__f_typerFG = new $c_Lfeatherweightgo_typer_TyperImpl();
-  this.Lfeatherweightgo_Main$__f_parserFG = new $c_Lfeatherweightgo_parser_ParserImpl()
+  this.Lfeatherweightgo_Main$__f_parserFG = new $c_Lfeatherweightgo_parser_ParserImpl();
+  this.Lfeatherweightgo_Main$__f_exampleSourceCode = $m_sc_StringOps$().stripMargin$extension__T__C__T("package main;\n      |type any interface { }\n      |type List[A any] interface {\n      |    Length() int\n      |}\n      |type Nil[A any] struct { }\n      |type Cons[A any] struct {\n      |    head A\n      |    tail List[A]\n      |}\n      |func (this Nil[A any]) Length() int {\n      |    return 0\n      |}\n      |func (this Cons[A any]) Length() int {\n      |    return this.tail.Length() + 1\n      |}\n      |func main() {\n      |    _ = Cons[int]{1, Cons[int]{2, Nil[int]{}}}.Length()\n      |}\n      |", 124)
 }
 $c_Lfeatherweightgo_Main$.prototype = new $h_O();
 $c_Lfeatherweightgo_Main$.prototype.constructor = $c_Lfeatherweightgo_Main$;
@@ -1639,6 +1641,9 @@ $c_Lfeatherweightgo_Main$.prototype.eval__T__sjs_js_Tuple2 = (function(source) {
     }
   }
 });
+$c_Lfeatherweightgo_Main$.prototype.$js$exported$prop$exampleSourceCode__O = (function() {
+  return this.Lfeatherweightgo_Main$__f_exampleSourceCode
+});
 $c_Lfeatherweightgo_Main$.prototype.$js$exported$meth$parse__T__O = (function(source) {
   return this.parse__T__T(source)
 });
@@ -1659,6 +1664,12 @@ $c_Lfeatherweightgo_Main$.prototype.typeCheck = (function(arg) {
 $c_Lfeatherweightgo_Main$.prototype.parse = (function(arg) {
   var prep0 = $as_T(arg);
   return this.$js$exported$meth$parse__T__O(prep0)
+});
+Object.defineProperty($c_Lfeatherweightgo_Main$.prototype, "exampleSourceCode", {
+  "get": (function() {
+    return this.$js$exported$prop$exampleSourceCode__O()
+  }),
+  "configurable": true
 });
 var $d_Lfeatherweightgo_Main$ = new $TypeData().initClass({
   Lfeatherweightgo_Main$: 0
