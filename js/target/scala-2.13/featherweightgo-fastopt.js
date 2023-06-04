@@ -4,7 +4,7 @@ let FeatherweightGoMain;
 var $linkingInfo = Object.freeze({
   "assumingES6": true,
   "productionMode": false,
-  "linkerVersion": "1.5.0",
+  "linkerVersion": "1.5.1",
   "fileLevelThis": this
 });
 var $imul = Math.imul;
@@ -224,6 +224,13 @@ function $dp_hashCode__I(instance) {
         return $c_O.prototype.hashCode__I.call(instance)
       }
     }
+  }
+}
+function $dp_indexOf__I__I(instance, x0) {
+  if (((typeof instance) === "string")) {
+    return $f_T__indexOf__I__I(instance, x0)
+  } else {
+    return instance.indexOf__I__I(x0)
   }
 }
 function $dp_length__I(instance) {
@@ -2426,6 +2433,7 @@ function $asArrayOf_jl_CharSequence(obj, depth) {
 /** @constructor */
 function $c_jl_Class(data0) {
   this.jl_Class__f_data = null;
+  this.jl_Class__f_cachedSimpleName = null;
   this.jl_Class__f_data = data0
 }
 $c_jl_Class.prototype = new $h_O();
@@ -2508,8 +2516,8 @@ $c_jl_FloatingPointBits$.prototype.numberHashCode__D__I = (function(value) {
   if (((iv === value) && ((1.0 / value) !== (-Infinity)))) {
     return iv
   } else {
-    var this$1 = this.doubleToLongBits__D__J(value);
-    return (this$1.RTLong__f_lo ^ this$1.RTLong__f_hi)
+    this.jl_FloatingPointBits$__f_float64Array[0] = value;
+    return ($uI(this.jl_FloatingPointBits$__f_int32Array[0]) ^ $uI(this.jl_FloatingPointBits$__f_int32Array[1]))
   }
 });
 $c_jl_FloatingPointBits$.prototype.doubleToLongBits__D__J = (function(value) {
@@ -3737,8 +3745,10 @@ function $asArrayOf_ju_Formattable(obj, depth) {
 /** @constructor */
 function $c_ju_Formatter$() {
   this.ju_Formatter$__f_java$util$Formatter$$FormatSpecifier = null;
+  this.ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags = null;
   $n_ju_Formatter$ = this;
-  this.ju_Formatter$__f_java$util$Formatter$$FormatSpecifier = new RegExp("(?:(\\d+)\\$)?([-#+ 0,\\(<]*)(\\d+)?(?:\\.(\\d+))?[%A-Za-z]", "g")
+  this.ju_Formatter$__f_java$util$Formatter$$FormatSpecifier = new RegExp("(?:(\\d+)\\$)?([-#+ 0,\\(<]*)(\\d+)?(?:\\.(\\d+))?[%A-Za-z]", "g");
+  this.ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags = new $ac_I(new Int32Array([96, 126, 638, 770, 32, 256, 2, 126, (-1), (-1), (-1), (-1), (-1), (-1), 800, (-1), (-1), (-1), 124, (-1), (-1), (-1), (-1), 544, (-1), (-1)]))
 }
 $c_ju_Formatter$.prototype = new $h_O();
 $c_ju_Formatter$.prototype.constructor = $c_ju_Formatter$;
@@ -3747,6 +3757,84 @@ function $h_ju_Formatter$() {
   /*<skip>*/
 }
 $h_ju_Formatter$.prototype = $c_ju_Formatter$.prototype;
+$c_ju_Formatter$.prototype.java$util$Formatter$$strOfZeros__I__T = (function(count) {
+  if ((count <= 20)) {
+    return $as_T("00000000000000000000".substring(0, count))
+  } else {
+    var result = "";
+    var remaining = count;
+    while ((remaining > 20)) {
+      result = (result + "00000000000000000000");
+      remaining = (((-20) + remaining) | 0)
+    };
+    var $$x1 = result;
+    var endIndex = remaining;
+    return (("" + $$x1) + $as_T("00000000000000000000".substring(0, endIndex)))
+  }
+});
+$c_ju_Formatter$.prototype.java$util$Formatter$$numberToDecimal__D__ju_Formatter$Decimal = (function(x) {
+  if ((x === 0.0)) {
+    var negative = ((1.0 / x) < 0.0);
+    return new $c_ju_Formatter$Decimal(negative, "0", 0)
+  } else {
+    var negative$2 = (x < 0.0);
+    var d = (negative$2 ? (-x) : x);
+    var s = ("" + d);
+    var ePos = $f_T__indexOf__I__I(s, 101);
+    var e;
+    if ((ePos < 0)) {
+      e = 0
+    } else {
+      var $$x2 = parseInt;
+      var beginIndex = ((1 + ePos) | 0);
+      var s$1 = $as_T(s.substring(beginIndex));
+      var $$x1 = $$x2(s$1);
+      e = $uI($$x1)
+    };
+    var significandEnd = ((ePos < 0) ? $uI(s.length) : ePos);
+    var dotPos = $f_T__indexOf__I__I(s, 46);
+    if ((dotPos < 0)) {
+      var unscaledValue = $as_T(s.substring(0, significandEnd));
+      var scale = ((-e) | 0);
+      return new $c_ju_Formatter$Decimal(negative$2, unscaledValue, scale)
+    } else {
+      var $$x3 = $as_T(s.substring(0, dotPos));
+      var beginIndex$1 = ((1 + dotPos) | 0);
+      var digits = (("" + $$x3) + $as_T(s.substring(beginIndex$1, significandEnd)));
+      var digitsLen = $uI(digits.length);
+      var i = 0;
+      while (true) {
+        var $$x4;
+        if ((i < digitsLen)) {
+          var index = i;
+          $$x4 = ((65535 & $uI(digits.charCodeAt(index))) === 48)
+        } else {
+          $$x4 = false
+        };
+        if ($$x4) {
+          i = ((1 + i) | 0)
+        } else {
+          break
+        }
+      };
+      var beginIndex$2 = i;
+      var unscaledValue$2 = $as_T(digits.substring(beginIndex$2));
+      var scale$2 = ((((-e) | 0) + ((significandEnd - ((1 + dotPos) | 0)) | 0)) | 0);
+      return new $c_ju_Formatter$Decimal(negative$2, unscaledValue$2, scale$2)
+    }
+  }
+});
+$c_ju_Formatter$.prototype.java$util$Formatter$$bigDecimalToDecimal__Ljava_math_BigDecimal__ju_Formatter$Decimal = (function(x) {
+  var unscaledValueWithSign = x.unscaledValue__Ljava_math_BigInteger().toString__T();
+  if ((unscaledValueWithSign === "0")) {
+    return new $c_ju_Formatter$Decimal(false, "0", 0)
+  } else {
+    var negative = ((65535 & $uI(unscaledValueWithSign.charCodeAt(0))) === 45);
+    var unscaledValue = (negative ? $as_T(unscaledValueWithSign.substring(1)) : unscaledValueWithSign);
+    var scale = x.scale__I();
+    return new $c_ju_Formatter$Decimal(negative, unscaledValue, scale)
+  }
+});
 var $d_ju_Formatter$ = new $TypeData().initClass({
   ju_Formatter$: 0
 }, false, "java.util.Formatter$", {
@@ -3761,6 +3849,99 @@ function $m_ju_Formatter$() {
   };
   return $n_ju_Formatter$
 }
+function $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal($thiz, roundingPos) {
+  var digits = $thiz.ju_Formatter$Decimal__f_unscaledValue;
+  var digitsLen = $uI(digits.length);
+  if ((roundingPos < 0)) {
+    var negative = $thiz.ju_Formatter$Decimal__f_negative;
+    return new $c_ju_Formatter$Decimal(negative, "0", 0)
+  } else if ((roundingPos >= digitsLen)) {
+    return $thiz
+  } else if (((65535 & $uI(digits.charCodeAt(roundingPos))) < 53)) {
+    if ((roundingPos === 0)) {
+      var negative$1 = $thiz.ju_Formatter$Decimal__f_negative;
+      return new $c_ju_Formatter$Decimal(negative$1, "0", 0)
+    } else {
+      return new $c_ju_Formatter$Decimal($thiz.ju_Formatter$Decimal__f_negative, $as_T(digits.substring(0, roundingPos)), (($thiz.ju_Formatter$Decimal__f_scale - ((digitsLen - roundingPos) | 0)) | 0))
+    }
+  } else {
+    var lastNonNinePos = (((-1) + roundingPos) | 0);
+    while (true) {
+      var $$x1;
+      if ((lastNonNinePos >= 0)) {
+        var index = lastNonNinePos;
+        $$x1 = ((65535 & $uI(digits.charCodeAt(index))) === 57)
+      } else {
+        $$x1 = false
+      };
+      if ($$x1) {
+        lastNonNinePos = (((-1) + lastNonNinePos) | 0)
+      } else {
+        break
+      }
+    };
+    var newUnscaledValue;
+    if ((lastNonNinePos < 0)) {
+      newUnscaledValue = "1"
+    } else {
+      var endIndex = lastNonNinePos;
+      var $$x2 = $as_T(digits.substring(0, endIndex));
+      var index$1 = lastNonNinePos;
+      newUnscaledValue = (("" + $$x2) + $bC((65535 & ((1 + (65535 & $uI(digits.charCodeAt(index$1)))) | 0))))
+    };
+    var pos = ((1 + lastNonNinePos) | 0);
+    var newScale = (($thiz.ju_Formatter$Decimal__f_scale - ((digitsLen - pos) | 0)) | 0);
+    return new $c_ju_Formatter$Decimal($thiz.ju_Formatter$Decimal__f_negative, newUnscaledValue, newScale)
+  }
+}
+/** @constructor */
+function $c_ju_Formatter$Decimal(negative, unscaledValue, scale) {
+  this.ju_Formatter$Decimal__f_negative = false;
+  this.ju_Formatter$Decimal__f_unscaledValue = null;
+  this.ju_Formatter$Decimal__f_scale = 0;
+  this.ju_Formatter$Decimal__f_negative = negative;
+  this.ju_Formatter$Decimal__f_unscaledValue = unscaledValue;
+  this.ju_Formatter$Decimal__f_scale = scale
+}
+$c_ju_Formatter$Decimal.prototype = new $h_O();
+$c_ju_Formatter$Decimal.prototype.constructor = $c_ju_Formatter$Decimal;
+/** @constructor */
+function $h_ju_Formatter$Decimal() {
+  /*<skip>*/
+}
+$h_ju_Formatter$Decimal.prototype = $c_ju_Formatter$Decimal.prototype;
+$c_ju_Formatter$Decimal.prototype.isZero__Z = (function() {
+  return (this.ju_Formatter$Decimal__f_unscaledValue === "0")
+});
+$c_ju_Formatter$Decimal.prototype.round__I__ju_Formatter$Decimal = (function(precision) {
+  $m_ju_Formatter$();
+  var condition = (precision > 0);
+  if ((!condition)) {
+    throw new $c_jl_AssertionError("Decimal.round() called with non-positive precision")
+  };
+  return $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal(this, precision)
+});
+$c_ju_Formatter$Decimal.prototype.setScale__I__ju_Formatter$Decimal = (function(newScale) {
+  var this$1 = this.ju_Formatter$Decimal__f_unscaledValue;
+  var roundingPos = (((($uI(this$1.length) + newScale) | 0) - this.ju_Formatter$Decimal__f_scale) | 0);
+  var rounded = $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal(this, roundingPos);
+  $m_ju_Formatter$();
+  var condition = (rounded.isZero__Z() || (rounded.ju_Formatter$Decimal__f_scale <= newScale));
+  if ((!condition)) {
+    throw new $c_jl_AssertionError("roundAtPos returned a non-zero value with a scale too large")
+  };
+  return ((rounded.isZero__Z() || (rounded.ju_Formatter$Decimal__f_scale === newScale)) ? rounded : new $c_ju_Formatter$Decimal(this.ju_Formatter$Decimal__f_negative, (("" + rounded.ju_Formatter$Decimal__f_unscaledValue) + $m_ju_Formatter$().java$util$Formatter$$strOfZeros__I__T(((newScale - rounded.ju_Formatter$Decimal__f_scale) | 0))), newScale))
+});
+$c_ju_Formatter$Decimal.prototype.toString__T = (function() {
+  return (((((("Decimal(" + this.ju_Formatter$Decimal__f_negative) + ", ") + this.ju_Formatter$Decimal__f_unscaledValue) + ", ") + this.ju_Formatter$Decimal__f_scale) + ")")
+});
+var $d_ju_Formatter$Decimal = new $TypeData().initClass({
+  ju_Formatter$Decimal: 0
+}, false, "java.util.Formatter$Decimal", {
+  ju_Formatter$Decimal: 1,
+  O: 1
+});
+$c_ju_Formatter$Decimal.prototype.$classData = $d_ju_Formatter$Decimal;
 /** @constructor */
 function $c_ju_Formatter$LocaleInfo() {
   /*<skip>*/
@@ -10652,6 +10833,15 @@ function $h_jl_Character$() {
   /*<skip>*/
 }
 $h_jl_Character$.prototype = $c_jl_Character$.prototype;
+$c_jl_Character$.prototype.toString__I__T = (function(codePoint) {
+  if (((codePoint >= 0) && (codePoint < 65536))) {
+    return $as_T(String.fromCharCode(codePoint))
+  } else if (((codePoint >= 0) && (codePoint <= 1114111))) {
+    return $as_T(String.fromCharCode((65535 & (55296 | (((-64) + (codePoint >> 10)) | 0))), (65535 & (56320 | (1023 & codePoint)))))
+  } else {
+    throw $ct_jl_IllegalArgumentException__(new $c_jl_IllegalArgumentException())
+  }
+});
 $c_jl_Character$.prototype.digitWithValidRadix__I__I__I = (function(codePoint, radix) {
   var value;
   if ((codePoint < 256)) {
@@ -18265,6 +18455,10 @@ function $f_T__getChars__I__I__AC__I__V($thiz, srcBegin, srcEnd, dst, dstBegin) 
     i = ((1 + i) | 0)
   }
 }
+function $f_T__indexOf__I__I($thiz, ch) {
+  var str = $m_jl_Character$().toString__I__T(ch);
+  return $uI($thiz.indexOf(str))
+}
 function $f_T__length__I($thiz) {
   return $uI($thiz.length)
 }
@@ -18384,6 +18578,15 @@ function $isArrayOf_jl_VirtualMachineError(obj, depth) {
 function $asArrayOf_jl_VirtualMachineError(obj, depth) {
   return (($isArrayOf_jl_VirtualMachineError(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ljava.lang.VirtualMachineError;", depth))
 }
+function $as_Ljava_math_BigDecimal(obj) {
+  return ((false || (obj === null)) ? obj : $throwClassCastException(obj, "java.math.BigDecimal"))
+}
+function $isArrayOf_Ljava_math_BigDecimal(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Ljava_math_BigDecimal)))
+}
+function $asArrayOf_Ljava_math_BigDecimal(obj, depth) {
+  return (($isArrayOf_Ljava_math_BigDecimal(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ljava.math.BigDecimal;", depth))
+}
 function $as_Ljava_math_BigInteger(obj) {
   return ((false || (obj === null)) ? obj : $throwClassCastException(obj, "java.math.BigInteger"))
 }
@@ -18456,14 +18659,8 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
     re.lastIndex = formatSpecifierIndex;
     var execResult = re.exec(format);
     if (((execResult === null) || ($uI(execResult.index) !== formatSpecifierIndex))) {
-      var conversion;
-      if ((formatSpecifierIndex === fmtLength)) {
-        conversion = "%"
-      } else {
-        var endIndex = ((1 + formatSpecifierIndex) | 0);
-        conversion = $as_T(format.substring(formatSpecifierIndex, endIndex))
-      };
-      throw new $c_ju_UnknownFormatConversionException(conversion)
+      var conversion = ((formatSpecifierIndex === fmtLength) ? 37 : (65535 & $uI(format.charCodeAt(formatSpecifierIndex))));
+      $p_ju_Formatter__throwUnknownFormatConversionException__C__E($thiz, conversion)
     };
     fmtIndex = $uI(re.lastIndex);
     var index = (((-1) + fmtIndex) | 0);
@@ -18471,12 +18668,48 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
     var flags = $p_ju_Formatter__parseFlags__T__C__I($thiz, $as_T(execResult[2]), conversion$2);
     var width = $p_ju_Formatter__parsePositiveIntSilent__sjs_js_$bar__I__I($thiz, execResult[3], (-1));
     var precision = $p_ju_Formatter__parsePositiveIntSilent__sjs_js_$bar__I__I($thiz, execResult[4], (-1));
-    var arg;
-    if (((conversion$2 === 37) || (conversion$2 === 110))) {
-      arg = null
+    if ((conversion$2 === 110)) {
+      if ((precision !== (-1))) {
+        $p_ju_Formatter__throwIllegalFormatPrecisionException__I__E($thiz, precision)
+      };
+      if ((width !== (-1))) {
+        $p_ju_Formatter__throwIllegalFormatWidthException__I__E($thiz, width)
+      };
+      if ((flags !== 0)) {
+        $thiz.java$util$Formatter$$throwIllegalFormatFlagsException__I__E(flags)
+      };
+      $p_ju_Formatter__sendToDest__T__V($thiz, "\n")
+    } else if ((conversion$2 === 37)) {
+      if ((precision !== (-1))) {
+        $p_ju_Formatter__throwIllegalFormatPrecisionException__I__E($thiz, precision)
+      };
+      if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
+        $thiz.java$util$Formatter$$throwIllegalFormatFlagsException__I__E(flags)
+      };
+      if ((((1 & flags) !== 0) && (width === (-1)))) {
+        $p_ju_Formatter__throwMissingFormatWidthException__T__E($thiz, $p_ju_Formatter__fullFormatSpecifier$1__sjs_js_RegExp$ExecResult__T($thiz, execResult))
+      };
+      if ((((-2) & flags) !== 0)) {
+        $thiz.java$util$Formatter$$throwFormatFlagsConversionMismatchException__C__I__I__E(37, flags, (-2))
+      };
+      $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, "%")
     } else {
-      if ((((17 & flags) !== 0) && (width < 0))) {
-        throw new $c_ju_MissingFormatWidthException(("%" + execResult[0]))
+      var conversionLower = (((256 & flags) !== 0) ? (65535 & ((32 + conversion$2) | 0)) : conversion$2);
+      var illegalFlags = $m_ju_Formatter$().ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags.get((((-97) + conversionLower) | 0));
+      if (((illegalFlags === (-1)) || (((256 & flags) & illegalFlags) !== 0))) {
+        $p_ju_Formatter__throwUnknownFormatConversionException__C__E($thiz, conversion$2)
+      };
+      if ((((17 & flags) !== 0) && (width === (-1)))) {
+        $p_ju_Formatter__throwMissingFormatWidthException__T__E($thiz, $p_ju_Formatter__fullFormatSpecifier$1__sjs_js_RegExp$ExecResult__T($thiz, execResult))
+      };
+      if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
+        $thiz.java$util$Formatter$$throwIllegalFormatFlagsException__I__E(flags)
+      };
+      if (((precision !== (-1)) && ((512 & illegalFlags) !== 0))) {
+        $p_ju_Formatter__throwIllegalFormatPrecisionException__I__E($thiz, precision)
+      };
+      if (((flags & illegalFlags) !== 0)) {
+        $thiz.java$util$Formatter$$throwFormatFlagsConversionMismatchException__C__I__I__E(conversionLower, flags, illegalFlags)
       };
       var argIndex;
       if (((128 & flags) !== 0)) {
@@ -18491,22 +18724,21 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
         }
       };
       if (((argIndex <= 0) || (argIndex > args.u.length))) {
-        var conversionStr = $as_T(String.fromCharCode(conversion$2));
-        if (($uI("bBhHsHcCdoxXeEgGfn%".indexOf(conversionStr)) < 0)) {
-          throw new $c_ju_UnknownFormatConversionException(conversionStr)
-        } else {
-          throw new $c_ju_MissingFormatArgumentException(("%" + execResult[0]))
-        }
+        $p_ju_Formatter__throwMissingFormatArgumentException__T__E($thiz, $p_ju_Formatter__fullFormatSpecifier$1__sjs_js_RegExp$ExecResult__T($thiz, execResult))
       };
       lastArgIndex = argIndex;
-      arg = args.get((((-1) + argIndex) | 0))
-    };
-    $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($thiz, localeInfo, arg, conversion$2, flags, width, precision)
+      var arg = args.get((((-1) + argIndex) | 0));
+      if ((((arg === null) && (conversionLower !== 98)) && (conversionLower !== 115))) {
+        $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, $m_ju_Formatter$RootLocaleInfo$(), flags, width, precision, "null")
+      } else {
+        $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($thiz, localeInfo, arg, conversionLower, flags, width, precision)
+      }
+    }
   };
   return $thiz
 }
 function $p_ju_Formatter__parseFlags__T__C__I($thiz, flags, conversion) {
-  var bits = ((conversion <= 90) ? 256 : 0);
+  var bits = (((conversion >= 65) && (conversion <= 90)) ? 256 : 0);
   var len = $uI(flags.length);
   var i = 0;
   while ((i !== len)) {
@@ -18551,7 +18783,7 @@ function $p_ju_Formatter__parseFlags__T__C__I($thiz, flags, conversion) {
       }
     };
     if (((bits & bit) !== 0)) {
-      throw new $c_ju_DuplicateFormatFlagsException($as_T(String.fromCharCode(f)))
+      $p_ju_Formatter__throwDuplicateFormatFlagsException__C__E($thiz, f)
     };
     bits = (bits | bit);
     i = ((1 + i) | 0)
@@ -18567,470 +18799,349 @@ function $p_ju_Formatter__parsePositiveIntSilent__sjs_js_$bar__I__I($thiz, captu
     return ((x <= 2.147483647E9) ? $doubleToInt(x) : (-1))
   }
 }
-function $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($thiz, localeInfo, arg, conversion, flags, width, precision) {
-  switch (conversion) {
-    case 98:
-    case 66: {
-      if (((126 & flags) !== 0)) {
-        $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 126, conversion)
-      };
+function $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($thiz, localeInfo, arg, conversionLower, flags, width, precision) {
+  switch (conversionLower) {
+    case 98: {
       var str = (((arg === false) || (arg === null)) ? "false" : "true");
       $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, $m_ju_Formatter$RootLocaleInfo$(), flags, width, precision, str);
       break
     }
-    case 104:
-    case 72: {
-      if (((126 & flags) !== 0)) {
-        $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 126, conversion)
-      };
-      var str$2;
-      if ((arg === null)) {
-        str$2 = "null"
-      } else {
-        var i = $dp_hashCode__I(arg);
-        str$2 = $as_T($uD((i >>> 0)).toString(16))
-      };
+    case 104: {
+      var i = $dp_hashCode__I(arg);
+      var str$2 = $as_T($uD((i >>> 0)).toString(16));
       $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, $m_ju_Formatter$RootLocaleInfo$(), flags, width, precision, str$2);
       break
     }
-    case 115:
-    case 83: {
+    case 115: {
       if ($is_ju_Formattable(arg)) {
         var x2 = $as_ju_Formattable(arg);
-        if (((124 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 124, conversion)
-        };
         var formattableFlags = (((((1 & flags) !== 0) ? 1 : 0) | (((2 & flags) !== 0) ? 4 : 0)) | (((256 & flags) !== 0) ? 2 : 0));
         x2.formatTo__ju_Formatter__I__I__I__V($thiz, formattableFlags, width, precision)
       } else {
-        if (((126 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 126, conversion)
+        if (((2 & flags) !== 0)) {
+          $thiz.java$util$Formatter$$throwFormatFlagsConversionMismatchException__C__I__I__E(conversionLower, flags, 2)
         };
         var str$3 = ("" + arg);
         $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo, flags, width, precision, str$3)
       };
       break
     }
-    case 99:
-    case 67: {
-      if (((126 & flags) !== 0)) {
-        $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 126, conversion)
-      };
-      if ((precision >= 0)) {
-        throw new $c_ju_IllegalFormatPrecisionException(precision)
-      };
+    case 99: {
+      var str$4;
       if ((arg instanceof $Char)) {
         var x2$2 = $uC(arg);
-        $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo, flags, width, (-1), $as_T(String.fromCharCode(x2$2)))
-      } else if ($isInt(arg)) {
+        str$4 = $as_T(String.fromCharCode(x2$2))
+      } else {
+        if ((!$isInt(arg))) {
+          $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg)
+        };
         var x3 = $uI(arg);
         if ((!((x3 >= 0) && (x3 <= 1114111)))) {
-          throw new $c_ju_IllegalFormatCodePointException(x3)
+          $p_ju_Formatter__throwIllegalFormatCodePointException__I__E($thiz, x3)
         };
-        var str$4;
         if ((x3 < 65536)) {
-          str$4 = String.fromCharCode(x3)
+          str$4 = $as_T(String.fromCharCode(x3))
         } else {
-          var $$x1 = String;
+          var $$x2 = String;
           var value = (55296 | (((-64) + (x3 >> 10)) | 0));
           var value$1 = (56320 | (1023 & x3));
-          str$4 = $$x1.fromCharCode(value, value$1)
-        };
-        $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo, flags, width, (-1), $as_T(str$4))
-      } else {
-        $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg, localeInfo, flags, width, precision, conversion)
+          var $$x1 = $$x2.fromCharCode(value, value$1);
+          str$4 = $as_T($$x1)
+        }
       };
+      $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo, flags, width, (-1), str$4);
       break
     }
     case 100: {
-      if (((2 & flags) !== 0)) {
-        $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 2, conversion)
-      };
-      if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-        $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-      };
-      if ((precision >= 0)) {
-        throw new $c_ju_IllegalFormatPrecisionException(precision)
-      };
+      var str$5;
       if ($isInt(arg)) {
         var x2$3 = $uI(arg);
-        $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V(localeInfo, flags, width, ("" + x2$3), "")
+        str$5 = ("" + x2$3)
       } else if ((arg instanceof $c_RTLong)) {
         var t = $uJ(arg);
         var lo = t.RTLong__f_lo;
         var hi = t.RTLong__f_hi;
-        $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V(localeInfo, flags, width, $m_RTLong$().org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T(lo, hi), "")
-      } else if (false) {
+        str$5 = $m_RTLong$().org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T(lo, hi)
+      } else {
+        if ((!false)) {
+          $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg)
+        };
         var x4 = $as_Ljava_math_BigInteger(arg);
-        $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V(localeInfo, flags, width, x4.toString__T(), "")
-      } else {
-        $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg, localeInfo, flags, width, precision, conversion)
+        str$5 = x4.toString__T()
       };
+      $p_ju_Formatter__formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, localeInfo, flags, width, str$5, "");
       break
     }
-    case 111: {
-      var prefix = (((2 & flags) !== 0) ? "0" : "");
-      if ((precision >= 0)) {
-        throw new $c_ju_IllegalFormatPrecisionException(precision)
-      };
-      if ($isInt(arg)) {
-        var x2$1 = $uI(arg);
-        if (((108 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 108, conversion)
-        };
-        if (((17 & flags) === 17)) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-        };
-        $thiz.java$util$Formatter$$padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($m_ju_Formatter$RootLocaleInfo$(), flags, width, prefix, $thiz.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, $as_T($uD((x2$1 >>> 0)).toString(8))))
-      } else if ((arg instanceof $c_RTLong)) {
-        var t$1 = $uJ(arg);
-        var lo$1 = t$1.RTLong__f_lo;
-        var hi$1 = t$1.RTLong__f_hi;
-        if (((108 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 108, conversion)
-        };
-        if (((17 & flags) === 17)) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-        };
-        var $$x2 = $m_ju_Formatter$RootLocaleInfo$();
-        var this$14 = $m_jl_Long$();
-        $thiz.java$util$Formatter$$padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($$x2, flags, width, prefix, $thiz.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, this$14.java$lang$Long$$toOctalString__I__I__T(lo$1, hi$1)))
-      } else if (false) {
-        var x4$1 = $as_Ljava_math_BigInteger(arg);
-        if (((32 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 32, conversion)
-        };
-        if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-        };
-        $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V($m_ju_Formatter$RootLocaleInfo$(), flags, width, x4$1.toString__I__T(8), prefix)
+    case 111:
+    case 120: {
+      var isOctal = (conversionLower === 111);
+      var prefix = (((2 & flags) === 0) ? "" : (isOctal ? "0" : (((256 & flags) !== 0) ? "0X" : "0x")));
+      if (false) {
+        var x2$4 = $as_Ljava_math_BigInteger(arg);
+        var radix = (isOctal ? 8 : 16);
+        $p_ju_Formatter__formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, $m_ju_Formatter$RootLocaleInfo$(), flags, width, x2$4.toString__I__T(radix), prefix)
       } else {
-        if (((32 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 32, conversion)
+        var str$6;
+        if ($isInt(arg)) {
+          var x2$5 = $uI(arg);
+          str$6 = (isOctal ? $as_T($uD((x2$5 >>> 0)).toString(8)) : $as_T($uD((x2$5 >>> 0)).toString(16)))
+        } else {
+          if ((!(arg instanceof $c_RTLong))) {
+            $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg)
+          };
+          var t$1 = $uJ(arg);
+          var lo$1 = t$1.RTLong__f_lo;
+          var hi$1 = t$1.RTLong__f_hi;
+          if (isOctal) {
+            var this$17 = $m_jl_Long$();
+            str$6 = this$17.java$lang$Long$$toOctalString__I__I__T(lo$1, hi$1)
+          } else {
+            var this$18 = $m_jl_Long$();
+            str$6 = this$18.java$lang$Long$$toHexString__I__I__T(lo$1, hi$1)
+          }
         };
-        if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
+        if (((76 & flags) !== 0)) {
+          $thiz.java$util$Formatter$$throwFormatFlagsConversionMismatchException__C__I__I__E(conversionLower, flags, 76)
         };
-        $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg, localeInfo, flags, width, precision, conversion)
-      };
-      break
-    }
-    case 120:
-    case 88: {
-      var prefix$2 = (((2 & flags) === 0) ? "" : (((256 & flags) !== 0) ? "0X" : "0x"));
-      if ((precision >= 0)) {
-        throw new $c_ju_IllegalFormatPrecisionException(precision)
-      };
-      if ($isInt(arg)) {
-        var x2$4 = $uI(arg);
-        if (((108 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 108, conversion)
-        };
-        if (((17 & flags) === 17)) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-        };
-        $thiz.java$util$Formatter$$padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($m_ju_Formatter$RootLocaleInfo$(), flags, width, prefix$2, $thiz.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, $as_T($uD((x2$4 >>> 0)).toString(16))))
-      } else if ((arg instanceof $c_RTLong)) {
-        var t$2 = $uJ(arg);
-        var lo$2 = t$2.RTLong__f_lo;
-        var hi$2 = t$2.RTLong__f_hi;
-        if (((108 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 108, conversion)
-        };
-        if (((17 & flags) === 17)) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-        };
-        var $$x3 = $m_ju_Formatter$RootLocaleInfo$();
-        var this$18 = $m_jl_Long$();
-        $thiz.java$util$Formatter$$padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($$x3, flags, width, prefix$2, $thiz.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, this$18.java$lang$Long$$toHexString__I__I__T(lo$2, hi$2)))
-      } else if (false) {
-        var x4$2 = $as_Ljava_math_BigInteger(arg);
-        if (((32 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 32, conversion)
-        };
-        if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-        };
-        $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V($m_ju_Formatter$RootLocaleInfo$(), flags, width, x4$2.toString__I__T(16), prefix$2)
-      } else {
-        if (((32 & flags) !== 0)) {
-          $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 32, conversion)
-        };
-        if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-          $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-        };
-        $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg, localeInfo, flags, width, precision, conversion)
+        $p_ju_Formatter__padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, $m_ju_Formatter$RootLocaleInfo$(), flags, width, prefix, $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, str$6))
       };
       break
     }
     case 101:
-    case 69: {
-      if (((32 & flags) !== 0)) {
-        $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 32, conversion)
-      };
-      if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-        $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-      };
-      if (((typeof arg) === "number")) {
-        var x2$5 = $uD(arg);
-        if (((x2$5 !== x2$5) || ((x2$5 === Infinity) || (x2$5 === (-Infinity))))) {
-          $thiz.java$util$Formatter$$formatNaNOrInfinite__I__I__D__V(flags, width, x2$5)
-        } else {
-          var forceDecimalSep = ((2 & flags) !== 0);
-          var arg2 = ((precision >= 0) ? precision : 6);
-          $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V(localeInfo, flags, width, $p_ju_Formatter__computerizedScientificNotation__D__I__Z__T($thiz, x2$5, arg2, forceDecimalSep), "")
-        }
-      } else {
-        $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg, localeInfo, flags, width, precision, conversion)
-      };
-      break
-    }
-    case 103:
-    case 71: {
-      if (((2 & flags) !== 0)) {
-        $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags, 2, conversion)
-      };
-      if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-        $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-      };
+    case 102:
+    case 103: {
       if (((typeof arg) === "number")) {
         var x2$6 = $uD(arg);
         if (((x2$6 !== x2$6) || ((x2$6 === Infinity) || (x2$6 === (-Infinity))))) {
-          $thiz.java$util$Formatter$$formatNaNOrInfinite__I__I__D__V(flags, width, x2$6)
+          $p_ju_Formatter__formatNaNOrInfinite__I__I__D__V($thiz, flags, width, x2$6)
         } else {
-          var forceDecimalSep$1 = ((2 & flags) !== 0);
-          var arg2$1 = ((precision >= 0) ? precision : 6);
-          $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V(localeInfo, flags, width, $p_ju_Formatter__generalScientificNotation__D__I__Z__T($thiz, x2$6, arg2$1, forceDecimalSep$1), "")
+          $p_ju_Formatter__formatDecimal$1__ju_Formatter$Decimal__I__I__C__ju_Formatter$LocaleInfo__I__V($thiz, $m_ju_Formatter$().java$util$Formatter$$numberToDecimal__D__ju_Formatter$Decimal(x2$6), flags, precision, conversionLower, localeInfo, width)
         }
+      } else if (false) {
+        var x3$4 = $as_Ljava_math_BigDecimal(arg);
+        $p_ju_Formatter__formatDecimal$1__ju_Formatter$Decimal__I__I__C__ju_Formatter$LocaleInfo__I__V($thiz, $m_ju_Formatter$().java$util$Formatter$$bigDecimalToDecimal__Ljava_math_BigDecimal__ju_Formatter$Decimal(x3$4), flags, precision, conversionLower, localeInfo, width)
       } else {
-        $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg, localeInfo, flags, width, precision, conversion)
+        $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg)
       };
       break
     }
-    case 102: {
-      if ((((17 & flags) === 17) || ((12 & flags) === 12))) {
-        $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags)
-      };
+    case 97: {
       if (((typeof arg) === "number")) {
         var x2$7 = $uD(arg);
-        if (((x2$7 !== x2$7) || ((x2$7 === Infinity) || (x2$7 === (-Infinity))))) {
-          $thiz.java$util$Formatter$$formatNaNOrInfinite__I__I__D__V(flags, width, x2$7)
-        } else {
-          var forceDecimalSep$2 = ((2 & flags) !== 0);
-          var arg2$2 = ((precision >= 0) ? precision : 6);
-          $thiz.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V(localeInfo, flags, width, $p_ju_Formatter__decimalNotation__D__I__Z__T($thiz, x2$7, arg2$2, forceDecimalSep$2), "")
-        }
+        $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, width, precision, x2$7)
       } else {
-        $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg, localeInfo, flags, width, precision, conversion)
+        $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg)
       };
-      break
-    }
-    case 37: {
-      if (((254 & flags) !== 0)) {
-        $p_ju_Formatter__illegalFlags$2__I__E($thiz, flags)
-      };
-      if ((precision >= 0)) {
-        throw new $c_ju_IllegalFormatPrecisionException(precision)
-      };
-      if ((((1 & flags) !== 0) && (width < 0))) {
-        throw new $c_ju_MissingFormatWidthException("%-%")
-      };
-      $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, "%");
-      break
-    }
-    case 110: {
-      if (((255 & flags) !== 0)) {
-        $p_ju_Formatter__illegalFlags$2__I__E($thiz, flags)
-      };
-      if ((precision >= 0)) {
-        throw new $c_ju_IllegalFormatPrecisionException(precision)
-      };
-      if ((width >= 0)) {
-        throw new $c_ju_IllegalFormatWidthException(width)
-      };
-      $p_ju_Formatter__sendToDest__T__V($thiz, "\n");
       break
     }
     default: {
-      throw new $c_ju_UnknownFormatConversionException($as_T(String.fromCharCode(conversion)))
+      throw new $c_jl_AssertionError((("Unknown conversion '" + $bC(conversionLower)) + "' was not rejected earlier"))
     }
   }
 }
 function $p_ju_Formatter__flagsToString__I__T($thiz, flags) {
   return ((((((((((1 & flags) !== 0) ? "-" : "") + (((2 & flags) !== 0) ? "#" : "")) + (((4 & flags) !== 0) ? "+" : "")) + (((8 & flags) !== 0) ? " " : "")) + (((16 & flags) !== 0) ? "0" : "")) + (((32 & flags) !== 0) ? "," : "")) + (((64 & flags) !== 0) ? "(" : "")) + (((128 & flags) !== 0) ? "<" : ""))
 }
-function $p_ju_Formatter__computerizedScientificNotation__D__I__Z__T($thiz, x, precision, forceDecimalSep) {
-  var s1 = $as_T(x.toExponential(precision));
-  var s2 = (((x === 0.0) && ((1.0 / x) < 0.0)) ? ("-" + s1) : s1);
-  var len = $uI(s2.length);
-  var index = (((-3) + len) | 0);
-  var s3;
-  if (((65535 & $uI(s2.charCodeAt(index))) !== 101)) {
-    s3 = s2
-  } else {
-    var endIndex = (((-1) + len) | 0);
-    var $$x1 = $as_T(s2.substring(0, endIndex));
-    var beginIndex = (((-1) + len) | 0);
-    s3 = (($$x1 + "0") + $as_T(s2.substring(beginIndex)))
-  };
-  if (((!forceDecimalSep) || ($uI(s3.indexOf(".")) >= 0))) {
-    return s3
-  } else {
-    var pos = $uI(s3.indexOf("e"));
-    return (($as_T(s3.substring(0, pos)) + ".") + $as_T(s3.substring(pos)))
-  }
+function $p_ju_Formatter__computerizedScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, x, digitsAfterDot, forceDecimalSep) {
+  var rounded = x.round__I__ju_Formatter$Decimal(((1 + digitsAfterDot) | 0));
+  var signStr = (rounded.ju_Formatter$Decimal__f_negative ? "-" : "");
+  var intStr = rounded.ju_Formatter$Decimal__f_unscaledValue;
+  var fractionalDigitCount = (((-1) + $uI(intStr.length)) | 0);
+  var missingZeros = ((digitsAfterDot - fractionalDigitCount) | 0);
+  var integerPart = $as_T(intStr.substring(0, 1));
+  var fractionalPart = (("" + $as_T(intStr.substring(1))) + $m_ju_Formatter$().java$util$Formatter$$strOfZeros__I__T(missingZeros));
+  var significandStr = (((fractionalPart === "") && (!forceDecimalSep)) ? integerPart : ((integerPart + ".") + fractionalPart));
+  var exponent = ((fractionalDigitCount - rounded.ju_Formatter$Decimal__f_scale) | 0);
+  var exponentSign = ((exponent < 0) ? "-" : "+");
+  var this$3 = ((exponent < 0) ? ((-exponent) | 0) : exponent);
+  var exponentAbsStr0 = ("" + this$3);
+  var exponentAbsStr = (($uI(exponentAbsStr0.length) === 1) ? ("0" + exponentAbsStr0) : exponentAbsStr0);
+  return ((((signStr + significandStr) + "e") + exponentSign) + exponentAbsStr)
 }
-function $p_ju_Formatter__generalScientificNotation__D__I__Z__T($thiz, x, precision, forceDecimalSep) {
-  var m = $uD(Math.abs(x));
+function $p_ju_Formatter__decimalNotation__ju_Formatter$Decimal__I__Z__T($thiz, x, scale, forceDecimalSep) {
+  var rounded = x.setScale__I__ju_Formatter$Decimal(scale);
+  var signStr = (rounded.ju_Formatter$Decimal__f_negative ? "-" : "");
+  var intStr = rounded.ju_Formatter$Decimal__f_unscaledValue;
+  var intStrLen = $uI(intStr.length);
+  var minDigits = ((1 + scale) | 0);
+  var expandedIntStr = ((intStrLen >= minDigits) ? intStr : (("" + $m_ju_Formatter$().java$util$Formatter$$strOfZeros__I__T(((minDigits - intStrLen) | 0))) + intStr));
+  var dotPos = (($uI(expandedIntStr.length) - scale) | 0);
+  var integerPart = (signStr + $as_T(expandedIntStr.substring(0, dotPos)));
+  return (((scale === 0) && (!forceDecimalSep)) ? integerPart : ((integerPart + ".") + $as_T(expandedIntStr.substring(dotPos))))
+}
+function $p_ju_Formatter__generalScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, x, precision, forceDecimalSep) {
   var p = ((precision === 0) ? 1 : precision);
-  if ((m === 0.0)) {
-    return $p_ju_Formatter__decimalNotation__D__I__Z__T($thiz, x, (((-1) + p) | 0), forceDecimalSep)
+  var rounded = x.round__I__ju_Formatter$Decimal(p);
+  var this$1 = rounded.ju_Formatter$Decimal__f_unscaledValue;
+  var orderOfMagnitude = (((((-1) + $uI(this$1.length)) | 0) - rounded.ju_Formatter$Decimal__f_scale) | 0);
+  if (((orderOfMagnitude >= (-4)) && (orderOfMagnitude < p))) {
+    var b = (((-1) + ((p - orderOfMagnitude) | 0)) | 0);
+    return $p_ju_Formatter__decimalNotation__ju_Formatter$Decimal__I__Z__T($thiz, rounded, ((b < 0) ? 0 : b), forceDecimalSep)
   } else {
-    var $$x1;
-    if ((m >= 1.0E-4)) {
-      var b = p;
-      $$x1 = (m < $uD(Math.pow(10.0, b)))
-    } else {
-      $$x1 = false
-    };
-    if ($$x1) {
-      var a = $uD(Math.log10(m));
-      var sig0 = $doubleToInt($uD(Math.ceil(a)));
-      var b$1 = sig0;
-      var sig;
-      if (($uD(Math.pow(10.0, b$1)) <= m)) {
-        sig = ((1 + sig0) | 0)
-      } else {
-        sig = sig0
-      };
-      var a$1 = ((p - sig) | 0);
-      return $p_ju_Formatter__decimalNotation__D__I__Z__T($thiz, x, ((a$1 > 0) ? a$1 : 0), forceDecimalSep)
-    } else {
-      return $p_ju_Formatter__computerizedScientificNotation__D__I__Z__T($thiz, x, (((-1) + p) | 0), forceDecimalSep)
-    }
+    return $p_ju_Formatter__computerizedScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, rounded, (((-1) + p) | 0), forceDecimalSep)
   }
 }
-function $p_ju_Formatter__decimalNotation__D__I__Z__T($thiz, x, precision, forceDecimalSep) {
-  var s1 = $as_T(x.toFixed(precision));
-  var s2 = (((x === 0.0) && ((1.0 / x) < 0.0)) ? ("-" + s1) : s1);
-  return ((forceDecimalSep && ($uI(s2.indexOf(".")) < 0)) ? (s2 + ".") : s2)
+function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, width, precision, arg) {
+  if (((arg !== arg) || ((arg === Infinity) || (arg === (-Infinity))))) {
+    $p_ju_Formatter__formatNaNOrInfinite__I__I__D__V($thiz, flags, width, arg)
+  } else {
+    var t = $m_jl_FloatingPointBits$().doubleToLongBits__D__J(arg);
+    var lo = t.RTLong__f_lo;
+    var hi = t.RTLong__f_hi;
+    var negative = (hi < 0);
+    var hi$1 = (1048575 & hi);
+    var lo$1 = ((hi >>> 20) | 0);
+    var biasedExponent = (2047 & lo$1);
+    var actualPrecision = ((precision === 0) ? 1 : ((precision > 12) ? (-1) : precision));
+    var signStr = (negative ? "-" : (((4 & flags) !== 0) ? "+" : (((8 & flags) !== 0) ? " " : "")));
+    var x1___1;
+    var x1___2;
+    var x1___3;
+    if ((biasedExponent === 0)) {
+      if (((lo === 0) && (hi$1 === 0))) {
+        var $$x1___1 = "0";
+        var $$x1___2 = $L0;
+        var $$x1___3 = 0;
+        x1___1 = $$x1___1;
+        x1___2 = $$x1___2;
+        x1___3 = $$x1___3
+      } else if ((actualPrecision === (-1))) {
+        var $$x2___1 = "0";
+        var $$x2___2 = new $c_RTLong(lo, hi$1);
+        var $$x2___3 = (-1022);
+        x1___1 = $$x2___1;
+        x1___2 = $$x2___2;
+        x1___3 = $$x2___3
+      } else {
+        var leadingZeros = ((hi$1 !== 0) ? $clz32(hi$1) : ((32 + $clz32(lo)) | 0));
+        var shift = (((-11) + leadingZeros) | 0);
+        var lo$2 = (((32 & shift) === 0) ? (lo << shift) : 0);
+        var hi$2 = (((32 & shift) === 0) ? (((((lo >>> 1) | 0) >>> ((31 - shift) | 0)) | 0) | (hi$1 << shift)) : (lo << shift));
+        var hi$3 = (1048575 & hi$2);
+        var normalizedExponent = (((-1022) - shift) | 0);
+        var $$x3___1 = "1";
+        var $$x3___2 = new $c_RTLong(lo$2, hi$3);
+        var $$x3___3 = normalizedExponent;
+        x1___1 = $$x3___1;
+        x1___2 = $$x3___2;
+        x1___3 = $$x3___3
+      }
+    } else {
+      var _3 = (((-1023) + biasedExponent) | 0);
+      var $$x4___1 = "1";
+      var $$x4___2 = new $c_RTLong(lo, hi$1);
+      var $$x4___3 = _3;
+      x1___1 = $$x4___1;
+      x1___2 = $$x4___2;
+      x1___3 = $$x4___3
+    };
+    var implicitBitStr = $as_T(x1___1);
+    var t$1 = $uJ(x1___2);
+    var lo$3 = t$1.RTLong__f_lo;
+    var hi$4 = t$1.RTLong__f_hi;
+    var exponent = $uI(x1___3);
+    var t$2 = $uJ(new $c_RTLong(lo$3, hi$4));
+    var lo$4 = t$2.RTLong__f_lo;
+    var hi$5 = t$2.RTLong__f_hi;
+    var roundedMantissa__lo;
+    var roundedMantissa__hi;
+    if ((actualPrecision === (-1))) {
+      var $$x5__lo = lo$4;
+      var $$x5__hi = hi$5;
+      roundedMantissa__lo = $$x5__lo;
+      roundedMantissa__hi = $$x5__hi
+    } else {
+      var n = ((52 - (actualPrecision << 2)) | 0);
+      var lo$5 = (((32 & n) === 0) ? (1 << n) : 0);
+      var hi$6 = (((32 & n) === 0) ? 0 : (1 << n));
+      var lo$6 = (((-1) + lo$5) | 0);
+      var hi$7 = ((lo$6 !== (-1)) ? hi$6 : (((-1) + hi$6) | 0));
+      var lo$7 = (((lo$5 >>> 1) | 0) | (hi$6 << 31));
+      var hi$8 = (hi$6 >> 1);
+      var lo$8 = (~lo$6);
+      var hi$9 = (~hi$7);
+      var lo$9 = (lo$4 & lo$8);
+      var hi$10 = (hi$5 & hi$9);
+      var lo$10 = (lo$4 & lo$6);
+      var hi$11 = (hi$5 & hi$7);
+      if (((hi$11 === hi$8) ? (((-2147483648) ^ lo$10) < ((-2147483648) ^ lo$7)) : (hi$11 < hi$8))) {
+        var $$x6__lo = lo$9;
+        var $$x6__hi = hi$10;
+        roundedMantissa__lo = $$x6__lo;
+        roundedMantissa__hi = $$x6__hi
+      } else if (((hi$11 === hi$8) ? (((-2147483648) ^ lo$10) > ((-2147483648) ^ lo$7)) : (hi$11 > hi$8))) {
+        var lo$11 = ((lo$9 + lo$5) | 0);
+        var hi$12 = ((((-2147483648) ^ lo$11) < ((-2147483648) ^ lo$9)) ? ((1 + ((hi$10 + hi$6) | 0)) | 0) : ((hi$10 + hi$6) | 0));
+        var $$x7__lo = lo$11;
+        var $$x7__hi = hi$12;
+        roundedMantissa__lo = $$x7__lo;
+        roundedMantissa__hi = $$x7__hi
+      } else {
+        var lo$12 = (lo$9 & lo$5);
+        var hi$13 = (hi$10 & hi$6);
+        if (((lo$12 === 0) && (hi$13 === 0))) {
+          var $$x8__lo = lo$9;
+          var $$x8__hi = hi$10;
+          roundedMantissa__lo = $$x8__lo;
+          roundedMantissa__hi = $$x8__hi
+        } else {
+          var lo$13 = ((lo$9 + lo$5) | 0);
+          var hi$14 = ((((-2147483648) ^ lo$13) < ((-2147483648) ^ lo$9)) ? ((1 + ((hi$10 + hi$6) | 0)) | 0) : ((hi$10 + hi$6) | 0));
+          var $$x9__lo = lo$13;
+          var $$x9__hi = hi$14;
+          roundedMantissa__lo = $$x9__lo;
+          roundedMantissa__hi = $$x9__hi
+        }
+      }
+    };
+    var this$10 = $m_jl_Long$();
+    var hi$15 = roundedMantissa__hi;
+    var baseStr = this$10.java$lang$Long$$toHexString__I__I__T(roundedMantissa__lo, hi$15);
+    var beginIndex = $uI(baseStr.length);
+    var padded = (("" + $as_T("0000000000000".substring(beginIndex))) + baseStr);
+    $m_ju_Formatter$();
+    var condition = ($uI(padded.length) === 13);
+    if ((!condition)) {
+      throw new $c_jl_AssertionError("padded mantissa does not have the right number of bits")
+    };
+    var minLength = ((actualPrecision < 1) ? 1 : actualPrecision);
+    var len = $uI(padded.length);
+    while (true) {
+      var $$x10;
+      if ((len > minLength)) {
+        var index = (((-1) + len) | 0);
+        $$x10 = ((65535 & $uI(padded.charCodeAt(index))) === 48)
+      } else {
+        $$x10 = false
+      };
+      if ($$x10) {
+        len = (((-1) + len) | 0)
+      } else {
+        break
+      }
+    };
+    var endIndex = len;
+    var mantissaStr = $as_T(padded.substring(0, endIndex));
+    var exponentStr = ("" + exponent);
+    var prefix = (signStr + (((256 & flags) !== 0) ? "0X" : "0x"));
+    var rest = ((((implicitBitStr + ".") + mantissaStr) + "p") + exponentStr);
+    $p_ju_Formatter__padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, $m_ju_Formatter$RootLocaleInfo$(), flags, width, prefix, $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, rest))
+  }
 }
 function $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo, flags, width, precision, str) {
   var truncatedStr = ((precision < 0) ? str : $as_T(str.substring(0, precision)));
   $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, $p_ju_Formatter__applyUpperCase__ju_Formatter$LocaleInfo__I__T__T($thiz, localeInfo, flags, truncatedStr))
 }
-function $p_ju_Formatter__insertGroupingCommas__ju_Formatter$LocaleInfo__T__T($thiz, localeInfo, s) {
-  var len = $uI(s.length);
-  var index = 0;
-  while (true) {
-    var $$x1;
-    if ((index !== len)) {
-      var index$1 = index;
-      var c = (65535 & $uI(s.charCodeAt(index$1)));
-      $$x1 = ((c >= 48) && (c <= 57))
-    } else {
-      $$x1 = false
-    };
-    if ($$x1) {
-      index = ((1 + index) | 0)
-    } else {
-      break
-    }
-  };
-  index = (((-3) + index) | 0);
-  if ((index <= 0)) {
-    return s
-  } else {
-    var beginIndex = index;
-    var result = $as_T(s.substring(beginIndex));
-    while ((index > 3)) {
-      var next = (((-3) + index) | 0);
-      var endIndex = index;
-      result = (($as_T(s.substring(next, endIndex)) + ",") + result);
-      index = next
-    };
-    var endIndex$1 = index;
-    return (($as_T(s.substring(0, endIndex$1)) + ",") + result)
-  }
-}
-function $p_ju_Formatter__applyUpperCase__ju_Formatter$LocaleInfo__I__T__T($thiz, localeInfo, flags, str) {
-  return (((256 & flags) !== 0) ? $as_T(str.toUpperCase()) : str)
-}
-function $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, str) {
-  var len = $uI(str.length);
-  if ((len >= width)) {
-    $p_ju_Formatter__sendToDest__T__V($thiz, str)
-  } else if (((1 & flags) !== 0)) {
-    $p_ju_Formatter__sendToDest__T__T__V($thiz, str, $p_ju_Formatter__strRepeat__T__I__T($thiz, " ", ((width - len) | 0)))
-  } else {
-    $p_ju_Formatter__sendToDest__T__T__V($thiz, $p_ju_Formatter__strRepeat__T__I__T($thiz, " ", ((width - len) | 0)), str)
-  }
-}
-function $p_ju_Formatter__strRepeat__T__I__T($thiz, s, times) {
-  var result = "";
-  var i = 0;
-  while ((i !== times)) {
-    result = (("" + result) + s);
-    i = ((1 + i) | 0)
-  };
-  return result
-}
-function $p_ju_Formatter__formatNullOrThrowIllegalFormatConversion$1__O__ju_Formatter$LocaleInfo__I__I__I__C__V($thiz, arg$1, localeInfo$1, flags$1, width$1, precision$1, conversion$1) {
-  if ((arg$1 === null)) {
-    $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo$1, flags$1, width$1, precision$1, "null")
-  } else {
-    throw new $c_ju_IllegalFormatConversionException(conversion$1, $objectGetClass(arg$1))
-  }
-}
-function $p_ju_Formatter__flagsConversionMismatch$1__I__I__C__E($thiz, flags$2, invalidFlags$1, conversion$2) {
-  throw new $c_ju_FormatFlagsConversionMismatchException($p_ju_Formatter__flagsToString__I__T($thiz, (flags$2 & invalidFlags$1)), conversion$2)
-}
-function $p_ju_Formatter__illegalFlags$1__I__E($thiz, flags$2) {
-  throw new $c_ju_IllegalFormatFlagsException($p_ju_Formatter__flagsToString__I__T($thiz, flags$2))
-}
-function $p_ju_Formatter__illegalFlags$2__I__E($thiz, flags$3) {
-  throw new $c_ju_IllegalFormatFlagsException($p_ju_Formatter__flagsToString__I__T($thiz, flags$3))
-}
-function $ct_ju_Formatter__jl_Appendable__ju_Formatter$LocaleInfo__($thiz, dest, formatterLocaleInfo) {
-  $thiz.ju_Formatter__f_dest = dest;
-  $thiz.ju_Formatter__f_formatterLocaleInfo = formatterLocaleInfo;
-  $thiz.ju_Formatter__f_stringOutput = "";
-  $thiz.ju_Formatter__f_java$util$Formatter$$closed = false;
-  $thiz.ju_Formatter__f_java$util$Formatter$$lastIOException = null;
-  return $thiz
-}
-function $ct_ju_Formatter__($thiz) {
-  $ct_ju_Formatter__jl_Appendable__ju_Formatter$LocaleInfo__($thiz, null, $m_ju_Formatter$RootLocaleInfo$());
-  return $thiz
-}
-/** @constructor */
-function $c_ju_Formatter() {
-  this.ju_Formatter__f_dest = null;
-  this.ju_Formatter__f_formatterLocaleInfo = null;
-  this.ju_Formatter__f_stringOutput = null;
-  this.ju_Formatter__f_java$util$Formatter$$closed = false;
-  this.ju_Formatter__f_java$util$Formatter$$lastIOException = null
-}
-$c_ju_Formatter.prototype = new $h_O();
-$c_ju_Formatter.prototype.constructor = $c_ju_Formatter;
-/** @constructor */
-function $h_ju_Formatter() {
-  /*<skip>*/
-}
-$h_ju_Formatter.prototype = $c_ju_Formatter.prototype;
-$c_ju_Formatter.prototype.format__T__AO__ju_Formatter = (function(format, args) {
-  return $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter(this, this.ju_Formatter__f_formatterLocaleInfo, format, args)
-});
-$c_ju_Formatter.prototype.java$util$Formatter$$formatNaNOrInfinite__I__I__D__V = (function(flags, width, x) {
+function $p_ju_Formatter__formatNaNOrInfinite__I__I__D__V($thiz, flags, width, x) {
   var str = ((x !== x) ? "NaN" : ((x > 0.0) ? (((4 & flags) !== 0) ? "+Infinity" : (((8 & flags) !== 0) ? " Infinity" : "Infinity")) : (((64 & flags) !== 0) ? "(Infinity)" : "-Infinity")));
-  $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V(this, flags, width, this.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, str))
-});
-$c_ju_Formatter.prototype.java$util$Formatter$$formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V = (function(localeInfo, flags, width, str, basePrefix) {
+  $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, str))
+}
+function $p_ju_Formatter__formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, localeInfo, flags, width, str, basePrefix) {
   if ((($uI(str.length) >= width) && ((110 & flags) === 0))) {
-    var str$1 = this.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, str);
-    $p_ju_Formatter__sendToDest__T__V(this, str$1)
+    var str$1 = $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, str);
+    $p_ju_Formatter__sendToDest__T__V($thiz, str$1)
   } else if (((126 & flags) === 0)) {
-    $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V(this, flags, width, this.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, str))
+    $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, str))
   } else {
     var x1___1;
     var x1___2;
@@ -19067,31 +19178,169 @@ $c_ju_Formatter.prototype.java$util$Formatter$$formatNumericString__ju_Formatter
     var numberPrefix = $as_T(x1___1);
     var rest0 = $as_T(x1___2);
     var prefix = (("" + numberPrefix) + basePrefix);
-    var rest = (((32 & flags) !== 0) ? $p_ju_Formatter__insertGroupingCommas__ju_Formatter$LocaleInfo__T__T(this, localeInfo, rest0) : rest0);
-    var str$2 = this.java$util$Formatter$$applyNumberUpperCase__I__T__T(flags, rest);
-    this.java$util$Formatter$$padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V(localeInfo, flags, width, prefix, str$2)
+    var rest = (((32 & flags) !== 0) ? $p_ju_Formatter__insertGroupingCommas__ju_Formatter$LocaleInfo__T__T($thiz, localeInfo, rest0) : rest0);
+    var str$2 = $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, rest);
+    $p_ju_Formatter__padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, localeInfo, flags, width, prefix, str$2)
   }
-});
-$c_ju_Formatter.prototype.java$util$Formatter$$applyNumberUpperCase__I__T__T = (function(flags, str) {
+}
+function $p_ju_Formatter__insertGroupingCommas__ju_Formatter$LocaleInfo__T__T($thiz, localeInfo, s) {
+  var len = $uI(s.length);
+  var index = 0;
+  while (true) {
+    var $$x1;
+    if ((index !== len)) {
+      var index$1 = index;
+      var c = (65535 & $uI(s.charCodeAt(index$1)));
+      $$x1 = ((c >= 48) && (c <= 57))
+    } else {
+      $$x1 = false
+    };
+    if ($$x1) {
+      index = ((1 + index) | 0)
+    } else {
+      break
+    }
+  };
+  index = (((-3) + index) | 0);
+  if ((index <= 0)) {
+    return s
+  } else {
+    var beginIndex = index;
+    var result = $as_T(s.substring(beginIndex));
+    while ((index > 3)) {
+      var next = (((-3) + index) | 0);
+      var endIndex = index;
+      result = (($as_T(s.substring(next, endIndex)) + ",") + result);
+      index = next
+    };
+    var endIndex$1 = index;
+    return (($as_T(s.substring(0, endIndex$1)) + ",") + result)
+  }
+}
+function $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, str) {
   return (((256 & flags) !== 0) ? $as_T(str.toUpperCase()) : str)
-});
-$c_ju_Formatter.prototype.java$util$Formatter$$padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V = (function(localeInfo, flags, width, prefix, str) {
+}
+function $p_ju_Formatter__applyUpperCase__ju_Formatter$LocaleInfo__I__T__T($thiz, localeInfo, flags, str) {
+  return (((256 & flags) !== 0) ? $as_T(str.toUpperCase()) : str)
+}
+function $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, str) {
+  var len = $uI(str.length);
+  if ((len >= width)) {
+    $p_ju_Formatter__sendToDest__T__V($thiz, str)
+  } else if (((1 & flags) !== 0)) {
+    $p_ju_Formatter__sendToDest__T__T__V($thiz, str, $p_ju_Formatter__strRepeat__T__I__T($thiz, " ", ((width - len) | 0)))
+  } else {
+    $p_ju_Formatter__sendToDest__T__T__V($thiz, $p_ju_Formatter__strRepeat__T__I__T($thiz, " ", ((width - len) | 0)), str)
+  }
+}
+function $p_ju_Formatter__padAndSendToDest__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, localeInfo, flags, width, prefix, str) {
   var len = (($uI(prefix.length) + $uI(str.length)) | 0);
   if ((len >= width)) {
-    $p_ju_Formatter__sendToDest__T__T__V(this, prefix, str)
+    $p_ju_Formatter__sendToDest__T__T__V($thiz, prefix, str)
   } else if (((16 & flags) !== 0)) {
-    $p_ju_Formatter__sendToDest__T__T__T__V(this, prefix, $p_ju_Formatter__strRepeat__T__I__T(this, "0", ((width - len) | 0)), str)
+    $p_ju_Formatter__sendToDest__T__T__T__V($thiz, prefix, $p_ju_Formatter__strRepeat__T__I__T($thiz, "0", ((width - len) | 0)), str)
   } else if (((1 & flags) !== 0)) {
-    $p_ju_Formatter__sendToDest__T__T__T__V(this, prefix, str, $p_ju_Formatter__strRepeat__T__I__T(this, " ", ((width - len) | 0)))
+    $p_ju_Formatter__sendToDest__T__T__T__V($thiz, prefix, str, $p_ju_Formatter__strRepeat__T__I__T($thiz, " ", ((width - len) | 0)))
   } else {
-    $p_ju_Formatter__sendToDest__T__T__T__V(this, $p_ju_Formatter__strRepeat__T__I__T(this, " ", ((width - len) | 0)), prefix, str)
+    $p_ju_Formatter__sendToDest__T__T__T__V($thiz, $p_ju_Formatter__strRepeat__T__I__T($thiz, " ", ((width - len) | 0)), prefix, str)
   }
+}
+function $p_ju_Formatter__strRepeat__T__I__T($thiz, s, times) {
+  var result = "";
+  var i = 0;
+  while ((i !== times)) {
+    result = (("" + result) + s);
+    i = ((1 + i) | 0)
+  };
+  return result
+}
+function $p_ju_Formatter__throwDuplicateFormatFlagsException__C__E($thiz, flag) {
+  throw new $c_ju_DuplicateFormatFlagsException($as_T(String.fromCharCode(flag)))
+}
+function $p_ju_Formatter__throwUnknownFormatConversionException__C__E($thiz, conversion) {
+  throw new $c_ju_UnknownFormatConversionException($as_T(String.fromCharCode(conversion)))
+}
+function $p_ju_Formatter__throwIllegalFormatPrecisionException__I__E($thiz, precision) {
+  throw new $c_ju_IllegalFormatPrecisionException(precision)
+}
+function $p_ju_Formatter__throwIllegalFormatWidthException__I__E($thiz, width) {
+  throw new $c_ju_IllegalFormatWidthException(width)
+}
+function $p_ju_Formatter__throwMissingFormatWidthException__T__E($thiz, fullFormatSpecifier) {
+  throw new $c_ju_MissingFormatWidthException(fullFormatSpecifier)
+}
+function $p_ju_Formatter__throwMissingFormatArgumentException__T__E($thiz, fullFormatSpecifier) {
+  throw new $c_ju_MissingFormatArgumentException(fullFormatSpecifier)
+}
+function $p_ju_Formatter__throwIllegalFormatCodePointException__I__E($thiz, arg) {
+  throw new $c_ju_IllegalFormatCodePointException(arg)
+}
+function $p_ju_Formatter__fullFormatSpecifier$1__sjs_js_RegExp$ExecResult__T($thiz, execResult$1) {
+  return ("%" + execResult$1[0])
+}
+function $p_ju_Formatter__formatDecimal$1__ju_Formatter$Decimal__I__I__C__ju_Formatter$LocaleInfo__I__V($thiz, x, flags$1, precision$1, conversionLower$1, localeInfo$1, width$1) {
+  var forceDecimalSep = ((2 & flags$1) !== 0);
+  var actualPrecision = ((precision$1 >= 0) ? precision$1 : 6);
+  var notation;
+  switch (conversionLower$1) {
+    case 101: {
+      notation = $p_ju_Formatter__computerizedScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, x, actualPrecision, forceDecimalSep);
+      break
+    }
+    case 102: {
+      notation = $p_ju_Formatter__decimalNotation__ju_Formatter$Decimal__I__Z__T($thiz, x, actualPrecision, forceDecimalSep);
+      break
+    }
+    default: {
+      notation = $p_ju_Formatter__generalScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, x, actualPrecision, forceDecimalSep)
+    }
+  };
+  $p_ju_Formatter__formatNumericString__ju_Formatter$LocaleInfo__I__I__T__T__V($thiz, localeInfo$1, flags$1, width$1, notation, "")
+}
+function $ct_ju_Formatter__jl_Appendable__ju_Formatter$LocaleInfo__($thiz, dest, formatterLocaleInfo) {
+  $thiz.ju_Formatter__f_dest = dest;
+  $thiz.ju_Formatter__f_formatterLocaleInfo = formatterLocaleInfo;
+  $thiz.ju_Formatter__f_stringOutput = "";
+  $thiz.ju_Formatter__f_java$util$Formatter$$closed = false;
+  $thiz.ju_Formatter__f_java$util$Formatter$$lastIOException = null;
+  return $thiz
+}
+function $ct_ju_Formatter__($thiz) {
+  $ct_ju_Formatter__jl_Appendable__ju_Formatter$LocaleInfo__($thiz, null, $m_ju_Formatter$RootLocaleInfo$());
+  return $thiz
+}
+/** @constructor */
+function $c_ju_Formatter() {
+  this.ju_Formatter__f_dest = null;
+  this.ju_Formatter__f_formatterLocaleInfo = null;
+  this.ju_Formatter__f_stringOutput = null;
+  this.ju_Formatter__f_java$util$Formatter$$closed = false;
+  this.ju_Formatter__f_java$util$Formatter$$lastIOException = null
+}
+$c_ju_Formatter.prototype = new $h_O();
+$c_ju_Formatter.prototype.constructor = $c_ju_Formatter;
+/** @constructor */
+function $h_ju_Formatter() {
+  /*<skip>*/
+}
+$h_ju_Formatter.prototype = $c_ju_Formatter.prototype;
+$c_ju_Formatter.prototype.format__T__AO__ju_Formatter = (function(format, args) {
+  return $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter(this, this.ju_Formatter__f_formatterLocaleInfo, format, args)
 });
 $c_ju_Formatter.prototype.toString__T = (function() {
   if (this.ju_Formatter__f_java$util$Formatter$$closed) {
     throw new $c_ju_FormatterClosedException()
   };
   return ((this.ju_Formatter__f_dest === null) ? this.ju_Formatter__f_stringOutput : this.ju_Formatter__f_dest.toString__T())
+});
+$c_ju_Formatter.prototype.java$util$Formatter$$throwIllegalFormatFlagsException__I__E = (function(flags) {
+  throw new $c_ju_IllegalFormatFlagsException($p_ju_Formatter__flagsToString__I__T(this, flags))
+});
+$c_ju_Formatter.prototype.java$util$Formatter$$throwFormatFlagsConversionMismatchException__C__I__I__E = (function(conversionLower, flags, illegalFlags) {
+  throw new $c_ju_FormatFlagsConversionMismatchException($p_ju_Formatter__flagsToString__I__T(this, (flags & illegalFlags)), conversionLower)
+});
+$c_ju_Formatter.prototype.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E = (function(conversionLower, arg) {
+  throw new $c_ju_IllegalFormatConversionException(conversionLower, $objectGetClass(arg))
 });
 var $d_ju_Formatter = new $TypeData().initClass({
   ju_Formatter: 0
