@@ -1,7 +1,7 @@
 import ReleaseTransformations._
 import UpdateReadme.updateReadme
 
-val scala213Version = "2.13.5"
+val scala213Version = "2.13.10"
 val defaultScalacOptions = Seq(
   "-deprecation",
   "-encoding", "UTF-8",
