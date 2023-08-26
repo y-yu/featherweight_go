@@ -24,7 +24,7 @@ lazy val root = project.in(file("."))
     featherweightGoJVM
   )
 
-lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) in file("."))
+lazy val featherweightGo = ((file(".") / crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full)))
   .settings(
     scalaVersion := scala213Version,
     scalacOptions ++= defaultScalacOptions,
@@ -38,7 +38,7 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
   )
   .jsSettings(
     scalacOptions += {
-      val a = (baseDirectory in LocalRootProject).value.toURI.toString
+      val a = ((LocalRootProject / baseDirectory)).value.toURI.toString
       val g = "https://raw.githubusercontent.com/y-yu/featherweight_go/" + tagOrHash.value
       s"-P:scalajs:mapSourceURI:$a->$g/"
     }
@@ -47,7 +47,7 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
     mainClass := Some("featherweightgo.Main")
   )
 
-lazy val featherweightGoCore = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Pure) in file("./core"))
+lazy val featherweightGoCore = ((file("./core") / crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Pure)))
   .settings(
     organization := "com.github.y-yu",
     name := "featherweight_go",
@@ -78,7 +78,7 @@ lazy val publishSettings = Seq(
     else
       Opts.resolver.sonatypeStaging
   ),
-  publishArtifact in Test := false,
+  (Test / publishArtifact) := false,
   pomExtra :=
     <developers>
       <developer>
@@ -113,7 +113,7 @@ lazy val publishSettings = Seq(
 )
 
 val tagName = Def.setting {
-  s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
+  s"v${if (releaseUseGlobalVersion.value) ((ThisBuild / version)).value else version.value}"
 }
 
 val tagOrHash = Def.setting {
