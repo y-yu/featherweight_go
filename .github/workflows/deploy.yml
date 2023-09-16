@@ -8,15 +8,15 @@ jobs:
     name: Deploy to gh-pages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup Java 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: 11
 
       - name: Setup coursier cache
-        uses: coursier/cache-action@v4.1
+        uses: coursier/cache-action@v6.4
 
       - name: Make JS code
         run: ./sbt featherweightGoJS/fastOptJS
