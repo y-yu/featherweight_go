@@ -1,7 +1,7 @@
 import ReleaseTransformations._
 import UpdateReadme.updateReadme
 
-val scala213Version = "2.13.5"
+val scala213Version = "2.13.11"
 val defaultScalacOptions = Seq(
   "-deprecation",
   "-encoding", "UTF-8",
@@ -38,7 +38,7 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
   )
   .jsSettings(
     scalacOptions += {
-      val a = (baseDirectory in LocalRootProject).value.toURI.toString
+      val a = (LocalRootProject / baseDirectory).value.toURI.toString
       val g = "https://raw.githubusercontent.com/y-yu/featherweight_go/" + tagOrHash.value
       s"-P:scalajs:mapSourceURI:$a->$g/"
     }
@@ -58,7 +58,7 @@ lazy val featherweightGoCore = (crossProject(JVMPlatform, JSPlatform).crossType(
     scalacOptions ++= defaultScalacOptions,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %%% "scala-parser-combinators" % "1.1.2",
-      "org.scalatest" %%% "scalatest" % "3.2.16" % "test",
+      "org.scalatest" %%% "scalatest" % "3.2.17" % "test",
       "com.lihaoyi" %%% "pprint" % "0.6.6"
     )
   )
@@ -72,13 +72,13 @@ lazy val featherweightGoJS = featherweightGo.js
 
 lazy val publishSettings = Seq(
   publishMavenStyle := true,
-  publishTo := Some(
+  publishTo := (
     if (isSnapshot.value)
-      Opts.resolver.sonatypeSnapshots
+      Opts.resolver.sonatypeOssSnapshots.headOption
     else
-      Opts.resolver.sonatypeStaging
+      Some(Opts.resolver.sonatypeStaging)
   ),
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   pomExtra :=
     <developers>
       <developer>
@@ -113,7 +113,7 @@ lazy val publishSettings = Seq(
 )
 
 val tagName = Def.setting {
-  s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
+  s"v${if (releaseUseGlobalVersion.value) (ThisBuild / version).value else version.value}"
 }
 
 val tagOrHash = Def.setting {
