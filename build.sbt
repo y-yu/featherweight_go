@@ -57,7 +57,7 @@ lazy val featherweightGoCore = (crossProject(JVMPlatform, JSPlatform).crossType(
     scalaVersion := scala213Version,
     scalacOptions ++= defaultScalacOptions,
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %%% "scala-parser-combinators" % "1.1.2",
+      "org.scala-lang.modules" %%% "scala-parser-combinators" % "2.3.0",
       "org.scalatest" %%% "scalatest" % "3.2.17" % "test",
       "com.lihaoyi" %%% "pprint" % "0.6.6"
     )
