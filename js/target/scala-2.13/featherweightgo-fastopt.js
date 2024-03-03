@@ -1598,16 +1598,16 @@ function $c_Lfansi_Str$() {
       var color = $as_Lfansi_Attr(arg1$1);
       var this$7 = $n($n(color).escapeOpt__s_Option());
       if (this$7.isEmpty__Z()) {
-        var xs = $m_s_None$()
+        var elems = $m_s_None$()
       } else {
         var arg1$2 = this$7.get__O();
         var str = $as_T(arg1$2);
-        var xs = new $c_s_Some(new $c_T2(str, ($n($m_s_package$().s_package$__f_Left), new $c_s_util_Left(color))))
+        var elems = new $c_s_Some(new $c_T2(str, ($n($m_s_package$().s_package$__f_Left), new $c_s_util_Left(color))))
       };
-      b$1.addAll__sc_IterableOnce__sci_VectorBuilder(xs)
+      b$1.addAll__sc_IterableOnce__sci_VectorBuilder(elems)
     };
-    var xs$1 = b$1.result__sci_Vector();
-    b.addAll__sc_IterableOnce__sci_VectorBuilder(xs$1)
+    var elems$1 = b$1.result__sci_Vector();
+    b.addAll__sc_IterableOnce__sci_VectorBuilder(elems$1)
   };
   var pairs = b.result__sci_Vector();
   var $x_1 = $m_s_package$().s_package$__f_Seq;
@@ -2774,22 +2774,18 @@ $c_Lfeatherweightgo_util_Utils$.prototype.unique__sci_List__Z = (function(method
 $c_Lfeatherweightgo_util_Utils$.prototype.bounds__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Type__s_util_Either = (function(typeBound, typ) {
   if ((typ instanceof $c_Lfeatherweightgo_model_ast_TypeParameter)) {
     var x2 = $as_Lfeatherweightgo_model_ast_TypeParameter(typ);
-    $n($m_s_package$().s_package$__f_Left);
     var this$1 = $n(typeBound);
-    var value = $n($n(this$1.Lfeatherweightgo_model_typer_TypeBound__f_value).get__O__s_Option(x2)).get__O();
-    return new $c_s_util_Left(value)
+    return new $c_s_util_Left($n($n(this$1.Lfeatherweightgo_model_typer_TypeBound__f_value).get__O__s_Option(x2)).get__O())
   } else if ((typ instanceof $c_Lfeatherweightgo_model_ast_InterfaceType)) {
     var x3 = $as_Lfeatherweightgo_model_ast_InterfaceType(typ);
-    $n($m_s_package$().s_package$__f_Left);
     return new $c_s_util_Left(x3)
   } else if ((typ instanceof $c_Lfeatherweightgo_model_ast_AbstractStructureType)) {
     var x4 = $as_Lfeatherweightgo_model_ast_AbstractStructureType(typ);
-    $n($m_s_package$().s_package$__f_Right);
     return new $c_s_util_Right(x4)
   } else if ((typ instanceof $c_Lfeatherweightgo_model_ast_AnyNamedType)) {
     var x5 = $as_Lfeatherweightgo_model_ast_AnyNamedType(typ);
-    var this$5 = $n(x5);
-    throw new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("`bounds` cannot accept AnyNamedType(" + this$5.Lfeatherweightgo_model_ast_AnyNamedType__f_typeName) + ")!"), null)
+    var this$2 = $n(x5);
+    throw new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("`bounds` cannot accept AnyNamedType(" + this$2.Lfeatherweightgo_model_ast_AnyNamedType__f_typeName) + ")!"), null)
   } else {
     throw new $c_s_MatchError(typ)
   }
@@ -2876,34 +2872,31 @@ $c_Lfeatherweightgo_util_Utils$.prototype.distinct__sci_List__Z = (function(seq)
   return ($n($as_sci_List($f_sc_SeqOps__distinct__O(this$1))).length__I() === $n(seq).length__I())
 });
 $c_Lfeatherweightgo_util_Utils$.prototype.sequence__sci_List__s_util_Either = (function(seq) {
-  var this$3 = $n(seq);
-  $n($m_s_package$().s_package$__f_Right);
-  $n($m_s_package$().s_package$__f_List);
-  var value = $m_sci_Nil$();
-  var z = new $c_s_util_Right(value);
+  var this$2 = $n(seq);
+  var z = new $c_s_util_Right(($n($m_s_package$().s_package$__f_List), $m_sci_Nil$()));
   var acc = z;
-  var these = this$3;
+  var these = this$2;
   while ((!$n(these).isEmpty__Z())) {
     var arg1 = acc;
     var arg2 = $n(these).head__O();
     var x = $as_s_util_Either(arg1);
     var y = $as_s_util_Either(arg2);
-    var this$4 = $n(x);
-    if ((this$4 instanceof $c_s_util_Right)) {
-      var x2 = $as_s_util_Right(this$4);
+    var this$3 = $n(x);
+    if ((this$3 instanceof $c_s_util_Right)) {
+      var x2 = $as_s_util_Right(this$3);
       var b = $n(x2).s_util_Right__f_value;
       var a = $as_sci_List(b);
-      var this$5 = $n(y);
-      if ((this$5 instanceof $c_s_util_Right)) {
-        var x2$1 = $as_s_util_Right(this$5);
+      var this$4 = $n(y);
+      if ((this$4 instanceof $c_s_util_Right)) {
+        var x2$1 = $as_s_util_Right(this$4);
         var b$1 = $n(x2$1).s_util_Right__f_value;
-        var this$6 = $n(a);
-        acc = new $c_s_util_Right($as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$6, b$1)))
+        var this$5 = $n(a);
+        acc = new $c_s_util_Right($as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$5, b$1)))
       } else {
-        acc = this$5
+        acc = this$4
       }
     } else {
-      acc = this$4
+      acc = this$3
     };
     these = $as_sc_LinearSeq($n(these).tail__O())
   };
@@ -8958,9 +8951,6 @@ $h_s_util_control_NonFatal$.prototype = $c_s_util_control_NonFatal$.prototype;
 $c_s_util_control_NonFatal$.prototype.apply__jl_Throwable__Z = (function(t) {
   return (!((t instanceof $c_jl_VirtualMachineError) || (false || (false || (false || false)))))
 });
-$c_s_util_control_NonFatal$.prototype.unapply__jl_Throwable__s_Option = (function(t) {
-  return (this.apply__jl_Throwable__Z(t) ? new $c_s_Some(t) : $m_s_None$())
-});
 var $d_s_util_control_NonFatal$ = new $TypeData().initClass({
   s_util_control_NonFatal$: 0
 }, false, "scala.util.control.NonFatal$", {
@@ -10190,157 +10180,143 @@ function $m_Lfansi_Underlined$() {
   return $n_Lfansi_Underlined$
 }
 function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression$1) {
-  $n($m_s_package$().s_package$__f_Left);
-  var value = new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(expression$1, $m_s_None$(), null);
-  return new $c_s_util_Left(value)
+  return new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(expression$1, $m_s_None$(), null))
 }
 function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, expression, declarations$1) {
   if ($is_Lfeatherweightgo_model_ast_Primitive(expression)) {
     var x2 = $as_Lfeatherweightgo_model_ast_Primitive(expression);
-    $n($m_s_package$().s_package$__f_Right);
     return new $c_s_util_Right(x2)
   } else if ((expression instanceof $c_Lfeatherweightgo_model_ast_Plus)) {
     var x3 = $as_Lfeatherweightgo_model_ast_Plus(expression);
     var lhs = $n(x3).Lfeatherweightgo_model_ast_Plus__f_lhs;
     var rhs = $n(x3).Lfeatherweightgo_model_ast_Plus__f_rhs;
-    var this$2 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, lhs, declarations$1));
-    if ((this$2 instanceof $c_s_util_Right)) {
-      var x2$1 = $as_s_util_Right(this$2);
+    var this$1 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, lhs, declarations$1));
+    if ((this$1 instanceof $c_s_util_Right)) {
+      var x2$1 = $as_s_util_Right(this$1);
       var b = $n(x2$1).s_util_Right__f_value;
       var l = $as_Lfeatherweightgo_model_ast_Primitive(b);
-      var this$3 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, rhs, declarations$1));
-      if ((this$3 instanceof $c_s_util_Right)) {
-        var x2$2 = $as_s_util_Right(this$3);
+      var this$2 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, rhs, declarations$1));
+      if ((this$2 instanceof $c_s_util_Right)) {
+        var x2$2 = $as_s_util_Right(this$2);
         var b$1 = $n(x2$2).s_util_Right__f_value;
         var r = $as_Lfeatherweightgo_model_ast_Primitive(b$1);
         matchEnd7: {
-          var this$8;
+          var this$5;
           if ((l instanceof $c_Lfeatherweightgo_model_ast_IntegerValue)) {
             var x4 = $as_Lfeatherweightgo_model_ast_IntegerValue(l);
             var lv = $n(x4).Lfeatherweightgo_model_ast_IntegerValue__f_value;
             if ((r instanceof $c_Lfeatherweightgo_model_ast_IntegerValue)) {
               var x5 = $as_Lfeatherweightgo_model_ast_IntegerValue(r);
               var rv = $n(x5).Lfeatherweightgo_model_ast_IntegerValue__f_value;
-              $n($m_s_package$().s_package$__f_Right);
-              var value = new $c_Lfeatherweightgo_model_ast_IntegerValue(((lv + rv) | 0));
-              var this$8 = new $c_s_util_Right(value);
+              var this$5 = new $c_s_util_Right(new $c_Lfeatherweightgo_model_ast_IntegerValue(((lv + rv) | 0)));
               break matchEnd7
             }
           };
-          $n($m_s_package$().s_package$__f_Left);
           $m_sc_StringOps$();
           var x = (((("Integer primitive + error!\n                       | lhs: " + l) + "\n                       | rhs: ") + r) + "\n                       |");
-          var value$1 = new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(x3, new $c_s_Some($m_sc_StringOps$().stripMargin$extension__T__C__T(x, 124)), null);
-          var this$8 = new $c_s_util_Left(value$1)
+          var this$5 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(x3, new $c_s_Some($m_sc_StringOps$().stripMargin$extension__T__C__T(x, 124)), null))
         };
-        if ((this$8 instanceof $c_s_util_Right)) {
-          var x2$3 = $as_s_util_Right(this$8);
+        if ((this$5 instanceof $c_s_util_Right)) {
+          var x2$3 = $as_s_util_Right(this$5);
           var b$2 = $n(x2$3).s_util_Right__f_value;
           var result = $as_Lfeatherweightgo_model_ast_IntegerValue(b$2);
           return new $c_s_util_Right(result)
         } else {
-          return this$8
+          return this$5
         }
       } else {
-        return this$3
+        return this$2
       }
     } else {
-      return this$2
+      return this$1
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_ast_Concat)) {
     var x4$1 = $as_Lfeatherweightgo_model_ast_Concat(expression);
     var lhs$2 = $n(x4$1).Lfeatherweightgo_model_ast_Concat__f_lhs;
     var rhs$2 = $n(x4$1).Lfeatherweightgo_model_ast_Concat__f_rhs;
-    var this$9 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, lhs$2, declarations$1));
-    if ((this$9 instanceof $c_s_util_Right)) {
-      var x2$4 = $as_s_util_Right(this$9);
+    var this$6 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, lhs$2, declarations$1));
+    if ((this$6 instanceof $c_s_util_Right)) {
+      var x2$4 = $as_s_util_Right(this$6);
       var b$3 = $n(x2$4).s_util_Right__f_value;
       var l$3 = $as_Lfeatherweightgo_model_ast_Primitive(b$3);
-      var this$10 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, rhs$2, declarations$1));
-      if ((this$10 instanceof $c_s_util_Right)) {
-        var x2$5 = $as_s_util_Right(this$10);
+      var this$7 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, rhs$2, declarations$1));
+      if ((this$7 instanceof $c_s_util_Right)) {
+        var x2$5 = $as_s_util_Right(this$7);
         var b$4 = $n(x2$5).s_util_Right__f_value;
         var r$1 = $as_Lfeatherweightgo_model_ast_Primitive(b$4);
         matchEnd7$1: {
-          var this$15;
+          var this$10;
           if ((l$3 instanceof $c_Lfeatherweightgo_model_ast_StringValue)) {
             var x4$2 = $as_Lfeatherweightgo_model_ast_StringValue(l$3);
             var lv$1 = $n(x4$2).Lfeatherweightgo_model_ast_StringValue__f_value;
             if ((r$1 instanceof $c_Lfeatherweightgo_model_ast_StringValue)) {
               var x5$1 = $as_Lfeatherweightgo_model_ast_StringValue(r$1);
               var rv$1 = $n(x5$1).Lfeatherweightgo_model_ast_StringValue__f_value;
-              $n($m_s_package$().s_package$__f_Right);
-              var value$2 = new $c_Lfeatherweightgo_model_ast_StringValue((("" + lv$1) + rv$1));
-              var this$15 = new $c_s_util_Right(value$2);
+              var this$10 = new $c_s_util_Right(new $c_Lfeatherweightgo_model_ast_StringValue((("" + lv$1) + rv$1)));
               break matchEnd7$1
             }
           };
-          $n($m_s_package$().s_package$__f_Left);
           $m_sc_StringOps$();
           var x$1 = (((("String primitive + error!\n                       | lhs: " + l$3) + "\n                       | rhs: ") + r$1) + "\n                       |");
-          var value$3 = new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(x4$1, new $c_s_Some($m_sc_StringOps$().stripMargin$extension__T__C__T(x$1, 124)), null);
-          var this$15 = new $c_s_util_Left(value$3)
+          var this$10 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(x4$1, new $c_s_Some($m_sc_StringOps$().stripMargin$extension__T__C__T(x$1, 124)), null))
         };
-        if ((this$15 instanceof $c_s_util_Right)) {
-          var x2$6 = $as_s_util_Right(this$15);
+        if ((this$10 instanceof $c_s_util_Right)) {
+          var x2$6 = $as_s_util_Right(this$10);
           var b$5 = $n(x2$6).s_util_Right__f_value;
           var result$1 = $as_Lfeatherweightgo_model_ast_StringValue(b$5);
           return new $c_s_util_Right(result$1)
         } else {
-          return this$15
+          return this$10
         }
       } else {
-        return this$10
+        return this$7
       }
     } else {
-      return this$9
+      return this$6
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_ast_StructureLiteral)) {
     var x5$2 = $as_Lfeatherweightgo_model_ast_StructureLiteral(expression);
     var structureTypeName = $n(x5$2).Lfeatherweightgo_model_ast_StructureLiteral__f_structureType;
     var arguments$1 = $n(x5$2).Lfeatherweightgo_model_ast_StructureLiteral__f_arguments;
-    var this$16 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalAll$1__sci_List__sci_List__s_util_Either($thiz, arguments$1, declarations$1));
-    if ((this$16 instanceof $c_s_util_Right)) {
-      var x2$7 = $as_s_util_Right(this$16);
+    var this$11 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalAll$1__sci_List__sci_List__s_util_Either($thiz, arguments$1, declarations$1));
+    if ((this$11 instanceof $c_s_util_Right)) {
+      var x2$7 = $as_s_util_Right(this$11);
       var b$6 = $n(x2$7).s_util_Right__f_value;
       var vs = $as_sci_List(b$6);
       return new $c_s_util_Right(new $c_Lfeatherweightgo_model_ast_ValuedStructureLiteral(structureTypeName, vs))
     } else {
-      return this$16
+      return this$11
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_ast_FieldSelect)) {
     var x6 = $as_Lfeatherweightgo_model_ast_FieldSelect(expression);
     var e = $n(x6).Lfeatherweightgo_model_ast_FieldSelect__f_expression;
     var fieldName = $n(x6).Lfeatherweightgo_model_ast_FieldSelect__f_fieldName;
-    var this$17 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, e, declarations$1));
-    if ((this$17 instanceof $c_s_util_Right)) {
-      var x2$8 = $as_s_util_Right(this$17);
+    var this$12 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, e, declarations$1));
+    if ((this$12 instanceof $c_s_util_Right)) {
+      var x2$8 = $as_s_util_Right(this$12);
       var b$7 = $n(x2$8).s_util_Right__f_value;
       var leftHandResult = $as_Lfeatherweightgo_model_ast_Primitive(b$7);
       if ((leftHandResult instanceof $c_Lfeatherweightgo_model_ast_ValuedStructureLiteral)) {
         var x2$9 = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral(leftHandResult);
-        $n($m_s_package$().s_package$__f_Right);
         var $x_1 = new $c_s_util_Right(x2$9)
       } else {
-        $n($m_s_package$().s_package$__f_Left);
-        var value$4 = new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(x6, new $c_s_Some((("Primitive type " + leftHandResult) + " doesn't have any fields!")), null);
-        var $x_1 = new $c_s_util_Left(value$4)
+        var $x_1 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGEvalError(x6, new $c_s_Some((("Primitive type " + leftHandResult) + " doesn't have any fields!")), null))
       };
-      var this$20 = $n($x_1);
-      if ((this$20 instanceof $c_s_util_Right)) {
-        var x2$10 = $as_s_util_Right(this$20);
+      var this$13 = $n($x_1);
+      if ((this$13 instanceof $c_s_util_Right)) {
+        var x2$10 = $as_s_util_Right(this$13);
         var b$8 = $n(x2$10).s_util_Right__f_value;
         var valuedStructureLiteral = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral(b$8);
-        var this$21 = $m_Lfeatherweightgo_util_Utils$();
+        var this$14 = $m_Lfeatherweightgo_util_Utils$();
         var structureType = $n(valuedStructureLiteral).Lfeatherweightgo_model_ast_ValuedStructureLiteral__f_structureTypeName;
-        var fs = $p_Lfeatherweightgo_util_Utils$__loop$1__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__sci_List(this$21, declarations$1, structureType);
+        var fs = $p_Lfeatherweightgo_util_Utils$__loop$1__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__sci_List(this$14, declarations$1, structureType);
         var $x_2 = new $c_s_util_Right(new $c_T2(valuedStructureLiteral, fs))
       } else {
-        var $x_2 = this$20
+        var $x_2 = this$13
       };
-      var this$22 = $n($x_2);
-      if ((this$22 instanceof $c_s_util_Right)) {
-        var x2$11 = $as_s_util_Right(this$22);
+      var this$15 = $n($x_2);
+      if ((this$15 instanceof $c_s_util_Right)) {
+        var x2$11 = $as_s_util_Right(this$15);
         var b$9 = $n(x2$11).s_util_Right__f_value;
         var x$1$1 = $as_T2(b$9);
         if ((x$1$1 === null)) {
@@ -10348,11 +10324,11 @@ function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweigh
         };
         var valuedStructureLiteral$1 = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral($n(x$1$1)._1__O());
         var fs$1 = $as_sci_List($n(x$1$1)._2__O());
-        var this$23 = $n(fs$1);
+        var this$16 = $n(fs$1);
         var that = $n(valuedStructureLiteral$1).Lfeatherweightgo_model_ast_ValuedStructureLiteral__f_values;
-        var this$24 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$23, that)));
+        var this$17 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$16, that)));
         _return: {
-          var these = this$24;
+          var these = this$17;
           while ((!$n(these).isEmpty__Z())) {
             var arg1 = $n(these).head__O();
             var x0$1 = $as_T2(arg1);
@@ -10362,37 +10338,35 @@ function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweigh
             var sf = $as_Lfeatherweightgo_model_ast_StructureField($n(x0$1)._1__O());
             var x$2 = $n(sf).Lfeatherweightgo_model_ast_StructureField__f_name;
             if (((x$2 === null) ? (fieldName === null) : $n(x$2).equals__O__Z(fieldName))) {
-              var this$25 = new $c_s_Some($n(these).head__O());
+              var this$18 = new $c_s_Some($n(these).head__O());
               break _return
             };
             these = $as_sci_List($n(these).tail__O())
           };
-          var this$25 = $m_s_None$()
+          var this$18 = $m_s_None$()
         };
-        if (this$25.isEmpty__Z()) {
+        if (this$18.isEmpty__Z()) {
           var $x_3 = $m_s_None$()
         } else {
-          var arg1$1 = this$25.get__O();
+          var arg1$1 = this$18.get__O();
           var v = $as_T2(arg1$1);
-          $n($m_s_package$().s_package$__f_Right);
-          var value$5 = $n(v)._2__O();
-          var $x_3 = new $c_s_Some(new $c_s_util_Right(value$5))
+          var $x_3 = new $c_s_Some(new $c_s_util_Right($n(v)._2__O()))
         };
-        var this$27 = $n($x_3);
-        var this$28 = $n($as_s_util_Either((this$27.isEmpty__Z() ? $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression) : this$27.get__O())));
-        if ((this$28 instanceof $c_s_util_Right)) {
-          var x2$12 = $as_s_util_Right(this$28);
+        var this$19 = $n($x_3);
+        var this$20 = $n($as_s_util_Either((this$19.isEmpty__Z() ? $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression) : this$19.get__O())));
+        if ((this$20 instanceof $c_s_util_Right)) {
+          var x2$12 = $as_s_util_Right(this$20);
           var b$10 = $n(x2$12).s_util_Right__f_value;
           var result$2 = $as_Lfeatherweightgo_model_ast_Primitive(b$10);
           return new $c_s_util_Right(result$2)
         } else {
-          return this$28
+          return this$20
         }
       } else {
-        return this$22
+        return this$15
       }
     } else {
-      return this$17
+      return this$12
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_ast_MethodCall)) {
     var x7 = $as_Lfeatherweightgo_model_ast_MethodCall(expression);
@@ -10400,23 +10374,22 @@ function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweigh
     var methodName = $n(x7).Lfeatherweightgo_model_ast_MethodCall__f_methodName;
     var types = $n(x7).Lfeatherweightgo_model_ast_MethodCall__f_types;
     var arguments$2 = $n(x7).Lfeatherweightgo_model_ast_MethodCall__f_arguments;
-    var this$29 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, e$2, declarations$1));
-    if ((this$29 instanceof $c_s_util_Right)) {
-      var x2$13 = $as_s_util_Right(this$29);
+    var this$21 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, e$2, declarations$1));
+    if ((this$21 instanceof $c_s_util_Right)) {
+      var x2$13 = $as_s_util_Right(this$21);
       var b$11 = $n(x2$13).s_util_Right__f_value;
       var leftHandResult$3 = $as_Lfeatherweightgo_model_ast_Primitive(b$11);
-      var this$30 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalAll$1__sci_List__sci_List__s_util_Either($thiz, arguments$2, declarations$1));
-      if ((this$30 instanceof $c_s_util_Right)) {
-        var x2$14 = $as_s_util_Right(this$30);
+      var this$22 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalAll$1__sci_List__sci_List__s_util_Either($thiz, arguments$2, declarations$1));
+      if ((this$22 instanceof $c_s_util_Right)) {
+        var x2$14 = $as_s_util_Right(this$22);
         var b$12 = $n(x2$14).s_util_Right__f_value;
         var argumentResult = $as_sci_List(b$12);
-        var this$31 = $m_Lfeatherweightgo_util_Utils$();
+        var this$23 = $m_Lfeatherweightgo_util_Utils$();
         var structureType$1 = $m_Lfeatherweightgo_util_Utils$().type__Lfeatherweightgo_model_ast_Primitive__Lfeatherweightgo_model_ast_AbstractStructureType(leftHandResult$3);
-        var x1 = $p_Lfeatherweightgo_util_Utils$__loop$2__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__Lfeatherweightgo_model_ast_MethodName__sci_List__s_Option(this$31, declarations$1, structureType$1, methodName, types);
+        var x1 = $p_Lfeatherweightgo_util_Utils$__loop$2__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__Lfeatherweightgo_model_ast_MethodName__sci_List__s_Option(this$23, declarations$1, structureType$1, methodName, types);
         if ((x1 instanceof $c_s_Some)) {
           var x2$15 = $as_s_Some(x1);
           var result$3 = $as_T2($n(x2$15).s_Some__f_value);
-          $n($m_s_package$().s_package$__f_Right);
           var $x_4 = new $c_s_util_Right(result$3)
         } else {
           var x$3 = $m_s_None$();
@@ -10425,9 +10398,9 @@ function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweigh
           };
           var $x_4 = $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression)
         };
-        var this$33 = $n($x_4);
-        if ((this$33 instanceof $c_s_util_Right)) {
-          var x2$16 = $as_s_util_Right(this$33);
+        var this$24 = $n($x_4);
+        if ((this$24 instanceof $c_s_util_Right)) {
+          var x2$16 = $as_s_util_Right(this$24);
           var b$13 = $n(x2$16).s_util_Right__f_value;
           var vs$1 = $as_T2(b$13);
           var x1$1 = $as_sci_List($n(vs$1)._1__O());
@@ -10435,19 +10408,19 @@ function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweigh
             var x2$17 = $as_sci_$colon$colon(x1$1);
             var h = $as_Lfeatherweightgo_util_Utils$TypedVariable($n(x2$17).sci_$colon$colon__f_head);
             var ts = $n(x2$17).sci_$colon$colon__f_next;
-            var this$35 = $n((($n(ts).length__I() !== $n(argumentResult).length__I()) ? $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression) : ($n($m_s_package$().s_package$__f_Right), new $c_s_util_Right((void 0)))));
-            if ((this$35 instanceof $c_s_util_Right)) {
-              var x2$18 = $as_s_util_Right(this$35);
+            var this$25 = $n((($n(ts).length__I() !== $n(argumentResult).length__I()) ? $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression) : new $c_s_util_Right((void 0))));
+            if ((this$25 instanceof $c_s_util_Right)) {
+              var x2$18 = $as_s_util_Right(this$25);
               var b$14 = $n(x2$18).s_util_Right__f_value;
               $as_jl_Void(b$14);
               var rassoc$1 = new $c_T2(h, leftHandResult$3);
-              var this$38 = $n(ts);
-              var this$39 = $n($as_sc_SeqOps($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$38, argumentResult)));
-              var $x_6 = $as_sc_IterableOnceOps(this$39.prepended__O__O(rassoc$1));
-              var this$40 = $m_s_$less$colon$less$();
-              var $x_5 = new $c_s_util_Right($n($x_6).toMap__s_$less$colon$less__sci_Map(this$40.s_$less$colon$less$__f_singleton))
+              var this$28 = $n(ts);
+              var this$29 = $n($as_sc_SeqOps($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$28, argumentResult)));
+              var $x_6 = $as_sc_IterableOnceOps(this$29.prepended__O__O(rassoc$1));
+              var this$30 = $m_s_$less$colon$less$();
+              var $x_5 = new $c_s_util_Right($n($x_6).toMap__s_$less$colon$less__sci_Map(this$30.s_$less$colon$less$__f_singleton))
             } else {
-              var $x_5 = this$35
+              var $x_5 = this$25
             }
           } else {
             var x$4 = $m_s_package$().s_package$__f_Nil;
@@ -10456,59 +10429,59 @@ function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweigh
             };
             var $x_5 = $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression)
           };
-          var this$41 = $n($x_5);
-          if ((this$41 instanceof $c_s_util_Right)) {
-            var x2$19 = $as_s_util_Right(this$41);
+          var this$31 = $n($x_5);
+          if ((this$31 instanceof $c_s_util_Right)) {
+            var x2$19 = $as_s_util_Right(this$31);
             var b$15 = $n(x2$19).s_util_Right__f_value;
             var variablesMap = $as_sci_Map(b$15);
             var expression$1 = $as_Lfeatherweightgo_model_ast_Expression($n(vs$1)._2__O());
-            var this$42 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, $p_Lfeatherweightgo_evaluator_EvaluatorImpl__loop$1__Lfeatherweightgo_model_ast_Expression__sci_Map__Lfeatherweightgo_model_ast_Expression__Lfeatherweightgo_model_ast_Expression($thiz, expression$1, variablesMap, expression$1), declarations$1));
-            if ((this$42 instanceof $c_s_util_Right)) {
-              var x2$20 = $as_s_util_Right(this$42);
+            var this$32 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, $p_Lfeatherweightgo_evaluator_EvaluatorImpl__loop$1__Lfeatherweightgo_model_ast_Expression__sci_Map__Lfeatherweightgo_model_ast_Expression__Lfeatherweightgo_model_ast_Expression($thiz, expression$1, variablesMap, expression$1), declarations$1));
+            if ((this$32 instanceof $c_s_util_Right)) {
+              var x2$20 = $as_s_util_Right(this$32);
               var b$16 = $n(x2$20).s_util_Right__f_value;
               var result$4 = $as_Lfeatherweightgo_model_ast_Primitive(b$16);
               return new $c_s_util_Right(result$4)
             } else {
-              return this$42
+              return this$32
             }
           } else {
-            return this$41
+            return this$31
           }
         } else {
-          return this$33
+          return this$24
         }
       } else {
-        return this$30
+        return this$22
       }
     } else {
-      return this$29
+      return this$21
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_ast_TypeAssertion)) {
     var x8 = $as_Lfeatherweightgo_model_ast_TypeAssertion(expression);
     var e$3 = $n(x8).Lfeatherweightgo_model_ast_TypeAssertion__f_expression;
     var typeName = $n(x8).Lfeatherweightgo_model_ast_TypeAssertion__f_typ;
-    var this$43 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, e$3, declarations$1));
-    if ((this$43 instanceof $c_s_util_Right)) {
-      var x2$21 = $as_s_util_Right(this$43);
+    var this$33 = $n($p_Lfeatherweightgo_evaluator_EvaluatorImpl__innerEval$1__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, e$3, declarations$1));
+    if ((this$33 instanceof $c_s_util_Right)) {
+      var x2$21 = $as_s_util_Right(this$33);
       var b$17 = $n(x2$21).s_util_Right__f_value;
       var leftHand = $as_Lfeatherweightgo_model_ast_Primitive(b$17);
-      var this$46 = $n($m_Lfeatherweightgo_model_typer_TypeBound$().Lfeatherweightgo_model_typer_TypeBound$__f_empty);
+      var this$36 = $n($m_Lfeatherweightgo_model_typer_TypeBound$().Lfeatherweightgo_model_typer_TypeBound$__f_empty);
       $m_Lfeatherweightgo_model_typer_Implement$();
       var lhs$1 = $m_Lfeatherweightgo_util_Utils$().type__Lfeatherweightgo_model_ast_Primitive__Lfeatherweightgo_model_ast_AbstractStructureType(leftHand);
-      var this$45 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(lhs$1);
-      var value$6 = new $c_Lfeatherweightgo_model_typer_Implement(this$45.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, typeName);
+      var this$35 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(lhs$1);
+      var value = new $c_Lfeatherweightgo_model_typer_Implement(this$35.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, typeName);
       var checking = $m_Lfeatherweightgo_model_typer_Implement$().checkingInstance__sci_List__Lfeatherweightgo_model_typer_Checking(declarations$1);
-      var this$48 = $n(($n(checking).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value$6, this$46) ? ($n($m_s_package$().s_package$__f_Right), new $c_s_util_Right(leftHand)) : $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression)));
-      if ((this$48 instanceof $c_s_util_Right)) {
-        var x2$22 = $as_s_util_Right(this$48);
+      var this$37 = $n(($n(checking).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value, this$36) ? new $c_s_util_Right(leftHand) : $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression)));
+      if ((this$37 instanceof $c_s_util_Right)) {
+        var x2$22 = $as_s_util_Right(this$37);
         var b$18 = $n(x2$22).s_util_Right__f_value;
         var result$5 = $as_Lfeatherweightgo_model_ast_Primitive(b$18);
         return new $c_s_util_Right(result$5)
       } else {
-        return this$48
+        return this$37
       }
     } else {
-      return this$43
+      return this$33
     }
   } else if ((expression instanceof $c_Lfeatherweightgo_model_ast_Variable)) {
     return $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalError$1__Lfeatherweightgo_model_ast_Expression__s_util_Either($thiz, expression)
@@ -10538,34 +10511,32 @@ function $p_Lfeatherweightgo_evaluator_EvaluatorImpl__evalAll$1__sci_List__sci_L
     };
     var $x_1 = h
   };
-  var this$4 = $n($x_1);
-  $n($m_s_package$().s_package$__f_Right);
-  var value = $m_s_package$().s_package$__f_Nil;
-  var z = new $c_s_util_Right(value);
+  var this$3 = $n($x_1);
+  var z = new $c_s_util_Right($m_s_package$().s_package$__f_Nil);
   var acc = z;
-  var these = this$4;
+  var these = this$3;
   while ((!$n(these).isEmpty__Z())) {
     var arg1$2 = acc;
     var arg2 = $n(these).head__O();
     var x = $as_s_util_Either(arg1$2);
     var y = $as_s_util_Either(arg2);
-    var this$5 = $n(x);
-    if ((this$5 instanceof $c_s_util_Right)) {
-      var x2 = $as_s_util_Right(this$5);
+    var this$4 = $n(x);
+    if ((this$4 instanceof $c_s_util_Right)) {
+      var x2 = $as_s_util_Right(this$4);
       var b = $n(x2).s_util_Right__f_value;
       var xv = $as_sci_List(b);
-      var this$6 = $n(y);
-      if ((this$6 instanceof $c_s_util_Right)) {
-        var x2$1 = $as_s_util_Right(this$6);
+      var this$5 = $n(y);
+      if ((this$5 instanceof $c_s_util_Right)) {
+        var x2$1 = $as_s_util_Right(this$5);
         var b$1 = $n(x2$1).s_util_Right__f_value;
         var yv = $as_Lfeatherweightgo_model_ast_Primitive(b$1);
-        var this$7 = $n(xv);
-        acc = new $c_s_util_Right($as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$7, yv)))
+        var this$6 = $n(xv);
+        acc = new $c_s_util_Right($as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$6, yv)))
       } else {
-        acc = this$6
+        acc = this$5
       }
     } else {
-      acc = this$5
+      acc = this$4
     };
     these = $as_sc_LinearSeq($n(these).tail__O())
   };
@@ -11119,13 +11090,10 @@ $c_Lfeatherweightgo_parser_ParserImpl.prototype.parse__T__s_util_Either = (funct
   if ((x1 instanceof $c_s_util_parsing_combinator_Parsers$Success)) {
     var x2 = $as_s_util_parsing_combinator_Parsers$Success(x1);
     var result = $as_Lfeatherweightgo_model_ast_Main($n(x2).s_util_parsing_combinator_Parsers$Success__f_result);
-    $n($m_s_package$().s_package$__f_Right);
     return new $c_s_util_Right(result)
   } else if ((x1 instanceof $c_s_util_parsing_combinator_Parsers$NoSuccess)) {
     var x4 = $as_s_util_parsing_combinator_Parsers$NoSuccess(x1);
-    $n($m_s_package$().s_package$__f_Left);
-    var value = new $c_Lfeatherweightgo_model_error_FGError$FGParseError($n(x4).msg__T(), null);
-    return new $c_s_util_Left(value)
+    return new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGParseError($n(x4).msg__T(), null))
   } else {
     throw new $c_s_MatchError(x1)
   }
@@ -11142,12 +11110,10 @@ function $p_Lfeatherweightgo_typer_TyperImpl__toEither__s_Option__O__s_util_Eith
   if ((opt instanceof $c_s_Some)) {
     var x2 = $as_s_Some(opt);
     var a = $n(x2).s_Some__f_value;
-    $n($m_s_package$().s_package$__f_Right);
     return new $c_s_util_Right(a)
   } else {
     var x = $m_s_None$();
     if ((x === opt)) {
-      $n($m_s_package$().s_package$__f_Left);
       return new $c_s_util_Left(error)
     } else {
       throw new $c_s_MatchError(opt)
@@ -11628,31 +11594,26 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_ValuedStructureLiteral)) {
       var x2 = $as_Lfeatherweightgo_model_ast_ValuedStructureLiteral(x1);
       var structureTypeName = $n(x2).Lfeatherweightgo_model_ast_ValuedStructureLiteral__f_structureTypeName;
-      $n($m_s_package$().s_package$__f_Right);
       return new $c_s_util_Right(structureTypeName)
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_IntegerValue)) {
-      $n($m_s_package$().s_package$__f_Right);
-      var value = $m_Lfeatherweightgo_model_ast_AbstractStructureType$IntegerType$();
-      return new $c_s_util_Right(value)
+      return new $c_s_util_Right($m_Lfeatherweightgo_model_ast_AbstractStructureType$IntegerType$())
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_StringValue)) {
-      $n($m_s_package$().s_package$__f_Right);
-      var value$1 = $m_Lfeatherweightgo_model_ast_AbstractStructureType$StringType$();
-      return new $c_s_util_Right(value$1)
+      return new $c_s_util_Right($m_Lfeatherweightgo_model_ast_AbstractStructureType$StringType$())
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_Plus)) {
       var x8 = $as_Lfeatherweightgo_model_ast_Plus(x1);
       var lhs = $n(x8).Lfeatherweightgo_model_ast_Plus__f_lhs;
       var rhs = $n(x8).Lfeatherweightgo_model_ast_Plus__f_rhs;
-      var this$4 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, lhs, declarations$1));
-      if ((this$4 instanceof $c_s_util_Right)) {
-        var x2$1 = $as_s_util_Right(this$4);
+      var this$1 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, lhs, declarations$1));
+      if ((this$1 instanceof $c_s_util_Right)) {
+        var x2$1 = $as_s_util_Right(this$1);
         var b = $n(x2$1).s_util_Right__f_value;
         var lhsType = $as_Lfeatherweightgo_model_ast_Type(b);
-        var this$5 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, rhs, declarations$1));
-        if ((this$5 instanceof $c_s_util_Right)) {
-          var x2$2 = $as_s_util_Right(this$5);
+        var this$2 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, rhs, declarations$1));
+        if ((this$2 instanceof $c_s_util_Right)) {
+          var x2$2 = $as_s_util_Right(this$2);
           var b$1 = $n(x2$2).s_util_Right__f_value;
           var rhsType = $as_Lfeatherweightgo_model_ast_Type(b$1);
           var x = $m_Lfeatherweightgo_model_ast_AbstractStructureType$IntegerType$();
@@ -11663,41 +11624,38 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
             var $x_1 = false
           };
           if ($x_1) {
-            $n($m_s_package$().s_package$__f_Right);
-            var this$10 = new $c_s_util_Right((void 0))
+            var this$5 = new $c_s_util_Right((void 0))
           } else {
-            $n($m_s_package$().s_package$__f_Left);
             $m_sc_StringOps$();
             var x$1 = (((("\n                     |Primitive integer + takes integer type arguments!\n                     | lhs type: " + lhsType) + "\n                     | rhs type: ") + rhsType) + "\n                     |");
-            var value$2 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError($m_sc_StringOps$().stripMargin$extension__T__C__T(x$1, 124), null);
-            var this$10 = new $c_s_util_Left(value$2)
+            var this$5 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError($m_sc_StringOps$().stripMargin$extension__T__C__T(x$1, 124), null))
           };
-          if ((this$10 instanceof $c_s_util_Right)) {
-            var x2$3 = $as_s_util_Right(this$10);
+          if ((this$5 instanceof $c_s_util_Right)) {
+            var x2$3 = $as_s_util_Right(this$5);
             var b$2 = $n(x2$3).s_util_Right__f_value;
             return new $c_s_util_Right(($as_jl_Void(b$2), $m_Lfeatherweightgo_model_ast_AbstractStructureType$IntegerType$()))
           } else {
-            return this$10
+            return this$5
           }
         } else {
-          return this$5
+          return this$2
         }
       } else {
-        return this$4
+        return this$1
       }
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_Concat)) {
       var x9 = $as_Lfeatherweightgo_model_ast_Concat(x1);
       var lhs$2 = $n(x9).Lfeatherweightgo_model_ast_Concat__f_lhs;
       var rhs$2 = $n(x9).Lfeatherweightgo_model_ast_Concat__f_rhs;
-      var this$11 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, lhs$2, declarations$1));
-      if ((this$11 instanceof $c_s_util_Right)) {
-        var x2$4 = $as_s_util_Right(this$11);
+      var this$6 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, lhs$2, declarations$1));
+      if ((this$6 instanceof $c_s_util_Right)) {
+        var x2$4 = $as_s_util_Right(this$6);
         var b$3 = $n(x2$4).s_util_Right__f_value;
         var lhsType$3 = $as_Lfeatherweightgo_model_ast_Type(b$3);
-        var this$12 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, rhs$2, declarations$1));
-        if ((this$12 instanceof $c_s_util_Right)) {
-          var x2$5 = $as_s_util_Right(this$12);
+        var this$7 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, rhs$2, declarations$1));
+        if ((this$7 instanceof $c_s_util_Right)) {
+          var x2$5 = $as_s_util_Right(this$7);
           var b$4 = $n(x2$5).s_util_Right__f_value;
           var rhsType$1 = $as_Lfeatherweightgo_model_ast_Type(b$4);
           var x$2 = $m_Lfeatherweightgo_model_ast_AbstractStructureType$StringType$();
@@ -11708,34 +11666,31 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
             var $x_2 = false
           };
           if ($x_2) {
-            $n($m_s_package$().s_package$__f_Right);
-            var this$17 = new $c_s_util_Right((void 0))
+            var this$10 = new $c_s_util_Right((void 0))
           } else {
-            $n($m_s_package$().s_package$__f_Left);
             $m_sc_StringOps$();
             var x$4 = (((("\n                     |Primitive string ++ takes string type arguments!\n                     | lhs type: " + lhsType$3) + "\n                     | rhs type: ") + rhsType$1) + "\n                     |");
-            var value$3 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError($m_sc_StringOps$().stripMargin$extension__T__C__T(x$4, 124), null);
-            var this$17 = new $c_s_util_Left(value$3)
+            var this$10 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError($m_sc_StringOps$().stripMargin$extension__T__C__T(x$4, 124), null))
           };
-          if ((this$17 instanceof $c_s_util_Right)) {
-            var x2$6 = $as_s_util_Right(this$17);
+          if ((this$10 instanceof $c_s_util_Right)) {
+            var x2$6 = $as_s_util_Right(this$10);
             var b$5 = $n(x2$6).s_util_Right__f_value;
             return new $c_s_util_Right(($as_jl_Void(b$5), $m_Lfeatherweightgo_model_ast_AbstractStructureType$StringType$()))
           } else {
-            return this$17
+            return this$10
           }
         } else {
-          return this$12
+          return this$7
         }
       } else {
-        return this$11
+        return this$6
       }
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_Variable)) {
       var x10 = $as_Lfeatherweightgo_model_ast_Variable(x1);
       var name = $n(x10).Lfeatherweightgo_model_ast_Variable__f_variableName;
-      var this$18 = $n(environment);
-      return $p_Lfeatherweightgo_typer_TyperImpl__toEither__s_Option__O__s_util_Either($thiz, $n(this$18.Lfeatherweightgo_model_typer_Environment__f_value).get__O__s_Option(name), $m_Lfeatherweightgo_model_error_FGError$FGTypeError$().apply__Lfeatherweightgo_model_ast_VariableName__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_error_FGError$FGTypeError(name, environment))
+      var this$11 = $n(environment);
+      return $p_Lfeatherweightgo_typer_TyperImpl__toEither__s_Option__O__s_util_Either($thiz, $n(this$11.Lfeatherweightgo_model_typer_Environment__f_value).get__O__s_Option(name), $m_Lfeatherweightgo_model_error_FGError$FGTypeError$().apply__Lfeatherweightgo_model_ast_VariableName__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_error_FGError$FGTypeError(name, environment))
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_MethodCall)) {
       var x11 = $as_Lfeatherweightgo_model_ast_MethodCall(x1);
@@ -11743,24 +11698,24 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
       var methodName = $n(x11).Lfeatherweightgo_model_ast_MethodCall__f_methodName;
       var types = $n(x11).Lfeatherweightgo_model_ast_MethodCall__f_types;
       var arguments$1 = $n(x11).Lfeatherweightgo_model_ast_MethodCall__f_arguments;
-      var this$19 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, e, declarations$1));
-      if ((this$19 instanceof $c_s_util_Right)) {
-        var x2$7 = $as_s_util_Right(this$19);
+      var this$12 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, e, declarations$1));
+      if ((this$12 instanceof $c_s_util_Right)) {
+        var x2$7 = $as_s_util_Right(this$12);
         var b$6 = $n(x2$7).s_util_Right__f_value;
         var eType = $as_Lfeatherweightgo_model_ast_Type(b$6);
         var $x_4 = $m_Lfeatherweightgo_util_Utils$();
-        var this$21 = $n(arguments$1);
+        var this$14 = $n(arguments$1);
         var f = ((environment, typeBound, declarations$1) => ((arg$2) => {
           var arg = $as_Lfeatherweightgo_model_ast_Expression(arg$2);
           return $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, arg, declarations$1)
         }))(environment, typeBound, declarations$1);
-        if ((this$21 === $m_sci_Nil$())) {
+        if ((this$14 === $m_sci_Nil$())) {
           var $x_3 = $m_sci_Nil$()
         } else {
-          var arg1 = this$21.head__O();
+          var arg1 = this$14.head__O();
           var h = new $c_sci_$colon$colon(f(arg1), $m_sci_Nil$());
           var t = h;
-          var rest = $as_sci_List(this$21.tail__O());
+          var rest = $as_sci_List(this$14.tail__O());
           while ((rest !== $m_sci_Nil$())) {
             var arg1$1 = $n(rest).head__O();
             var nx = new $c_sci_$colon$colon(f(arg1$1), $m_sci_Nil$());
@@ -11770,50 +11725,50 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
           };
           var $x_3 = h
         };
-        var this$22 = $n($n($x_4).sequence__sci_List__s_util_Either($x_3));
-        if ((this$22 instanceof $c_s_util_Right)) {
-          var x2$8 = $as_s_util_Right(this$22);
+        var this$15 = $n($n($x_4).sequence__sci_List__s_util_Either($x_3));
+        if ((this$15 instanceof $c_s_util_Right)) {
+          var x2$8 = $as_s_util_Right(this$15);
           var b$7 = $n(x2$8).s_util_Right__f_value;
           var argumentTypes = $as_sci_List(b$7);
-          var this$23 = $n($m_Lfeatherweightgo_util_Utils$().methods__Lfeatherweightgo_model_ast_Type__Lfeatherweightgo_model_typer_TypeBound__Z__sci_List__sci_List(eType, typeBound, true, declarations$1));
+          var this$16 = $n($m_Lfeatherweightgo_util_Utils$().methods__Lfeatherweightgo_model_ast_Type__Lfeatherweightgo_model_typer_TypeBound__Z__sci_List__sci_List(eType, typeBound, true, declarations$1));
           _return: {
-            var these = this$23;
+            var these = this$16;
             while ((!$n(these).isEmpty__Z())) {
               var arg1$2 = $n(these).head__O();
               var x$9 = $as_Lfeatherweightgo_model_ast_MethodSpecification(arg1$2);
               var x$5 = $n(x$9).Lfeatherweightgo_model_ast_MethodSpecification__f_methodName;
               if (((x$5 === null) ? (methodName === null) : $n(x$5).equals__O__Z(methodName))) {
-                var this$24 = new $c_s_Some($n(these).head__O());
+                var this$17 = new $c_s_Some($n(these).head__O());
                 break _return
               };
               these = $as_sci_List($n(these).tail__O())
             };
-            var this$24 = $m_s_None$()
+            var this$17 = $m_s_None$()
           };
-          if (this$24.isEmpty__Z()) {
+          if (this$17.isEmpty__Z()) {
             var $x_5 = $m_s_None$()
           } else {
-            var arg1$3 = this$24.get__O();
+            var arg1$3 = this$17.get__O();
             var x$10 = $as_Lfeatherweightgo_model_ast_MethodSpecification(arg1$3);
             var $x_5 = new $c_s_Some($n(x$10).Lfeatherweightgo_model_ast_MethodSpecification__f_methodSignature)
           };
-          var this$25 = $n($p_Lfeatherweightgo_typer_TyperImpl__toEither__s_Option__O__s_util_Either($thiz, $x_5, $m_Lfeatherweightgo_model_error_FGError$FGTypeError$().apply__Lfeatherweightgo_model_ast_TypeName__Lfeatherweightgo_model_ast_MethodName__Lfeatherweightgo_model_error_FGError$FGTypeError($n(eType).name__Lfeatherweightgo_model_ast_TypeName(), methodName)));
-          if ((this$25 instanceof $c_s_util_Right)) {
-            var x2$9 = $as_s_util_Right(this$25);
+          var this$18 = $n($p_Lfeatherweightgo_typer_TyperImpl__toEither__s_Option__O__s_util_Either($thiz, $x_5, $m_Lfeatherweightgo_model_error_FGError$FGTypeError$().apply__Lfeatherweightgo_model_ast_TypeName__Lfeatherweightgo_model_ast_MethodName__Lfeatherweightgo_model_error_FGError$FGTypeError($n(eType).name__Lfeatherweightgo_model_ast_TypeName(), methodName)));
+          if ((this$18 instanceof $c_s_util_Right)) {
+            var x2$9 = $as_s_util_Right(this$18);
             var b$8 = $n(x2$9).s_util_Right__f_value;
             var methodSignature = $as_Lfeatherweightgo_model_ast_MethodSignature(b$8);
             var updatedTypeMap = $m_Lfeatherweightgo_util_Utils$().typeSubstitute__sci_List__sci_List__Lfeatherweightgo_model_typer_TypeBound__sci_List__Lfeatherweightgo_model_typer_TypeMap($n(methodSignature).Lfeatherweightgo_model_ast_MethodSignature__f_typeFormals, types, typeBound, declarations$1);
-            var this$26 = $n($n(methodSignature).Lfeatherweightgo_model_ast_MethodSignature__f_arguments);
-            var this$27 = new $c_sc_MapOps$$anon$1(this$26);
+            var this$19 = $n($n(methodSignature).Lfeatherweightgo_model_ast_MethodSignature__f_arguments);
+            var this$20 = new $c_sc_MapOps$$anon$1(this$19);
             $m_sci_List$();
-            var methodSignatureArgumentTypes = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$27);
+            var methodSignatureArgumentTypes = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$20);
             var $x_6 = new $c_s_util_Right(new $c_T3(methodSignature, updatedTypeMap, methodSignatureArgumentTypes))
           } else {
-            var $x_6 = this$25
+            var $x_6 = this$18
           };
-          var this$29 = $n($x_6);
-          if ((this$29 instanceof $c_s_util_Right)) {
-            var x2$10 = $as_s_util_Right(this$29);
+          var this$22 = $n($x_6);
+          if ((this$22 instanceof $c_s_util_Right)) {
+            var x2$10 = $as_s_util_Right(this$22);
             var b$9 = $n(x2$10).s_util_Right__f_value;
             var x$14 = $as_T3(b$9);
             if ((x$14 === null)) {
@@ -11824,27 +11779,27 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
             var methodSignatureArgumentTypes$1 = $as_sci_List($n(x$14).T3__f__3);
             if (($n(argumentTypes).length__I() === $n(methodSignatureArgumentTypes$1).length__I())) {
               var $x_10 = $n(typeBound);
-              var this$30 = $n(argumentTypes);
-              var this$34 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$30, methodSignatureArgumentTypes$1)));
+              var this$23 = $n(argumentTypes);
+              var this$27 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$23, methodSignatureArgumentTypes$1)));
               var f$1 = ((x0$1$2) => {
                 var x0$1 = $as_T2(x0$1$2);
                 if ((x0$1 !== null)) {
                   var argumentType = $as_Lfeatherweightgo_model_ast_Type($n(x0$1)._1__O());
                   var methodSignatureArgumentType = $as_Lfeatherweightgo_model_ast_Type($n(x0$1)._2__O());
                   $m_Lfeatherweightgo_model_typer_Implement$();
-                  var this$33 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(argumentType);
-                  return new $c_Lfeatherweightgo_model_typer_Implement(this$33.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, methodSignatureArgumentType)
+                  var this$26 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(argumentType);
+                  return new $c_Lfeatherweightgo_model_typer_Implement(this$26.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, methodSignatureArgumentType)
                 } else {
                   throw new $c_s_MatchError(x0$1)
                 }
               });
-              if ((this$34 === $m_sci_Nil$())) {
+              if ((this$27 === $m_sci_Nil$())) {
                 var $x_9 = $m_sci_Nil$()
               } else {
-                var arg1$4 = this$34.head__O();
+                var arg1$4 = this$27.head__O();
                 var h$1 = new $c_sci_$colon$colon(f$1(arg1$4), $m_sci_Nil$());
                 var t$1 = h$1;
-                var rest$1 = $as_sci_List(this$34.tail__O());
+                var rest$1 = $as_sci_List(this$27.tail__O());
                 while ((rest$1 !== $m_sci_Nil$())) {
                   var arg1$5 = $n(rest$1).head__O();
                   var nx$1 = new $c_sci_$colon$colon(f$1(arg1$5), $m_sci_Nil$());
@@ -11859,23 +11814,21 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
               var $x_8 = false
             };
             if ($x_8) {
-              $n($m_s_package$().s_package$__f_Right);
               var $x_7 = new $c_s_util_Right((void 0))
             } else {
-              $n($m_s_package$().s_package$__f_Left);
               var $x_13 = $m_Lfeatherweightgo_model_error_FGError$FGTypeError$();
-              var this$36 = $n(argumentTypes);
+              var this$28 = $n(argumentTypes);
               var f$2 = ((x$11$2) => {
                 var x$11 = $as_Lfeatherweightgo_model_ast_Type(x$11$2);
                 return $n(x$11).name__Lfeatherweightgo_model_ast_TypeName()
               });
-              if ((this$36 === $m_sci_Nil$())) {
+              if ((this$28 === $m_sci_Nil$())) {
                 var $x_12 = $m_sci_Nil$()
               } else {
-                var arg1$6 = this$36.head__O();
+                var arg1$6 = this$28.head__O();
                 var h$2 = new $c_sci_$colon$colon(f$2(arg1$6), $m_sci_Nil$());
                 var t$2 = h$2;
-                var rest$2 = $as_sci_List(this$36.tail__O());
+                var rest$2 = $as_sci_List(this$28.tail__O());
                 while ((rest$2 !== $m_sci_Nil$())) {
                   var arg1$7 = $n(rest$2).head__O();
                   var nx$2 = new $c_sci_$colon$colon(f$2(arg1$7), $m_sci_Nil$());
@@ -11885,21 +11838,21 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
                 };
                 var $x_12 = h$2
               };
-              var this$37 = $n($n(methodSignature$1).Lfeatherweightgo_model_ast_MethodSignature__f_arguments);
-              var this$38 = new $c_sc_MapOps$$anon$1(this$37);
+              var this$29 = $n($n(methodSignature$1).Lfeatherweightgo_model_ast_MethodSignature__f_arguments);
+              var this$30 = new $c_sc_MapOps$$anon$1(this$29);
               $m_sci_List$();
-              var this$40 = $n($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$38));
+              var this$32 = $n($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$30));
               var f$3 = ((x$12$2) => {
                 var x$12 = $as_Lfeatherweightgo_model_ast_Type(x$12$2);
                 return $n(x$12).name__Lfeatherweightgo_model_ast_TypeName()
               });
-              if ((this$40 === $m_sci_Nil$())) {
+              if ((this$32 === $m_sci_Nil$())) {
                 var $x_11 = $m_sci_Nil$()
               } else {
-                var arg1$8 = this$40.head__O();
+                var arg1$8 = this$32.head__O();
                 var h$3 = new $c_sci_$colon$colon(f$3(arg1$8), $m_sci_Nil$());
                 var t$3 = h$3;
-                var rest$3 = $as_sci_List(this$40.tail__O());
+                var rest$3 = $as_sci_List(this$32.tail__O());
                 while ((rest$3 !== $m_sci_Nil$())) {
                   var arg1$9 = $n(rest$3).head__O();
                   var nx$3 = new $c_sci_$colon$colon(f$3(arg1$9), $m_sci_Nil$());
@@ -11909,25 +11862,24 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
                 };
                 var $x_11 = h$3
               };
-              var value$4 = $n($x_13).apply__sci_List__sci_List__Lfeatherweightgo_model_error_FGError$FGTypeError($x_12, $x_11);
-              var $x_7 = new $c_s_util_Left(value$4)
+              var $x_7 = new $c_s_util_Left($n($x_13).apply__sci_List__sci_List__Lfeatherweightgo_model_error_FGError$FGTypeError($x_12, $x_11))
             };
-            var this$42 = $n($x_7);
-            if ((this$42 instanceof $c_s_util_Right)) {
-              var x2$11 = $as_s_util_Right(this$42);
+            var this$33 = $n($x_7);
+            if ((this$33 instanceof $c_s_util_Right)) {
+              var x2$11 = $as_s_util_Right(this$33);
               var b$10 = $n(x2$11).s_util_Right__f_value;
               return new $c_s_util_Right(($as_jl_Void(b$10), $m_Lfeatherweightgo_util_Utils$().typeReplace__Lfeatherweightgo_model_typer_TypeMap__Lfeatherweightgo_model_ast_Type__Lfeatherweightgo_model_ast_Type(updatedTypeMap$1, $n(methodSignature$1).Lfeatherweightgo_model_ast_MethodSignature__f_returnType)))
             } else {
-              return this$42
+              return this$33
             }
           } else {
-            return this$29
+            return this$22
           }
         } else {
-          return this$22
+          return this$15
         }
       } else {
-        return this$19
+        return this$12
       }
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_StructureLiteral)) {
@@ -11938,32 +11890,29 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
       var array = [structureType];
       var elems = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
       if ($p_Lfeatherweightgo_typer_TyperImpl__typeActualCheck$1__Lfeatherweightgo_model_typer_TypeBound__sci_List__sci_List__Z($thiz, typeBound, $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems), declarations$1)) {
-        $n($m_s_package$().s_package$__f_Right);
         var $x_14 = new $c_s_util_Right((void 0))
       } else {
-        $n($m_s_package$().s_package$__f_Left);
-        var this$48 = $n(structureType);
-        var value$5 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((this$48.Lfeatherweightgo_model_ast_AbstractStructureType__f_structureTypeName + " error!"), null);
-        var $x_14 = new $c_s_util_Left(value$5)
+        var this$38 = $n(structureType);
+        var $x_14 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((this$38.Lfeatherweightgo_model_ast_AbstractStructureType__f_structureTypeName + " error!"), null))
       };
-      var this$50 = $n($x_14);
-      if ((this$50 instanceof $c_s_util_Right)) {
-        var x2$12 = $as_s_util_Right(this$50);
+      var this$39 = $n($x_14);
+      if ((this$39 instanceof $c_s_util_Right)) {
+        var x2$12 = $as_s_util_Right(this$39);
         var b$11 = $n(x2$12).s_util_Right__f_value;
         $as_jl_Void(b$11);
         var $x_16 = $m_Lfeatherweightgo_util_Utils$();
-        var this$52 = $n(arguments$2);
+        var this$41 = $n(arguments$2);
         var f$4 = ((environment, typeBound, declarations$1) => ((arg$2$1) => {
           var arg$1 = $as_Lfeatherweightgo_model_ast_Expression(arg$2$1);
           return $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, arg$1, declarations$1)
         }))(environment, typeBound, declarations$1);
-        if ((this$52 === $m_sci_Nil$())) {
+        if ((this$41 === $m_sci_Nil$())) {
           var $x_15 = $m_sci_Nil$()
         } else {
-          var arg1$10 = this$52.head__O();
+          var arg1$10 = this$41.head__O();
           var h$4 = new $c_sci_$colon$colon(f$4(arg1$10), $m_sci_Nil$());
           var t$4 = h$4;
-          var rest$4 = $as_sci_List(this$52.tail__O());
+          var rest$4 = $as_sci_List(this$41.tail__O());
           while ((rest$4 !== $m_sci_Nil$())) {
             var arg1$11 = $n(rest$4).head__O();
             var nx$4 = new $c_sci_$colon$colon(f$4(arg1$11), $m_sci_Nil$());
@@ -11973,20 +11922,20 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
           };
           var $x_15 = h$4
         };
-        var this$53 = $n($n($x_16).sequence__sci_List__s_util_Either($x_15));
-        if ((this$53 instanceof $c_s_util_Right)) {
-          var x2$13 = $as_s_util_Right(this$53);
+        var this$42 = $n($n($x_16).sequence__sci_List__s_util_Either($x_15));
+        if ((this$42 instanceof $c_s_util_Right)) {
+          var x2$13 = $as_s_util_Right(this$42);
           var b$12 = $n(x2$13).s_util_Right__f_value;
           var argumentTypes$1 = $as_sci_List(b$12);
-          var this$54 = $m_Lfeatherweightgo_util_Utils$();
-          var fs = $p_Lfeatherweightgo_util_Utils$__loop$1__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__sci_List(this$54, declarations$1, structureType);
+          var this$43 = $m_Lfeatherweightgo_util_Utils$();
+          var fs = $p_Lfeatherweightgo_util_Utils$__loop$1__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__sci_List(this$43, declarations$1, structureType);
           var $x_17 = new $c_s_util_Right(new $c_T2(argumentTypes$1, fs))
         } else {
-          var $x_17 = this$53
+          var $x_17 = this$42
         };
-        var this$55 = $n($x_17);
-        if ((this$55 instanceof $c_s_util_Right)) {
-          var x2$14 = $as_s_util_Right(this$55);
+        var this$44 = $n($x_17);
+        if ((this$44 instanceof $c_s_util_Right)) {
+          var x2$14 = $as_s_util_Right(this$44);
           var b$13 = $n(x2$14).s_util_Right__f_value;
           var x$19 = $as_T2(b$13);
           if ((x$19 === null)) {
@@ -11996,19 +11945,19 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
           var fs$1 = $as_sci_List($n(x$19)._2__O());
           if (($n(argumentTypes$2).length__I() === $n(fs$1).length__I())) {
             var $x_21 = $n(typeBound);
-            var this$58 = $n(argumentTypes$2);
-            var this$57 = $n(fs$1);
+            var this$47 = $n(argumentTypes$2);
+            var this$46 = $n(fs$1);
             var f$5 = ((x$15$2) => {
               var x$15 = $as_Lfeatherweightgo_model_ast_StructureField(x$15$2);
               return $n(x$15).Lfeatherweightgo_model_ast_StructureField__f_typ
             });
-            if ((this$57 === $m_sci_Nil$())) {
+            if ((this$46 === $m_sci_Nil$())) {
               var that = $m_sci_Nil$()
             } else {
-              var arg1$12 = this$57.head__O();
+              var arg1$12 = this$46.head__O();
               var h$5 = new $c_sci_$colon$colon(f$5(arg1$12), $m_sci_Nil$());
               var t$5 = h$5;
-              var rest$5 = $as_sci_List(this$57.tail__O());
+              var rest$5 = $as_sci_List(this$46.tail__O());
               while ((rest$5 !== $m_sci_Nil$())) {
                 var arg1$13 = $n(rest$5).head__O();
                 var nx$5 = new $c_sci_$colon$colon(f$5(arg1$13), $m_sci_Nil$());
@@ -12018,26 +11967,26 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
               };
               var that = h$5
             };
-            var this$61 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$58, that)));
+            var this$50 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$47, that)));
             var f$6 = ((x0$2$2) => {
               var x0$2 = $as_T2(x0$2$2);
               if ((x0$2 !== null)) {
                 var argumentType$1 = $as_Lfeatherweightgo_model_ast_Type($n(x0$2)._1__O());
                 var fieldType = $as_Lfeatherweightgo_model_ast_Type($n(x0$2)._2__O());
                 $m_Lfeatherweightgo_model_typer_Implement$();
-                var this$60 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(argumentType$1);
-                return new $c_Lfeatherweightgo_model_typer_Implement(this$60.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, fieldType)
+                var this$49 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(argumentType$1);
+                return new $c_Lfeatherweightgo_model_typer_Implement(this$49.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, fieldType)
               } else {
                 throw new $c_s_MatchError(x0$2)
               }
             });
-            if ((this$61 === $m_sci_Nil$())) {
+            if ((this$50 === $m_sci_Nil$())) {
               var $x_20 = $m_sci_Nil$()
             } else {
-              var arg1$14 = this$61.head__O();
+              var arg1$14 = this$50.head__O();
               var h$6 = new $c_sci_$colon$colon(f$6(arg1$14), $m_sci_Nil$());
               var t$6 = h$6;
-              var rest$6 = $as_sci_List(this$61.tail__O());
+              var rest$6 = $as_sci_List(this$50.tail__O());
               while ((rest$6 !== $m_sci_Nil$())) {
                 var arg1$15 = $n(rest$6).head__O();
                 var nx$6 = new $c_sci_$colon$colon(f$6(arg1$15), $m_sci_Nil$());
@@ -12052,23 +12001,21 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
             var $x_19 = false
           };
           if ($x_19) {
-            $n($m_s_package$().s_package$__f_Right);
             var $x_18 = new $c_s_util_Right((void 0))
           } else {
-            $n($m_s_package$().s_package$__f_Left);
             var $x_24 = $m_Lfeatherweightgo_model_error_FGError$FGTypeError$();
-            var this$63 = $n(argumentTypes$2);
+            var this$51 = $n(argumentTypes$2);
             var f$7 = ((x$16$2) => {
               var x$16 = $as_Lfeatherweightgo_model_ast_Type(x$16$2);
               return $n(x$16).name__Lfeatherweightgo_model_ast_TypeName()
             });
-            if ((this$63 === $m_sci_Nil$())) {
+            if ((this$51 === $m_sci_Nil$())) {
               var $x_23 = $m_sci_Nil$()
             } else {
-              var arg1$16 = this$63.head__O();
+              var arg1$16 = this$51.head__O();
               var h$7 = new $c_sci_$colon$colon(f$7(arg1$16), $m_sci_Nil$());
               var t$7 = h$7;
-              var rest$7 = $as_sci_List(this$63.tail__O());
+              var rest$7 = $as_sci_List(this$51.tail__O());
               while ((rest$7 !== $m_sci_Nil$())) {
                 var arg1$17 = $n(rest$7).head__O();
                 var nx$7 = new $c_sci_$colon$colon(f$7(arg1$17), $m_sci_Nil$());
@@ -12078,18 +12025,18 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
               };
               var $x_23 = h$7
             };
-            var this$64 = $n(fs$1);
+            var this$52 = $n(fs$1);
             var f$8 = ((x$17$2) => {
               var x$17 = $as_Lfeatherweightgo_model_ast_StructureField(x$17$2);
               return $n($n(x$17).Lfeatherweightgo_model_ast_StructureField__f_typ).name__Lfeatherweightgo_model_ast_TypeName()
             });
-            if ((this$64 === $m_sci_Nil$())) {
+            if ((this$52 === $m_sci_Nil$())) {
               var $x_22 = $m_sci_Nil$()
             } else {
-              var arg1$18 = this$64.head__O();
+              var arg1$18 = this$52.head__O();
               var h$8 = new $c_sci_$colon$colon(f$8(arg1$18), $m_sci_Nil$());
               var t$8 = h$8;
-              var rest$8 = $as_sci_List(this$64.tail__O());
+              var rest$8 = $as_sci_List(this$52.tail__O());
               while ((rest$8 !== $m_sci_Nil$())) {
                 var arg1$19 = $n(rest$8).head__O();
                 var nx$8 = new $c_sci_$colon$colon(f$8(arg1$19), $m_sci_Nil$());
@@ -12099,36 +12046,34 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
               };
               var $x_22 = h$8
             };
-            var value$6 = $n($x_24).apply__sci_List__sci_List__Lfeatherweightgo_model_error_FGError$FGTypeError($x_23, $x_22);
-            var $x_18 = new $c_s_util_Left(value$6)
+            var $x_18 = new $c_s_util_Left($n($x_24).apply__sci_List__sci_List__Lfeatherweightgo_model_error_FGError$FGTypeError($x_23, $x_22))
           };
-          var this$66 = $n($x_18);
-          if ((this$66 instanceof $c_s_util_Right)) {
-            var x2$15 = $as_s_util_Right(this$66);
+          var this$53 = $n($x_18);
+          if ((this$53 instanceof $c_s_util_Right)) {
+            var x2$15 = $as_s_util_Right(this$53);
             var b$14 = $n(x2$15).s_util_Right__f_value;
             return new $c_s_util_Right(($as_jl_Void(b$14), structureType))
           } else {
-            return this$66
+            return this$53
           }
         } else {
-          return this$55
+          return this$44
         }
       } else {
-        return this$50
+        return this$39
       }
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_FieldSelect)) {
       var x13 = $as_Lfeatherweightgo_model_ast_FieldSelect(x1);
       var e$2 = $n(x13).Lfeatherweightgo_model_ast_FieldSelect__f_expression;
       var fieldName = $n(x13).Lfeatherweightgo_model_ast_FieldSelect__f_fieldName;
-      var this$67 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, e$2, declarations$1));
-      if ((this$67 instanceof $c_s_util_Right)) {
-        var x2$16 = $as_s_util_Right(this$67);
+      var this$54 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, e$2, declarations$1));
+      if ((this$54 instanceof $c_s_util_Right)) {
+        var x2$16 = $as_s_util_Right(this$54);
         var b$15 = $n(x2$16).s_util_Right__f_value;
         var eType$3 = $as_Lfeatherweightgo_model_ast_Type(b$15);
         if ((eType$3 instanceof $c_Lfeatherweightgo_model_ast_AbstractStructureType)) {
           var x2$17 = $as_Lfeatherweightgo_model_ast_AbstractStructureType(eType$3);
-          $n($m_s_package$().s_package$__f_Right);
           var $x_25 = new $c_s_util_Right(x2$17)
         } else if ((eType$3 instanceof $c_Lfeatherweightgo_model_ast_AnyNamedType)) {
           var x3 = $as_Lfeatherweightgo_model_ast_AnyNamedType(eType$3);
@@ -12140,29 +12085,24 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
               var typ = $as_Lfeatherweightgo_model_ast_Type($n(x2$2$1).s_Some__f_value);
               if ((typ instanceof $c_Lfeatherweightgo_model_ast_AbstractStructureType)) {
                 var x3$2 = $as_Lfeatherweightgo_model_ast_AbstractStructureType(typ);
-                $n($m_s_package$().s_package$__f_Right);
                 var $x_25 = new $c_s_util_Right(x3$2);
                 break matchEnd5$2
               }
             };
-            $n($m_s_package$().s_package$__f_Left);
-            var value$7 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("The give type[" + $n($n(eType$3).name__Lfeatherweightgo_model_ast_TypeName()).value__T()) + "] is not structure!"), null);
-            var $x_25 = new $c_s_util_Left(value$7)
+            var $x_25 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("The give type[" + $n($n(eType$3).name__Lfeatherweightgo_model_ast_TypeName()).value__T()) + "] is not structure!"), null))
           }
         } else {
-          $n($m_s_package$().s_package$__f_Left);
-          var value$8 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("The give type[" + $n($n(eType$3).name__Lfeatherweightgo_model_ast_TypeName()).value__T()) + "] is not structure!"), null);
-          var $x_25 = new $c_s_util_Left(value$8)
+          var $x_25 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("The give type[" + $n($n(eType$3).name__Lfeatherweightgo_model_ast_TypeName()).value__T()) + "] is not structure!"), null))
         };
-        var this$72 = $n($x_25);
-        if ((this$72 instanceof $c_s_util_Right)) {
-          var x2$18 = $as_s_util_Right(this$72);
+        var this$55 = $n($x_25);
+        if ((this$55 instanceof $c_s_util_Right)) {
+          var x2$18 = $as_s_util_Right(this$55);
           var b$16 = $n(x2$18).s_util_Right__f_value;
           var eStructureType = $as_Lfeatherweightgo_model_ast_AbstractStructureType(b$16);
-          var this$73 = $m_Lfeatherweightgo_util_Utils$();
-          var this$74 = $n($p_Lfeatherweightgo_util_Utils$__loop$1__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__sci_List(this$73, declarations$1, eStructureType));
+          var this$56 = $m_Lfeatherweightgo_util_Utils$();
+          var this$57 = $n($p_Lfeatherweightgo_util_Utils$__loop$1__sci_List__Lfeatherweightgo_model_ast_AbstractStructureType__sci_List(this$56, declarations$1, eStructureType));
           _return$1: {
-            var these$1 = this$74;
+            var these$1 = this$57;
             while ((!$n(these$1).isEmpty__Z())) {
               var arg1$20 = $n(these$1).head__O();
               var x$21 = $as_Lfeatherweightgo_model_ast_StructureField(arg1$20);
@@ -12176,21 +12116,21 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
             var $x_27 = $m_s_None$()
           };
           var $x_26 = $m_Lfeatherweightgo_model_error_FGError$FGTypeError$();
-          var this$75 = $n(eStructureType);
-          var this$76 = $n($p_Lfeatherweightgo_typer_TyperImpl__toEither__s_Option__O__s_util_Either($thiz, $x_27, $n($x_26).apply__Lfeatherweightgo_model_ast_TypeName__Lfeatherweightgo_model_ast_FieldName__Lfeatherweightgo_model_error_FGError$FGTypeError(this$75.structureTypeName__Lfeatherweightgo_model_ast_StructureTypeName(), fieldName)));
-          if ((this$76 instanceof $c_s_util_Right)) {
-            var x2$19 = $as_s_util_Right(this$76);
+          var this$58 = $n(eStructureType);
+          var this$59 = $n($p_Lfeatherweightgo_typer_TyperImpl__toEither__s_Option__O__s_util_Either($thiz, $x_27, $n($x_26).apply__Lfeatherweightgo_model_ast_TypeName__Lfeatherweightgo_model_ast_FieldName__Lfeatherweightgo_model_error_FGError$FGTypeError(this$58.structureTypeName__Lfeatherweightgo_model_ast_StructureTypeName(), fieldName)));
+          if ((this$59 instanceof $c_s_util_Right)) {
+            var x2$19 = $as_s_util_Right(this$59);
             var b$17 = $n(x2$19).s_util_Right__f_value;
             var field = $as_Lfeatherweightgo_model_ast_StructureField(b$17);
             return new $c_s_util_Right($n(field).Lfeatherweightgo_model_ast_StructureField__f_typ)
           } else {
-            return this$76
+            return this$59
           }
         } else {
-          return this$72
+          return this$55
         }
       } else {
-        return this$67
+        return this$54
       }
     };
     if ((x1 instanceof $c_Lfeatherweightgo_model_ast_TypeAssertion)) {
@@ -12210,14 +12150,12 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
           var x$22 = $m_s_None$();
           if ((x$22 === x1$2$1)) {
             if ($n($n(x15).Lfeatherweightgo_model_ast_AnyNamedType__f_types).isEmpty__Z()) {
-              var this$77 = $n(x15);
-              expression = new $c_Lfeatherweightgo_model_ast_TypeAssertion(e$3, new $c_Lfeatherweightgo_model_ast_TypeParameter($n(this$77.Lfeatherweightgo_model_ast_AnyNamedType__f_typeName).value__T()));
+              var this$60 = $n(x15);
+              expression = new $c_Lfeatherweightgo_model_ast_TypeAssertion(e$3, new $c_Lfeatherweightgo_model_ast_TypeParameter($n(this$60.Lfeatherweightgo_model_ast_AnyNamedType__f_typeName).value__T()));
               continue
             } else {
-              $n($m_s_package$().s_package$__f_Left);
-              var this$78 = $n(x15);
-              var value$9 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert target " + this$78.Lfeatherweightgo_model_ast_AnyNamedType__f_typeName) + " is invalid!"), null);
-              return new $c_s_util_Left(value$9)
+              var this$61 = $n(x15);
+              return new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert target " + this$61.Lfeatherweightgo_model_ast_AnyNamedType__f_typeName) + " is invalid!"), null))
             }
           } else {
             throw new $c_s_MatchError(x1$2$1)
@@ -12231,109 +12169,90 @@ function $p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightg
       $n($m_s_package$().s_package$__f_List);
       var array$1 = [typ$2];
       var elems$1 = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array$1);
-      if ($p_Lfeatherweightgo_typer_TyperImpl__typeActualCheck$1__Lfeatherweightgo_model_typer_TypeBound__sci_List__sci_List__Z($thiz, typeBound, $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1), declarations$1)) {
-        $n($m_s_package$().s_package$__f_Right);
-        var $x_28 = new $c_s_util_Right((void 0))
-      } else {
-        $n($m_s_package$().s_package$__f_Left);
-        var value$10 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + $n(typ$2).name__Lfeatherweightgo_model_ast_TypeName()) + " error!"), null);
-        var $x_28 = new $c_s_util_Left(value$10)
-      };
-      var this$86 = $n($x_28);
-      if ((this$86 instanceof $c_s_util_Right)) {
-        var x2$20 = $as_s_util_Right(this$86);
+      var this$66 = $n(($p_Lfeatherweightgo_typer_TyperImpl__typeActualCheck$1__Lfeatherweightgo_model_typer_TypeBound__sci_List__sci_List__Z($thiz, typeBound, $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1), declarations$1) ? new $c_s_util_Right((void 0)) : new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + $n(typ$2).name__Lfeatherweightgo_model_ast_TypeName()) + " error!"), null))));
+      if ((this$66 instanceof $c_s_util_Right)) {
+        var x2$20 = $as_s_util_Right(this$66);
         var b$18 = $n(x2$20).s_util_Right__f_value;
         $as_jl_Void(b$18);
-        var this$87 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, e$4, declarations$1));
-        if ((this$87 instanceof $c_s_util_Right)) {
-          var x2$21 = $as_s_util_Right(this$87);
+        var this$67 = $n($p_Lfeatherweightgo_typer_TyperImpl__expressionCheck$1__Lfeatherweightgo_model_typer_Environment__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Expression__sci_List__s_util_Either($thiz, environment, typeBound, e$4, declarations$1));
+        if ((this$67 instanceof $c_s_util_Right)) {
+          var x2$21 = $as_s_util_Right(this$67);
           var b$19 = $n(x2$21).s_util_Right__f_value;
           var eType$1 = $as_Lfeatherweightgo_model_ast_Type(b$19);
           if ((typ$2 instanceof $c_Lfeatherweightgo_model_ast_AbstractStructureType)) {
             var x2$22 = $as_Lfeatherweightgo_model_ast_AbstractStructureType(typ$2);
-            var this$93 = $n(typeBound);
+            var this$73 = $n(typeBound);
             $m_Lfeatherweightgo_model_typer_Implement$();
-            var this$92 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(x2$22);
-            var this$89 = $n($m_Lfeatherweightgo_util_Utils$().bounds__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Type__s_util_Either(typeBound, eType$1));
-            if ((this$89 instanceof $c_s_util_Right)) {
-              var x2$23 = $as_s_util_Right(this$89);
+            var this$72 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(x2$22);
+            var this$69 = $n($m_Lfeatherweightgo_util_Utils$().bounds__Lfeatherweightgo_model_typer_TypeBound__Lfeatherweightgo_model_ast_Type__s_util_Either(typeBound, eType$1));
+            if ((this$69 instanceof $c_s_util_Right)) {
+              var x2$23 = $as_s_util_Right(this$69);
               var b$20 = $n(x2$23).s_util_Right__f_value;
               var x$3$2 = $as_Lfeatherweightgo_model_ast_AbstractStructureType(b$20);
-              var $x_30 = x$3$2
+              var $x_29 = x$3$2
             } else {
-              if ((!(this$89 instanceof $c_s_util_Left))) {
-                throw new $c_s_MatchError(this$89)
+              if ((!(this$69 instanceof $c_s_util_Left))) {
+                throw new $c_s_MatchError(this$69)
               };
-              var x3$1 = $as_s_util_Left(this$89);
+              var x3$1 = $as_s_util_Left(this$69);
               var a = $n(x3$1).s_util_Left__f_value;
               var x$24 = $as_Lfeatherweightgo_model_ast_InterfaceType(a);
-              var $x_30 = x$24
+              var $x_29 = x$24
             };
-            var rhs$1 = $as_Lfeatherweightgo_model_ast_Type($x_30);
-            var value$11 = new $c_Lfeatherweightgo_model_typer_Implement(this$92.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, rhs$1);
+            var rhs$1 = $as_Lfeatherweightgo_model_ast_Type($x_29);
+            var value = new $c_Lfeatherweightgo_model_typer_Implement(this$72.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, rhs$1);
             var checking = $m_Lfeatherweightgo_model_typer_Implement$().checkingInstance__sci_List__Lfeatherweightgo_model_typer_Checking(declarations$1);
-            if ($n(checking).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value$11, this$93)) {
-              $n($m_s_package$().s_package$__f_Right);
-              var $x_29 = new $c_s_util_Right((void 0))
+            if ($n(checking).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value, this$73)) {
+              var $x_28 = new $c_s_util_Right((void 0))
             } else {
-              $n($m_s_package$().s_package$__f_Left);
-              var this$95 = $n(x2$22);
-              var value$12 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + this$95.structureTypeName__Lfeatherweightgo_model_ast_StructureTypeName()) + "(StructureType) error!"), null);
-              var $x_29 = new $c_s_util_Left(value$12)
+              var this$74 = $n(x2$22);
+              var $x_28 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + this$74.structureTypeName__Lfeatherweightgo_model_ast_StructureTypeName()) + "(StructureType) error!"), null))
             }
           } else if ((typ$2 instanceof $c_Lfeatherweightgo_model_ast_InterfaceType)) {
             var x3$3 = $as_Lfeatherweightgo_model_ast_InterfaceType(typ$2);
-            var this$99 = $n(typeBound);
+            var this$77 = $n(typeBound);
             $m_Lfeatherweightgo_model_typer_Implement$();
-            var this$98 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(eType$1);
-            var value$13 = new $c_Lfeatherweightgo_model_typer_Implement(this$98.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, x3$3);
+            var this$76 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(eType$1);
+            var value$1 = new $c_Lfeatherweightgo_model_typer_Implement(this$76.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, x3$3);
             var checking$1 = $m_Lfeatherweightgo_model_typer_Implement$().checkingInstance__sci_List__Lfeatherweightgo_model_typer_Checking(declarations$1);
-            if ($n(checking$1).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value$13, this$99)) {
-              $n($m_s_package$().s_package$__f_Right);
-              var $x_29 = new $c_s_util_Right((void 0))
+            if ($n(checking$1).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value$1, this$77)) {
+              var $x_28 = new $c_s_util_Right((void 0))
             } else {
-              $n($m_s_package$().s_package$__f_Left);
-              var this$101 = $n(x3$3);
-              var value$14 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + this$101.Lfeatherweightgo_model_ast_InterfaceType__f_interfaceTypeName) + "(InterfaceType) error!"), null);
-              var $x_29 = new $c_s_util_Left(value$14)
+              var this$78 = $n(x3$3);
+              var $x_28 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + this$78.Lfeatherweightgo_model_ast_InterfaceType__f_interfaceTypeName) + "(InterfaceType) error!"), null))
             }
           } else if ((typ$2 instanceof $c_Lfeatherweightgo_model_ast_TypeParameter)) {
             var x4 = $as_Lfeatherweightgo_model_ast_TypeParameter(typ$2);
-            var this$105 = $n(typeBound);
+            var this$81 = $n(typeBound);
             $m_Lfeatherweightgo_model_typer_Implement$();
-            var this$104 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(eType$1);
-            var value$15 = new $c_Lfeatherweightgo_model_typer_Implement(this$104.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, x4);
+            var this$80 = new $c_Lfeatherweightgo_model_typer_Implement$ImplementSyntax(eType$1);
+            var value$2 = new $c_Lfeatherweightgo_model_typer_Implement(this$80.Lfeatherweightgo_model_typer_Implement$ImplementSyntax__f_lhs, x4);
             var checking$2 = $m_Lfeatherweightgo_model_typer_Implement$().checkingInstance__sci_List__Lfeatherweightgo_model_typer_Checking(declarations$1);
-            if ($n(checking$2).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value$15, this$105)) {
-              $n($m_s_package$().s_package$__f_Right);
-              var $x_29 = new $c_s_util_Right((void 0))
+            if ($n(checking$2).isOk__O__Lfeatherweightgo_model_typer_TypeBound__Z(value$2, this$81)) {
+              var $x_28 = new $c_s_util_Right((void 0))
             } else {
-              $n($m_s_package$().s_package$__f_Left);
-              var this$107 = $n(x4);
-              var value$16 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + new $c_Lfeatherweightgo_model_ast_AnyTypeName(this$107.Lfeatherweightgo_model_ast_TypeParameter__f_typeName)) + "(TypeParameter) error!"), null);
-              var $x_29 = new $c_s_util_Left(value$16)
+              var this$82 = $n(x4);
+              var $x_28 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert " + new $c_Lfeatherweightgo_model_ast_AnyTypeName(this$82.Lfeatherweightgo_model_ast_TypeParameter__f_typeName)) + "(TypeParameter) error!"), null))
             }
           } else {
             if ((!(typ$2 instanceof $c_Lfeatherweightgo_model_ast_AnyNamedType))) {
               throw new $c_s_MatchError(typ$2)
             };
-            $n($m_s_package$().s_package$__f_Left);
-            var value$17 = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert is " + $n(typ$2).name__Lfeatherweightgo_model_ast_TypeName()) + " any named type"), null);
-            var $x_29 = new $c_s_util_Left(value$17)
+            var $x_28 = new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError((("assert is " + $n(typ$2).name__Lfeatherweightgo_model_ast_TypeName()) + " any named type"), null))
           };
-          var this$110 = $n($x_29);
-          if ((this$110 instanceof $c_s_util_Right)) {
-            var x2$24 = $as_s_util_Right(this$110);
+          var this$83 = $n($x_28);
+          if ((this$83 instanceof $c_s_util_Right)) {
+            var x2$24 = $as_s_util_Right(this$83);
             var b$21 = $n(x2$24).s_util_Right__f_value;
             return new $c_s_util_Right(($as_jl_Void(b$21), typ$2))
           } else {
-            return this$110
+            return this$83
           }
         } else {
-          return this$87
+          return this$67
         }
       } else {
-        return this$86
+        return this$66
       }
     };
     throw new $c_s_MatchError(x1)
@@ -12358,14 +12277,7 @@ $c_Lfeatherweightgo_typer_TyperImpl.prototype.check__Lfeatherweightgo_model_ast_
     var x2 = $as_s_util_Right(this$4);
     var b = $n(x2).s_util_Right__f_value;
     var result = $as_Lfeatherweightgo_model_ast_Type(b);
-    if (i) {
-      $n($m_s_package$().s_package$__f_Right);
-      return new $c_s_util_Right(result)
-    } else {
-      $n($m_s_package$().s_package$__f_Left);
-      var value = new $c_Lfeatherweightgo_model_error_FGError$FGTypeError("The declarations of the main program seems to be wrong!", null);
-      return new $c_s_util_Left(value)
-    }
+    return (i ? new $c_s_util_Right(result) : new $c_s_util_Left(new $c_Lfeatherweightgo_model_error_FGError$FGTypeError("The declarations of the main program seems to be wrong!", null)))
   } else {
     return this$4
   }
@@ -13544,11 +13456,11 @@ function $isArrayOf_sci_SetNode(obj, depth) {
 function $asArrayOf_sci_SetNode(obj, depth) {
   return (($isArrayOf_sci_SetNode(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.collection.immutable.SetNode;", depth))
 }
-function $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable($thiz, xs) {
-  if ((xs === $thiz)) {
-    $thiz.addAll__sc_IterableOnce__scm_Growable($m_scm_Buffer$().from__sc_IterableOnce__sc_SeqOps(xs))
+function $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable($thiz, elems) {
+  if ((elems === $thiz)) {
+    $thiz.addAll__sc_IterableOnce__scm_Growable($m_scm_Buffer$().from__sc_IterableOnce__sc_SeqOps(elems))
   } else {
-    var it = $n(xs).iterator__sc_Iterator();
+    var it = $n(elems).iterator__sc_Iterator();
     while ($n(it).hasNext__Z()) {
       $thiz.addOne__O__scm_Growable($n(it).next__O())
     }
@@ -16418,6 +16330,65 @@ $c_sci_BitmapIndexedSetNode.prototype.foreach__F1__V = (function(f) {
     j = ((1 + j) | 0)
   }
 });
+$c_sci_BitmapIndexedSetNode.prototype.subsetOf__sci_SetNode__I__Z = (function(that, shift) {
+  if ((this === that)) {
+    return true
+  } else if ((!(that instanceof $c_sci_HashCollisionSetNode))) {
+    if ((that instanceof $c_sci_BitmapIndexedSetNode)) {
+      var x3 = $as_sci_BitmapIndexedSetNode(that);
+      var thisBitmap = (this.sci_BitmapIndexedSetNode__f_dataMap | this.sci_BitmapIndexedSetNode__f_nodeMap);
+      var nodeBitmap = ($n(x3).sci_BitmapIndexedSetNode__f_dataMap | $n(x3).sci_BitmapIndexedSetNode__f_nodeMap);
+      if (((thisBitmap | nodeBitmap) !== nodeBitmap)) {
+        return false
+      };
+      var bitmap = (thisBitmap & nodeBitmap);
+      var i = bitmap;
+      if ((i === 0)) {
+        var bitsToSkip = 32
+      } else {
+        var i$1 = (i & ((-i) | 0));
+        var bitsToSkip = ((31 - $uI(Math.clz32(i$1))) | 0)
+      };
+      var isValidSubset = true;
+      while ((isValidSubset && (bitsToSkip < 32))) {
+        var bitpos = $m_sci_Node$().bitposFrom__I__I(bitsToSkip);
+        if (((this.sci_BitmapIndexedSetNode__f_dataMap & bitpos) !== 0)) {
+          if ((($n(x3).sci_BitmapIndexedSetNode__f_dataMap & bitpos) !== 0)) {
+            var payload0 = this.getPayload__I__O($m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_dataMap, bitpos));
+            var payload1 = $n(x3).getPayload__I__O($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_dataMap, bitpos));
+            isValidSubset = $m_sr_BoxesRunTime$().equals__O__O__Z(payload0, payload1)
+          } else {
+            var thisDataIndex = $m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_dataMap, bitpos);
+            var payload = this.getPayload__I__O(thisDataIndex);
+            var subNode = $n(that).getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
+            var elementUnimprovedHash = this.getHash__I__I(thisDataIndex);
+            var elementHash = $m_sc_Hashing$().improve__I__I(elementUnimprovedHash);
+            isValidSubset = $n(subNode).contains__O__I__I__I__Z(payload, elementUnimprovedHash, elementHash, ((5 + shift) | 0))
+          }
+        } else if ((($n(x3).sci_BitmapIndexedSetNode__f_dataMap & bitpos) === 0)) {
+          var subNode0 = this.getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
+          var subNode1 = $n(x3).getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
+          isValidSubset = $n(subNode0).subsetOf__sci_SetNode__I__Z(subNode1, ((5 + shift) | 0))
+        } else {
+          isValidSubset = false
+        };
+        var newBitmap = (bitmap ^ bitpos);
+        bitmap = newBitmap;
+        if ((newBitmap === 0)) {
+          bitsToSkip = 32
+        } else {
+          var i$2 = (newBitmap & ((-newBitmap) | 0));
+          bitsToSkip = ((31 - $uI(Math.clz32(i$2))) | 0)
+        }
+      };
+      return isValidSubset
+    } else {
+      throw new $c_s_MatchError(that)
+    }
+  } else {
+    return false
+  }
+});
 $c_sci_BitmapIndexedSetNode.prototype.equals__O__Z = (function(that) {
   if ((that instanceof $c_sci_BitmapIndexedSetNode)) {
     var x2 = $as_sci_BitmapIndexedSetNode(that);
@@ -16456,6 +16427,11 @@ $c_sci_BitmapIndexedSetNode.prototype.equals__O__Z = (function(that) {
 });
 $c_sci_BitmapIndexedSetNode.prototype.hashCode__I = (function() {
   throw new $c_jl_UnsupportedOperationException("Trie nodes do not support hashing.")
+});
+$c_sci_BitmapIndexedSetNode.prototype.toString__T = (function() {
+  var $x_1 = $m_sc_StringOps$();
+  var array = [this.sci_BitmapIndexedSetNode__f_size, this.sci_BitmapIndexedSetNode__f_dataMap, this.sci_BitmapIndexedSetNode__f_nodeMap];
+  return $n($x_1).format$extension__T__sci_Seq__T("BitmapIndexedSetNode(size=%s, dataMap=%x, nodeMap=%x)", $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array))
 });
 $c_sci_BitmapIndexedSetNode.prototype.copy__sci_BitmapIndexedSetNode = (function() {
   var this$1 = $n(this.sci_BitmapIndexedSetNode__f_content);
@@ -16773,6 +16749,31 @@ $c_sci_HashCollisionSetNode.prototype.foreach__F1__V = (function(f) {
 });
 $c_sci_HashCollisionSetNode.prototype.cachedJavaKeySetHashCode__I = (function() {
   return Math.imul($n(this.sci_HashCollisionSetNode__f_content).length__I(), this.sci_HashCollisionSetNode__f_hash)
+});
+$c_sci_HashCollisionSetNode.prototype.subsetOf__sci_SetNode__I__Z = (function(that, shift) {
+  if ((this === that)) {
+    return true
+  } else if ((that instanceof $c_sci_HashCollisionSetNode)) {
+    var x2 = $as_sci_HashCollisionSetNode(that);
+    var $x_1 = $n(this.sci_HashCollisionSetNode__f_content).length__I();
+    var this$1 = $n(x2);
+    if (($x_1 <= $n(this$1.sci_HashCollisionSetNode__f_content).length__I())) {
+      var this$2 = $n(this.sci_HashCollisionSetNode__f_content);
+      var eta$0$1 = $n(x2).sci_HashCollisionSetNode__f_content;
+      var res = true;
+      var it = this$2.iterator__sc_Iterator();
+      while ((res && $n(it).hasNext__Z())) {
+        var arg1 = $n(it).next__O();
+        var this$3 = $n(eta$0$1);
+        res = $f_sc_SeqOps__contains__O__Z(this$3, arg1)
+      };
+      return res
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
 });
 $c_sci_HashCollisionSetNode.prototype.equals__O__Z = (function(that) {
   if ((that instanceof $c_sci_HashCollisionSetNode)) {
@@ -17187,6 +17188,13 @@ function $m_sci_Set$() {
     $n_sci_Set$ = new $c_sci_Set$()
   };
   return $n_sci_Set$
+}
+function $f_scm_Builder__sizeHint__sc_IterableOnce__I__V($thiz, coll, delta) {
+  var x1 = $n(coll).knownSize__I();
+  if ((x1 !== (-1))) {
+    var that = ((x1 + delta) | 0);
+    $thiz.sizeHint__I__V(((that < 0) ? 0 : that))
+  }
 }
 function $is_scm_Builder(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.scm_Builder)))
@@ -20198,8 +20206,8 @@ function $f_sc_StrictOptimizedIterableOps__flatten__F1__O($thiz, toIterableOnce)
   var it = $thiz.iterator__sc_Iterator();
   while ($n(it).hasNext__Z()) {
     var this$1 = $n(b);
-    var xs = $as_sc_IterableOnce($n(toIterableOnce).apply__O__O($n(it).next__O()));
-    this$1.addAll__sc_IterableOnce__scm_Growable(xs)
+    var elems = $as_sc_IterableOnce($n(toIterableOnce).apply__O__O($n(it).next__O()));
+    this$1.addAll__sc_IterableOnce__scm_Growable(elems)
   };
   return $n(b).result__O()
 }
@@ -20440,12 +20448,12 @@ function $h_sci_WrappedString$() {
 $h_sci_WrappedString$.prototype = $c_sci_WrappedString$.prototype;
 $c_sci_WrappedString$.prototype.fromSpecific__sc_IterableOnce__sci_WrappedString = (function(it) {
   var b = this.newBuilder__scm_Builder();
-  var s = $n(it).knownSize__I();
-  if ((s >= 0)) {
-    $n(b).sizeHint__I__V(s)
-  };
-  var this$1 = $n(b);
-  this$1.addAll__sc_IterableOnce__scm_Growable(it);
+  var this$2 = $n(b);
+  $n(b);
+  var delta = 0;
+  $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this$2, it, delta);
+  var this$3 = $n(b);
+  this$3.addAll__sc_IterableOnce__scm_Growable(it);
   return $as_sci_WrappedString($n(b).result__O())
 });
 $c_sci_WrappedString$.prototype.newBuilder__scm_Builder = (function() {
@@ -20507,8 +20515,8 @@ $c_scm_Builder$$anon$1.prototype.sizeHint__I__V = (function(size) {
 $c_scm_Builder$$anon$1.prototype.result__O = (function() {
   return $n(this.scm_Builder$$anon$1__f_f$1).apply__O__O($n(this.scm_Builder$$anon$1__f_$outer).result__O())
 });
-$c_scm_Builder$$anon$1.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__scm_Builder$$anon$1(xs)
+$c_scm_Builder$$anon$1.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__scm_Builder$$anon$1(elems)
 });
 $c_scm_Builder$$anon$1.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__scm_Builder$$anon$1(elem)
@@ -20550,8 +20558,8 @@ $c_scm_GrowableBuilder.prototype.addAll__sc_IterableOnce__scm_GrowableBuilder = 
   $n(this.scm_GrowableBuilder__f_elems).addAll__sc_IterableOnce__scm_Growable(xs);
   return this
 });
-$c_scm_GrowableBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__scm_GrowableBuilder(xs)
+$c_scm_GrowableBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__scm_GrowableBuilder(elems)
 });
 $c_scm_GrowableBuilder.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__scm_GrowableBuilder(elem)
@@ -23687,7 +23695,7 @@ function $asArrayOf_sc_Iterable(obj, depth) {
   return (($isArrayOf_sc_Iterable(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.collection.Iterable;", depth))
 }
 function $p_sc_Iterator$$anon$10__nextCur__V($thiz) {
-  $thiz.sc_Iterator$$anon$10__f_cur = null;
+  $thiz.sc_Iterator$$anon$10__f_cur = $m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty;
   $thiz.sc_Iterator$$anon$10__f_cur = $n($as_sc_IterableOnce($n($thiz.sc_Iterator$$anon$10__f_f$3).apply__O__O($n($thiz.sc_Iterator$$anon$10__f_$outer).next__O()))).iterator__sc_Iterator();
   $thiz.sc_Iterator$$anon$10__f__hasNext = (-1)
 }
@@ -24209,7 +24217,8 @@ $c_sc_Iterator$SliceIterator.prototype.sliceIterator__I__I__sc_Iterator = (funct
   if ((rest === 0)) {
     return $m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty
   } else {
-    this.sc_Iterator$SliceIterator__f_dropping = ((this.sc_Iterator$SliceIterator__f_dropping + lo) | 0);
+    var sum = ((this.sc_Iterator$SliceIterator__f_dropping + lo) | 0);
+    this.sc_Iterator$SliceIterator__f_dropping = ((sum < 0) ? 2147483647 : sum);
     this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining = rest;
     return this
   }
@@ -24801,8 +24810,8 @@ $c_sci_HashMapBuilder.prototype.addAll__sc_IterableOnce__sci_HashMapBuilder = (f
   };
   return this
 });
-$c_sci_HashMapBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__sci_HashMapBuilder(xs)
+$c_sci_HashMapBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__sci_HashMapBuilder(elems)
 });
 $c_sci_HashMapBuilder.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__T2__sci_HashMapBuilder($as_T2(elem))
@@ -24955,8 +24964,8 @@ $c_sci_HashSetBuilder.prototype.addAll__sc_IterableOnce__sci_HashSetBuilder = (f
   };
   return this
 });
-$c_sci_HashSetBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__sci_HashSetBuilder(xs)
+$c_sci_HashSetBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__sci_HashSetBuilder(elems)
 });
 $c_sci_HashSetBuilder.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__sci_HashSetBuilder(elem)
@@ -25066,8 +25075,8 @@ $c_sci_LazyList$LazyBuilder.prototype.addAll__sc_IterableOnce__sci_LazyList$Lazy
   };
   return this
 });
-$c_sci_LazyList$LazyBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__sci_LazyList$LazyBuilder(xs)
+$c_sci_LazyList$LazyBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__sci_LazyList$LazyBuilder(elems)
 });
 $c_sci_LazyList$LazyBuilder.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__sci_LazyList$LazyBuilder(elem)
@@ -25359,8 +25368,8 @@ $c_sci_MapBuilderImpl.prototype.addOne__O__O__sci_MapBuilderImpl = (function(key
 $c_sci_MapBuilderImpl.prototype.addAll__sc_IterableOnce__sci_MapBuilderImpl = (function(xs) {
   return (this.sci_MapBuilderImpl__f_switchedToHashMapBuilder ? ($n(this.sci_MapBuilderImpl__f_hashMapBuilder).addAll__sc_IterableOnce__sci_HashMapBuilder(xs), this) : $as_sci_MapBuilderImpl($f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, xs)))
 });
-$c_sci_MapBuilderImpl.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__sci_MapBuilderImpl(xs)
+$c_sci_MapBuilderImpl.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__sci_MapBuilderImpl(elems)
 });
 $c_sci_MapBuilderImpl.prototype.addOne__O__scm_Growable = (function(elem) {
   var elem$1 = $as_T2(elem);
@@ -25473,8 +25482,8 @@ $c_sci_SetBuilderImpl.prototype.addOne__O__sci_SetBuilderImpl = (function(elem) 
 $c_sci_SetBuilderImpl.prototype.addAll__sc_IterableOnce__sci_SetBuilderImpl = (function(xs) {
   return (this.sci_SetBuilderImpl__f_switchedToHashSetBuilder ? ($n(this.sci_SetBuilderImpl__f_hashSetBuilder).addAll__sc_IterableOnce__sci_HashSetBuilder(xs), this) : $as_sci_SetBuilderImpl($f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, xs)))
 });
-$c_sci_SetBuilderImpl.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__sci_SetBuilderImpl(xs)
+$c_sci_SetBuilderImpl.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__sci_SetBuilderImpl(elems)
 });
 $c_sci_SetBuilderImpl.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__sci_SetBuilderImpl(elem)
@@ -26686,8 +26695,8 @@ $c_sci_VectorBuilder.prototype.toString__T = (function() {
 $c_sci_VectorBuilder.prototype.result__O = (function() {
   return this.result__sci_Vector()
 });
-$c_sci_VectorBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__sci_VectorBuilder(xs)
+$c_sci_VectorBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__sci_VectorBuilder(elems)
 });
 $c_sci_VectorBuilder.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__sci_VectorBuilder(elem)
@@ -26712,36 +26721,11 @@ var $d_sci_VectorBuilder = new $TypeData().initClass({
   scm_Clearable: 1
 });
 $c_sci_VectorBuilder.prototype.$classData = $d_sci_VectorBuilder;
-function $p_scm_ArrayBuffer$__resizeUp__J__J__I($thiz, arrayLen, targetLen) {
-  var ahi = targetLen.RTLong__f_hi;
-  var bhi = arrayLen.RTLong__f_hi;
-  if (((ahi === bhi) ? (((-2147483648) ^ targetLen.RTLong__f_lo) <= ((-2147483648) ^ arrayLen.RTLong__f_lo)) : (ahi < bhi))) {
-    return (-1)
-  } else {
-    var ahi$1 = targetLen.RTLong__f_hi;
-    if (((ahi$1 === 0) ? (((-2147483648) ^ targetLen.RTLong__f_lo) > (-1)) : (ahi$1 > 0))) {
-      throw $ct_jl_Exception__T__(new $c_jl_Exception(), "Collections cannot have more than 2147483647 elements")
-    };
-    var size = targetLen.RTLong__f_lo;
-    if ((size > 2147483645)) {
-      throw $ct_jl_Exception__T__(new $c_jl_Exception(), "Size of array-backed collection exceeds VM array size limit of 2147483645")
-    };
-    var lo = arrayLen.RTLong__f_lo;
-    var lo$1 = (lo << 1);
-    var hi = (((lo >>> 31) | 0) | (arrayLen.RTLong__f_hi << 1));
-    var t = (((hi === 0) ? (((-2147483648) ^ lo$1) > (-2147483632)) : (hi > 0)) ? new $c_RTLong(lo$1, hi) : new $c_RTLong(16, 0));
-    var lo$2 = t.RTLong__f_lo;
-    var hi$1 = t.RTLong__f_hi;
-    var ahi$2 = targetLen.RTLong__f_hi;
-    if (((ahi$2 === hi$1) ? (((-2147483648) ^ targetLen.RTLong__f_lo) > ((-2147483648) ^ lo$2)) : (ahi$2 > hi$1))) {
-      var t$1 = targetLen
-    } else {
-      var t$1 = new $c_RTLong(lo$2, hi$1)
-    };
-    var lo$3 = t$1.RTLong__f_lo;
-    var hi$2 = t$1.RTLong__f_hi;
-    var this$8 = (((hi$2 === 0) ? (((-2147483648) ^ lo$3) < (-3)) : (hi$2 < 0)) ? new $c_RTLong(lo$3, hi$2) : new $c_RTLong(2147483645, 0));
-    return this$8.RTLong__f_lo
+function $p_scm_ArrayBuffer$__checkArrayLengthLimit$1__I__I__V($thiz, targetLen$1, arrayLen$1) {
+  if ((targetLen$1 > 2147483639)) {
+    throw $ct_jl_Exception__T__(new $c_jl_Exception(), ((("Array of array-backed collection exceeds VM length limit of 2147483639. Requested length: " + targetLen$1) + "; current length: ") + arrayLen$1))
+  } else if ((targetLen$1 < 0)) {
+    throw $ct_jl_Exception__T__(new $c_jl_Exception(), ((((("Overflow while resizing array of array-backed collection. Requested length: " + targetLen$1) + "; current length: ") + arrayLen$1) + "; increase: ") + ((targetLen$1 - arrayLen$1) | 0)))
   }
 }
 /** @constructor */
@@ -26763,9 +26747,7 @@ $c_scm_ArrayBuffer$.prototype.apply__sci_Seq__O = (function(elems) {
 $c_scm_ArrayBuffer$.prototype.from__sc_IterableOnce__scm_ArrayBuffer = (function(coll) {
   var k = $n(coll).knownSize__I();
   if ((k >= 0)) {
-    var $x_1 = this.scm_ArrayBuffer$__f_emptyArray;
-    var hi = (k >> 31);
-    var array = this.scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__J__AO($x_1, 0, new $c_RTLong(k, hi));
+    var array = this.scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__I__AO(this.scm_ArrayBuffer$__f_emptyArray, 0, k);
     if ($is_sc_Iterable(coll)) {
       var x2 = $as_sc_Iterable(coll);
       var actual = $n(x2).copyToArray__O__I__I__I(array, 0, 2147483647)
@@ -26777,17 +26759,29 @@ $c_scm_ArrayBuffer$.prototype.from__sc_IterableOnce__scm_ArrayBuffer = (function
     };
     return $ct_scm_ArrayBuffer__AO__I__(new $c_scm_ArrayBuffer(), array, k)
   } else {
-    var this$3 = $ct_scm_ArrayBuffer__(new $c_scm_ArrayBuffer());
-    return this$3.addAll__sc_IterableOnce__scm_ArrayBuffer(coll)
+    var this$2 = $ct_scm_ArrayBuffer__(new $c_scm_ArrayBuffer());
+    return this$2.addAll__sc_IterableOnce__scm_ArrayBuffer(coll)
   }
 });
 $c_scm_ArrayBuffer$.prototype.newBuilder__scm_Builder = (function() {
   return new $c_scm_ArrayBuffer$$anon$1()
 });
-$c_scm_ArrayBuffer$.prototype.scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__J__AO = (function(array, curSize, targetSize) {
-  var value = $n(array).u.length;
-  var hi = (value >> 31);
-  var newLen = $p_scm_ArrayBuffer$__resizeUp__J__J__I(this, new $c_RTLong(value, hi), targetSize);
+$c_scm_ArrayBuffer$.prototype.resizeUp__I__I__I = (function(arrayLen, targetLen) {
+  if (((targetLen > 0) && (targetLen <= arrayLen))) {
+    return (-1)
+  } else {
+    $p_scm_ArrayBuffer$__checkArrayLengthLimit$1__I__I__V(this, targetLen, arrayLen);
+    if ((arrayLen > 1073741819)) {
+      return 2147483639
+    } else {
+      var x = (arrayLen << 1);
+      var y = ((x > 16) ? x : 16);
+      return ((targetLen > y) ? targetLen : y)
+    }
+  }
+});
+$c_scm_ArrayBuffer$.prototype.scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__I__AO = (function(array, curSize, targetSize) {
+  var newLen = this.resizeUp__I__I__I($n(array).u.length, targetSize);
   if ((newLen < 0)) {
     return array
   } else {
@@ -26833,7 +26827,7 @@ function $h_scm_ArrayBuffer$$anon$1() {
 }
 $h_scm_ArrayBuffer$$anon$1.prototype = $c_scm_ArrayBuffer$$anon$1.prototype;
 $c_scm_ArrayBuffer$$anon$1.prototype.sizeHint__I__V = (function(size) {
-  $n($as_scm_ArrayBuffer(this.scm_GrowableBuilder__f_elems)).ensureSize__I__V(size)
+  $n($as_scm_ArrayBuffer(this.scm_GrowableBuilder__f_elems)).sizeHint__I__V(size)
 });
 var $d_scm_ArrayBuffer$$anon$1 = new $TypeData().initClass({
   scm_ArrayBuffer$$anon$1: 0
@@ -27044,8 +27038,8 @@ $h_scm_ImmutableBuilder.prototype = $c_scm_ImmutableBuilder.prototype;
 $c_scm_ImmutableBuilder.prototype.sizeHint__I__V = (function(size) {
   /*<skip>*/
 });
-$c_scm_ImmutableBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, xs)
+$c_scm_ImmutableBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, elems)
 });
 $c_scm_ImmutableBuilder.prototype.result__O = (function() {
   return this.scm_ImmutableBuilder__f_elems
@@ -27357,12 +27351,11 @@ $c_s_util_Failure.prototype.recoverWith__s_PartialFunction__s_util_Try = (functi
     return ((marker !== v) ? $as_s_util_Try(v) : this)
   } catch (e) {
     var e$2 = ((e instanceof $c_jl_Throwable) ? e : new $c_sjs_js_JavaScriptException(e));
-    var o11 = $m_s_util_control_NonFatal$().unapply__jl_Throwable__s_Option(e$2);
-    if ((!$n(o11).isEmpty__Z())) {
-      var e$3 = $as_jl_Throwable($n(o11).get__O());
-      return new $c_s_util_Failure(e$3)
-    };
-    throw ((e$2 instanceof $c_sjs_js_JavaScriptException) ? e$2.sjs_js_JavaScriptException__f_exception : $n(e$2))
+    if ($m_s_util_control_NonFatal$().apply__jl_Throwable__Z(e$2)) {
+      return new $c_s_util_Failure(e$2)
+    } else {
+      throw ((e$2 instanceof $c_sjs_js_JavaScriptException) ? e$2.sjs_js_JavaScriptException__f_exception : $n(e$2))
+    }
   }
 });
 $c_s_util_Failure.prototype.productPrefix__T = (function() {
@@ -31033,24 +31026,22 @@ function $f_sc_StrictOptimizedSeqOps__distinctBy__F1__O($thiz, f) {
 }
 function $f_sc_StrictOptimizedSeqOps__prepended__O__O($thiz, elem) {
   var b = $n($thiz.iterableFactory__sc_SeqFactory()).newBuilder__scm_Builder();
-  if (($thiz.knownSize__I() >= 0)) {
-    $n(b).sizeHint__I__V(((1 + $thiz.length__I()) | 0))
-  };
   var this$1 = $n(b);
-  this$1.addOne__O__scm_Growable(elem);
+  $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this$1, $thiz, 1);
   var this$2 = $n(b);
-  this$2.addAll__sc_IterableOnce__scm_Growable($thiz);
+  this$2.addOne__O__scm_Growable(elem);
+  var this$3 = $n(b);
+  this$3.addAll__sc_IterableOnce__scm_Growable($thiz);
   return $n(b).result__O()
 }
 function $f_sc_StrictOptimizedSeqOps__appended__O__O($thiz, elem) {
   var b = $n($thiz.iterableFactory__sc_SeqFactory()).newBuilder__scm_Builder();
-  if (($thiz.knownSize__I() >= 0)) {
-    $n(b).sizeHint__I__V(((1 + $thiz.length__I()) | 0))
-  };
   var this$1 = $n(b);
-  this$1.addAll__sc_IterableOnce__scm_Growable($thiz);
+  $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this$1, $thiz, 1);
   var this$2 = $n(b);
-  this$2.addOne__O__scm_Growable(elem);
+  this$2.addAll__sc_IterableOnce__scm_Growable($thiz);
+  var this$3 = $n(b);
+  this$3.addOne__O__scm_Growable(elem);
   return $n(b).result__O()
 }
 function $f_sc_StrictOptimizedSeqOps__appendedAll__sc_IterableOnce__O($thiz, suffix) {
@@ -34302,8 +34293,8 @@ $c_scm_ArrayBuilder$generic.prototype.result__O = (function() {
 $c_scm_ArrayBuilder$generic.prototype.toString__T = (function() {
   return "ArrayBuilder.generic"
 });
-$c_scm_ArrayBuilder$generic.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__scm_ArrayBuilder$generic(xs)
+$c_scm_ArrayBuilder$generic.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__scm_ArrayBuilder$generic(elems)
 });
 $c_scm_ArrayBuilder$generic.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__scm_ArrayBuilder$generic(elem)
@@ -38221,6 +38212,20 @@ $c_sci_HashSet.prototype.head__O = (function() {
 $c_sci_HashSet.prototype.foreach__F1__V = (function(f) {
   $n(this.sci_HashSet__f_rootNode).foreach__F1__V(f)
 });
+$c_sci_HashSet.prototype.subsetOf__sc_Set__Z = (function(that) {
+  if (this.isEmpty__Z()) {
+    return true
+  } else if ((!$n(that).isEmpty__Z())) {
+    if ((that instanceof $c_sci_HashSet)) {
+      var x2 = $as_sci_HashSet(that);
+      return $n(this.sci_HashSet__f_rootNode).subsetOf__sci_SetNode__I__Z($n(x2).sci_HashSet__f_rootNode, 0)
+    } else {
+      return $f_sc_IterableOnceOps__forall__F1__Z(this, that)
+    }
+  } else {
+    return false
+  }
+});
 $c_sci_HashSet.prototype.equals__O__Z = (function(that) {
   if ((that instanceof $c_sci_HashSet)) {
     var x2 = $as_sci_HashSet(that);
@@ -39280,8 +39285,8 @@ function $h_scm_AbstractBuffer() {
   /*<skip>*/
 }
 $h_scm_AbstractBuffer.prototype = $c_scm_AbstractBuffer.prototype;
-$c_scm_AbstractBuffer.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, xs)
+$c_scm_AbstractBuffer.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, elems)
 });
 /** @constructor */
 function $c_scm_AbstractMap() {
@@ -39428,7 +39433,7 @@ $c_scm_HashSet.prototype.add__O__Z = (function(elem) {
   return $p_scm_HashSet__addElem__O__I__Z(this, elem, this.scala$collection$mutable$HashSet$$improveHash__I__I($m_sr_Statics$().anyHash__O__I(elem)))
 });
 $c_scm_HashSet.prototype.addAll__sc_IterableOnce__scm_HashSet = (function(xs) {
-  this.sizeHint__I__V($n(xs).knownSize__I());
+  $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this, xs, 0);
   if ((xs instanceof $c_sci_HashSet)) {
     var x2 = $as_sci_HashSet(xs);
     var this$2 = $n(x2);
@@ -39494,8 +39499,8 @@ $c_scm_HashSet.prototype.addOne__O__scm_Growable = (function(elem) {
   this.add__O__Z(elem);
   return this
 });
-$c_scm_HashSet.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__scm_HashSet(xs)
+$c_scm_HashSet.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__scm_HashSet(elems)
 });
 function $as_scm_HashSet(obj) {
   return (((obj instanceof $c_scm_HashSet) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.collection.mutable.HashSet"))
@@ -39855,7 +39860,7 @@ $c_scm_ArraySeq.prototype.fromSpecific__sc_IterableOnce__scm_ArraySeq = (functio
   capacity = 0;
   var isCharArrayBuilder = (elementClass === $d_C.getClassOf());
   jsElems = [];
-  var s = $n(coll).knownSize__I();
+  $n(coll).knownSize__I();
   var it = $n(coll).iterator__sc_Iterator();
   while ($n(it).hasNext__Z()) {
     var elem = $n(it).next__O();
@@ -42329,7 +42334,7 @@ $c_scm_HashMap.prototype.sizeHint__I__V = (function(size) {
   }
 });
 $c_scm_HashMap.prototype.addAll__sc_IterableOnce__scm_HashMap = (function(xs) {
-  this.sizeHint__I__V($n(xs).knownSize__I());
+  $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this, xs, 0);
   if ((xs instanceof $c_sci_HashMap)) {
     var x2 = $as_sci_HashMap(xs);
     var this$2 = $n(x2);
@@ -42453,8 +42458,8 @@ $c_scm_HashMap.prototype.hashCode__I = (function() {
 $c_scm_HashMap.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__T2__scm_HashMap($as_T2(elem))
 });
-$c_scm_HashMap.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__scm_HashMap(xs)
+$c_scm_HashMap.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__scm_HashMap(elems)
 });
 function $as_scm_HashMap(obj) {
   return (((obj instanceof $c_scm_HashMap) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.collection.mutable.HashMap"))
@@ -45669,8 +45674,8 @@ $c_scm_StringBuilder.prototype.lengthCompare__I__I = (function(len) {
 $c_scm_StringBuilder.prototype.sizeHint__I__V = (function(size) {
   /*<skip>*/
 });
-$c_scm_StringBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, xs)
+$c_scm_StringBuilder.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return $f_scm_Growable__addAll__sc_IterableOnce__scm_Growable(this, elems)
 });
 $c_scm_StringBuilder.prototype.length__I = (function() {
   return $n(this.scm_StringBuilder__f_underlying).length__I()
@@ -45985,8 +45990,8 @@ $c_scm_ListBuffer.prototype.last__O = (function() {
 $c_scm_ListBuffer.prototype.stringPrefix__T = (function() {
   return "ListBuffer"
 });
-$c_scm_ListBuffer.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__scm_ListBuffer(xs)
+$c_scm_ListBuffer.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__scm_ListBuffer(elems)
 });
 $c_scm_ListBuffer.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__scm_ListBuffer(elem)
@@ -46108,22 +46113,12 @@ $c_scm_ArrayBuffer.prototype.knownSize__I = (function() {
   return this.scm_ArrayBuffer__f_size0
 });
 $c_scm_ArrayBuffer.prototype.ensureSize__I__V = (function(n) {
-  var $x_3 = $m_scm_ArrayBuffer$();
-  var $x_2 = this.scm_ArrayBuffer__f_array;
-  var $x_1 = this.scm_ArrayBuffer__f_size0;
-  var hi = (n >> 31);
-  this.scm_ArrayBuffer__f_array = $n($x_3).scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__J__AO($x_2, $x_1, new $c_RTLong(n, hi))
+  this.scm_ArrayBuffer__f_array = $m_scm_ArrayBuffer$().scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__I__AO(this.scm_ArrayBuffer__f_array, this.scm_ArrayBuffer__f_size0, n)
 });
-$c_scm_ArrayBuffer.prototype.ensureAdditionalSize__I__V = (function(n) {
-  var $x_3 = $m_scm_ArrayBuffer$();
-  var $x_2 = this.scm_ArrayBuffer__f_array;
-  var $x_1 = this.scm_ArrayBuffer__f_size0;
-  var value = this.scm_ArrayBuffer__f_size0;
-  var hi = (value >> 31);
-  var hi$1 = (n >> 31);
-  var lo = ((value + n) | 0);
-  var hi$2 = ((((-2147483648) ^ lo) < ((-2147483648) ^ value)) ? ((1 + ((hi + hi$1) | 0)) | 0) : ((hi + hi$1) | 0));
-  this.scm_ArrayBuffer__f_array = $n($x_3).scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__J__AO($x_2, $x_1, new $c_RTLong(lo, hi$2))
+$c_scm_ArrayBuffer.prototype.sizeHint__I__V = (function(size) {
+  if (((size > this.scm_ArrayBuffer__f_size0) && (size >= 1))) {
+    this.ensureSize__I__V(size)
+  }
 });
 $c_scm_ArrayBuffer.prototype.apply__I__O = (function(n) {
   var hi = ((1 + n) | 0);
@@ -46157,10 +46152,10 @@ $c_scm_ArrayBuffer.prototype.iterableFactory__sc_SeqFactory = (function() {
 });
 $c_scm_ArrayBuffer.prototype.addOne__O__scm_ArrayBuffer = (function(elem) {
   this.scm_ArrayBuffer__f_mutationCount = ((1 + this.scm_ArrayBuffer__f_mutationCount) | 0);
-  this.ensureAdditionalSize__I__V(1);
-  var oldSize = this.scm_ArrayBuffer__f_size0;
-  this.scm_ArrayBuffer__f_size0 = ((1 + oldSize) | 0);
-  this.update__I__O__V(oldSize, elem);
+  var newSize = ((1 + this.scm_ArrayBuffer__f_size0) | 0);
+  this.ensureSize__I__V(newSize);
+  this.scm_ArrayBuffer__f_size0 = newSize;
+  this.update__I__O__V((((-1) + this.scm_ArrayBuffer__f_size0) | 0), elem);
   return this
 });
 $c_scm_ArrayBuffer.prototype.addAll__sc_IterableOnce__scm_ArrayBuffer = (function(elems) {
@@ -46169,7 +46164,7 @@ $c_scm_ArrayBuffer.prototype.addAll__sc_IterableOnce__scm_ArrayBuffer = (functio
     var elemsLength = $n(x2).scm_ArrayBuffer__f_size0;
     if ((elemsLength > 0)) {
       this.scm_ArrayBuffer__f_mutationCount = ((1 + this.scm_ArrayBuffer__f_mutationCount) | 0);
-      this.ensureAdditionalSize__I__V(elemsLength);
+      this.ensureSize__I__V(((this.scm_ArrayBuffer__f_size0 + elemsLength) | 0));
       $m_s_Array$().copy__O__I__O__I__I__V($n(x2).scm_ArrayBuffer__f_array, 0, this.scm_ArrayBuffer__f_array, this.scm_ArrayBuffer__f_size0, elemsLength);
       this.scm_ArrayBuffer__f_size0 = ((this.scm_ArrayBuffer__f_size0 + elemsLength) | 0)
     }
@@ -46199,8 +46194,8 @@ $c_scm_ArrayBuffer.prototype.foldLeft__O__F2__O = (function(z, op) {
 $c_scm_ArrayBuffer.prototype.reduceLeft__F2__O = (function(op) {
   return ((this.scm_ArrayBuffer__f_size0 > 0) ? $p_scm_ArrayBuffer__foldl__I__I__O__F2__O(this, 1, this.scm_ArrayBuffer__f_size0, $n(this.scm_ArrayBuffer__f_array).get(0), op) : $f_sc_IterableOnceOps__reduceLeft__F2__O(this, op))
 });
-$c_scm_ArrayBuffer.prototype.addAll__sc_IterableOnce__scm_Growable = (function(xs) {
-  return this.addAll__sc_IterableOnce__scm_ArrayBuffer(xs)
+$c_scm_ArrayBuffer.prototype.addAll__sc_IterableOnce__scm_Growable = (function(elems) {
+  return this.addAll__sc_IterableOnce__scm_ArrayBuffer(elems)
 });
 $c_scm_ArrayBuffer.prototype.addOne__O__scm_Growable = (function(elem) {
   return this.addOne__O__scm_ArrayBuffer(elem)
