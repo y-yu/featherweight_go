@@ -9265,11 +9265,8 @@ function $p_s_util_parsing_combinator_Parsers__continue$1__s_util_parsing_input_
   return $p_s_util_parsing_combinator_Parsers__applyp$1__s_util_parsing_input_Reader__s_Option__s_util_parsing_combinator_Parsers$Parser__scm_ListBuffer__s_util_parsing_combinator_Parsers$ParseResult($thiz, in$1, failure, p0, elems$1);
 }
 function $ct_s_util_parsing_combinator_Parsers$ParseResult__s_util_parsing_combinator_Parsers__($thiz, outer) {
-  if ((outer === null)) {
-    $n(null);
-  } else {
-    $thiz.s_util_parsing_combinator_Parsers$ParseResult__f_$outer = outer;
-  }
+  $n(outer);
+  $thiz.s_util_parsing_combinator_Parsers$ParseResult__f_$outer = outer;
   return $thiz;
 }
 /** @constructor */
@@ -13191,11 +13188,8 @@ function $p_s_util_parsing_combinator_Parsers$Parser__p$5__sr_LazyRef__F0__s_uti
   return ($n(p$lzy$4).sr_LazyRef__f__initialized ? $as_s_util_parsing_combinator_Parsers$Parser($n(p$lzy$4).sr_LazyRef__f__value) : $p_s_util_parsing_combinator_Parsers$Parser__p$lzycompute$4__sr_LazyRef__F0__s_util_parsing_combinator_Parsers$Parser($thiz, p$lzy$4, q$3));
 }
 function $ct_s_util_parsing_combinator_Parsers$Parser__s_util_parsing_combinator_Parsers__($thiz, outer) {
-  if ((outer === null)) {
-    $n(null);
-  } else {
-    $thiz.s_util_parsing_combinator_Parsers$Parser__f_$outer = outer;
-  }
+  $n(outer);
+  $thiz.s_util_parsing_combinator_Parsers$Parser__f_$outer = outer;
   $thiz.s_util_parsing_combinator_Parsers$Parser__f_name = "";
   return $thiz;
 }
@@ -16525,11 +16519,8 @@ function $c_s_util_parsing_combinator_RegexParsers$$anon$1(outer, s$1) {
   this.s_util_parsing_combinator_Parsers$Parser__f_$outer = null;
   this.s_util_parsing_combinator_RegexParsers$$anon$1__f_$outer = null;
   this.s_util_parsing_combinator_RegexParsers$$anon$1__f_s$1 = null;
-  if ((outer === null)) {
-    $n(null);
-  } else {
-    this.s_util_parsing_combinator_RegexParsers$$anon$1__f_$outer = outer;
-  }
+  $n(outer);
+  this.s_util_parsing_combinator_RegexParsers$$anon$1__f_$outer = outer;
   this.s_util_parsing_combinator_RegexParsers$$anon$1__f_s$1 = s$1;
   $ct_s_util_parsing_combinator_Parsers$Parser__s_util_parsing_combinator_Parsers__(this, outer);
 }
@@ -16596,11 +16587,8 @@ function $c_s_util_parsing_combinator_RegexParsers$$anon$2(outer, r$1) {
   this.s_util_parsing_combinator_Parsers$Parser__f_$outer = null;
   this.s_util_parsing_combinator_RegexParsers$$anon$2__f_$outer = null;
   this.s_util_parsing_combinator_RegexParsers$$anon$2__f_r$1 = null;
-  if ((outer === null)) {
-    $n(null);
-  } else {
-    this.s_util_parsing_combinator_RegexParsers$$anon$2__f_$outer = outer;
-  }
+  $n(outer);
+  this.s_util_parsing_combinator_RegexParsers$$anon$2__f_$outer = outer;
   this.s_util_parsing_combinator_RegexParsers$$anon$2__f_r$1 = r$1;
   $ct_s_util_parsing_combinator_Parsers$Parser__s_util_parsing_combinator_Parsers__(this, outer);
 }
@@ -19547,11 +19535,8 @@ function $c_s_util_parsing_combinator_Parsers$$tilde(outer, _1, _2) {
   this.s_util_parsing_combinator_Parsers$$tilde__f_$outer = null;
   this.s_util_parsing_combinator_Parsers$$tilde__f__1 = _1;
   this.s_util_parsing_combinator_Parsers$$tilde__f__2 = _2;
-  if ((outer === null)) {
-    $n(null);
-  } else {
-    this.s_util_parsing_combinator_Parsers$$tilde__f_$outer = outer;
-  }
+  $n(outer);
+  this.s_util_parsing_combinator_Parsers$$tilde__f_$outer = outer;
 }
 $c_s_util_parsing_combinator_Parsers$$tilde.prototype = new $h_O();
 $c_s_util_parsing_combinator_Parsers$$tilde.prototype.constructor = $c_s_util_parsing_combinator_Parsers$$tilde;
