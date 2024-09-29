@@ -23984,9 +23984,9 @@ var $d_sci_SetBuilderImpl = new $TypeData().initClass($c_sci_SetBuilderImpl, "sc
 }));
 function $p_sci_Vector$__liftedTree1$1__I($thiz) {
   try {
-    var x = $m_jl_System$SystemProperties$().getProperty__T__T__T("scala.collection.immutable.Vector.defaultApplyPreferredMaxLength", "250");
-    var this$4 = $m_jl_Integer$();
-    return this$4.parseInt__T__I__I(x, 10);
+    var this$ = $m_jl_System$SystemProperties$().getProperty__T__T__T("scala.collection.immutable.Vector.defaultApplyPreferredMaxLength", "250");
+    var this$3 = $m_jl_Integer$();
+    return this$3.parseInt__T__I__I(this$, 10);
   } catch (e) {
     if (false) {
       return 250;
@@ -35799,7 +35799,7 @@ $c_scm_AbstractSet.prototype.result__O = (function() {
 function $p_sci_LazyList__scala$collection$immutable$LazyList$$state$lzycompute__sci_LazyList$State($thiz) {
   if ((!$thiz.sci_LazyList__f_bitmap$0)) {
     if ($thiz.sci_LazyList__f_midEvaluation) {
-      throw $ct_jl_RuntimeException__T__(new $c_jl_RuntimeException(), "self-referential LazyList or a derivation thereof has no more elements");
+      throw $ct_jl_RuntimeException__T__(new $c_jl_RuntimeException(), "LazyList evaluation depends on its own result (self-reference); see docs for more info");
     }
     $thiz.sci_LazyList__f_midEvaluation = true;
     try {
