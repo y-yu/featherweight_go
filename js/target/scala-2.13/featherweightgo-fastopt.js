@@ -3257,7 +3257,7 @@ function $p_jl_System$SystemProperties$__loadSystemProperties__O($thiz) {
   result["java.vm.specification.vendor"] = "Oracle Corporation";
   result["java.vm.specification.name"] = "Java Virtual Machine Specification";
   result["java.vm.name"] = "Scala.js";
-  result["java.vm.version"] = "1.18.1";
+  result["java.vm.version"] = "1.18.2";
   result["java.specification.version"] = "1.8";
   result["java.specification.vendor"] = "Oracle Corporation";
   result["java.specification.name"] = "Java Platform API Specification";
