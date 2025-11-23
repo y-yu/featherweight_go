@@ -6836,8 +6836,12 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
       var $x_1 = new $c_Lpprint_Tree$Literal(("'" + $n(x12).name__T()));
     } else if ($is_sc_Map(x)) {
       var x13 = $as_sc_Map(x);
-      var this$16 = $n(x13);
-      var $x_4 = this$16.className__T();
+      if ((x13 instanceof $c_sci_HashMap)) {
+        var $x_4 = "Map";
+      } else {
+        var this$16 = $n(x13);
+        var $x_4 = this$16.className__T();
+      }
       var this$21 = $n($n(x13).iterator__sc_Iterator());
       var f = new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((x0$1$2$2) => {
         var x0$1$2 = $as_T2(x0$1$2$2);
@@ -6854,8 +6858,14 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
       var $x_1 = new $c_Lpprint_Tree$Apply($x_4, new $c_sc_Iterator$$anon$10(this$21, f));
     } else if ($is_sc_Iterable(x)) {
       var x14 = $as_sc_Iterable(x);
-      var this$24 = $n(x14);
-      var $x_5 = this$24.className__T();
+      if ((x14 instanceof $c_scm_ArraySeq)) {
+        var $x_5 = "Seq";
+      } else if ((x14 instanceof $c_sci_HashSet)) {
+        var $x_5 = "Set";
+      } else {
+        var this$24 = $n(x14);
+        var $x_5 = this$24.className__T();
+      }
       var this$26 = $n($n(x14).iterator__sc_Iterator());
       var f$1 = new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((x$2$2) => this.treeify__O__Z__Z__Lpprint_Tree(x$2$2, escapeUnicode, showFieldNames)));
       var $x_1 = new $c_Lpprint_Tree$Apply($x_5, new $c_sc_Iterator$$anon$9(this$26, f$1));
