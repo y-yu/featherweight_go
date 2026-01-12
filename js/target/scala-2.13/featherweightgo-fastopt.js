@@ -28,15 +28,21 @@ var $getOwnPropertyDescriptors = (Object.getOwnPropertyDescriptors || (() => {
     return descriptors;
   });
 })());
-var $L0;
 function $Char(c) {
   this.c = c;
 }
 $Char.prototype.toString = (function() {
   return String.fromCharCode(this.c);
 });
+function $Long(lo, hi) {
+  this.l = lo;
+  this.h = hi;
+}
+$Long.prototype.toString = (function() {
+  return $s_RTLong__toString__I__I__T(this.l, this.h);
+});
 function $valueDescription(arg0) {
-  return (((typeof arg0) === "number") ? (((arg0 === 0) && ((1 / arg0) < 0)) ? "number(-0)" : (("number(" + arg0) + ")")) : ((arg0 instanceof $c_RTLong) ? "long" : ((arg0 instanceof $Char) ? "char" : ((!(!(arg0 && arg0.$classData))) ? arg0.$classData.name : (typeof arg0)))));
+  return (((typeof arg0) === "number") ? (((arg0 === 0) && ((1 / arg0) < 0)) ? "number(-0)" : (("number(" + arg0) + ")")) : ((arg0 instanceof $Long) ? "long" : ((arg0 instanceof $Char) ? "char" : ((!(!(arg0 && arg0.$classData))) ? arg0.$classData.name : (typeof arg0)))));
 }
 function $throwClassCastException(arg0, arg1) {
   throw new $c_Lorg_scalajs_linker_runtime_UndefinedBehaviorError($ct_jl_ClassCastException__T__(new $c_jl_ClassCastException(), (($valueDescription(arg0) + " cannot be cast to ") + arg1)));
@@ -74,6 +80,12 @@ function $objectClone(arg0) {
 function $objectOrArrayClone(arg0) {
   return (arg0.$classData.isArrayClass ? arg0.clone__O() : $objectClone(arg0));
 }
+function $aJCheckGet(arg0, arg1) {
+  if (((arg1 >>> 0) >= (arg0.length >>> 1))) {
+    $throwArrayIndexOutOFBoundsException(arg1);
+  }
+  return (arg1 << 1);
+}
 function $objectGetClass(arg0) {
   switch ((typeof arg0)) {
     case "string": {
@@ -101,7 +113,7 @@ function $objectGetClass(arg0) {
       return $d_jl_Void.getClassOf();
     }
     default: {
-      if ((arg0 instanceof $c_RTLong)) {
+      if ((arg0 instanceof $Long)) {
         return $d_jl_Long.getClassOf();
       } else if ((arg0 instanceof $Char)) {
         return $d_jl_Character.getClassOf();
@@ -140,7 +152,7 @@ function $objectClassName(arg0) {
       return "java.lang.Void";
     }
     default: {
-      if ((arg0 instanceof $c_RTLong)) {
+      if ((arg0 instanceof $Long)) {
         return "java.lang.Long";
       } else if ((arg0 instanceof $Char)) {
         return "java.lang.Character";
@@ -183,10 +195,10 @@ function $dp_equals__O__Z(instance, x0) {
     default: {
       if (((!(!(instance && instance.$classData))) || (instance === null))) {
         return instance.equals__O__Z(x0);
-      } else if ((instance instanceof $c_RTLong)) {
-        return $f_jl_Long__equals__O__Z(instance, x0);
+      } else if ((instance instanceof $Long)) {
+        return $f_jl_Long__equals__O__Z(instance.l, instance.h, x0);
       } else if ((instance instanceof $Char)) {
-        return $f_jl_Character__equals__O__Z($uC(instance), x0);
+        return $f_jl_Character__equals__O__Z(instance.c, x0);
       } else {
         return $c_O.prototype.equals__O__Z.call(instance, x0);
       }
@@ -217,10 +229,10 @@ function $dp_hashCode__I(instance) {
     default: {
       if (((!(!(instance && instance.$classData))) || (instance === null))) {
         return instance.hashCode__I();
-      } else if ((instance instanceof $c_RTLong)) {
-        return $f_jl_Long__hashCode__I(instance);
+      } else if ((instance instanceof $Long)) {
+        return $f_jl_Long__hashCode__I(instance.l, instance.h);
       } else if ((instance instanceof $Char)) {
-        return $f_jl_Character__hashCode__I($uC(instance));
+        return $f_jl_Character__hashCode__I(instance.c);
       } else {
         return $c_O.prototype.hashCode__I.call(instance);
       }
@@ -292,11 +304,11 @@ function $floatFromBits(arg0) {
 }
 function $doubleToBits(arg0) {
   var dataView = $fpBitsDataView;
-  return $s_RTLong__fromDoubleBits__D__O__RTLong(arg0, dataView);
+  return $s_RTLong__fromDoubleBits__D__O__J(arg0, dataView);
 }
 function $doubleFromBits(arg0) {
   var dataView = $fpBitsDataView;
-  return $s_RTLong__bitsToDouble__RTLong__O__D(arg0, dataView);
+  return $s_RTLong__bitsToDouble__I__I__O__D(arg0.l, arg0.h, dataView);
 }
 function $resolveSuperRef(arg0, arg1) {
   var getPrototypeOf = Object.getPrototyeOf;
@@ -329,13 +341,13 @@ function $superSet(arg0, arg1, arg2, arg3) {
   throw new TypeError((("super has no setter '" + arg2) + "'."));
 }
 function $arraycopyCheckBounds(arg0, arg1, arg2, arg3, arg4) {
-  if ((((((arg1 < 0) || (arg3 < 0)) || (arg4 < 0)) || (arg1 > ((arg0 - arg4) | 0))) || (arg3 > ((arg2 - arg4) | 0)))) {
+  if ((((((arg1 | arg3) | arg4) < 0) || (arg1 > ((arg0 - arg4) | 0))) || (arg3 > ((arg2 - arg4) | 0)))) {
     $throwArrayIndexOutOFBoundsException(null);
   }
 }
 function $arraycopyGeneric(arg0, arg1, arg2, arg3, arg4) {
   $arraycopyCheckBounds(arg0.length, arg1, arg2.length, arg3, arg4);
-  if ((((arg0 !== arg2) || (arg3 < arg1)) || (((arg1 + arg4) | 0) < arg3))) {
+  if (((arg0 !== arg2) || (((arg3 - arg1) >>> 0) > (arg4 >>> 0)))) {
     for (var i = 0; (i < arg4); i = ((i + 1) | 0)) {
       arg2[((arg3 + i) | 0)] = arg0[((arg1 + i) | 0)];
     }
@@ -435,6 +447,10 @@ function $bC(arg0) {
   return new $Char(arg0);
 }
 var $bC0 = $bC(0);
+function $bL(arg0, arg1) {
+  return new $Long(arg0, arg1);
+}
+var $bL0 = $bL(0, 0);
 function $uV(arg0) {
   return (((arg0 === (void 0)) || (arg0 === null)) ? (void 0) : $throwClassCastException(arg0, "java.lang.Void"));
 }
@@ -454,7 +470,7 @@ function $uI(arg0) {
   return (($isInt(arg0) || (arg0 === null)) ? (arg0 | 0) : $throwClassCastException(arg0, "java.lang.Integer"));
 }
 function $uJ(arg0) {
-  return (((arg0 instanceof $c_RTLong) || (arg0 === null)) ? ((arg0 === null) ? $L0 : arg0) : $throwClassCastException(arg0, "java.lang.Long"));
+  return (((arg0 instanceof $Long) || (arg0 === null)) ? ((arg0 === null) ? $bL0 : arg0) : $throwClassCastException(arg0, "java.lang.Long"));
 }
 function $uF(arg0) {
   return (($isFloat(arg0) || (arg0 === null)) ? (+arg0) : $throwClassCastException(arg0, "java.lang.Float"));
@@ -505,13 +521,13 @@ function $ac_O(arg) {
 $ac_O.prototype = new $h_O();
 $ac_O.prototype.constructor = $ac_O;
 $ac_O.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_O.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -541,13 +557,13 @@ function $ac_Z(arg) {
 $ac_Z.prototype = new $h_O();
 $ac_Z.prototype.constructor = $ac_Z;
 $ac_Z.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_Z.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -571,13 +587,13 @@ function $ac_C(arg) {
 $ac_C.prototype = new $h_O();
 $ac_C.prototype.constructor = $ac_C;
 $ac_C.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_C.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -602,13 +618,13 @@ function $ac_B(arg) {
 $ac_B.prototype = new $h_O();
 $ac_B.prototype.constructor = $ac_B;
 $ac_B.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_B.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -633,13 +649,13 @@ function $ac_S(arg) {
 $ac_S.prototype = new $h_O();
 $ac_S.prototype.constructor = $ac_S;
 $ac_S.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_S.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -664,13 +680,13 @@ function $ac_I(arg) {
 $ac_I.prototype = new $h_O();
 $ac_I.prototype.constructor = $ac_I;
 $ac_I.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_I.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -687,30 +703,25 @@ function $ac_J(arg) {
     if ((arg < 0)) {
       $throwNegativeArraySizeException();
     }
-    this.u = new Array(arg);
-    for (var i = 0; (i < arg); (i++)) {
-      this.u[i] = $L0;
-    }
+    arg = (arg << 1);
+    this.u = new Int32Array(arg);
   } else {
     this.u = arg;
   }
 }
 $ac_J.prototype = new $h_O();
 $ac_J.prototype.constructor = $ac_J;
-$ac_J.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+$ac_J.prototype.set = (function(i, v, w) {
+  if (((i >>> 0) >= (((this.u.length >>> 1) | 0) >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
-  return this.u[i];
-});
-$ac_J.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
-    $throwArrayIndexOutOFBoundsException(i);
-  }
+  i = (i << 1);
   this.u[i] = v;
+  this.u[((i + 1) | 0)] = w;
 });
 $ac_J.prototype.copyTo = (function(srcPos, dest, destPos, length) {
-  $arraycopyGeneric(this.u, srcPos, dest.u, destPos, length);
+  $arraycopyCheckBounds(((this.u.length >>> 1) | 0), srcPos, ((dest.u.length >>> 1) | 0), destPos, length);
+  dest.u.set(this.u.subarray((srcPos << 1), (((srcPos + length) | 0) << 1)), (destPos << 1));
 });
 $ac_J.prototype.clone__O = (function() {
   return new $ac_J(this.u.slice());
@@ -728,13 +739,13 @@ function $ac_F(arg) {
 $ac_F.prototype = new $h_O();
 $ac_F.prototype.constructor = $ac_F;
 $ac_F.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_F.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -759,13 +770,13 @@ function $ac_D(arg) {
 $ac_D.prototype = new $h_O();
 $ac_D.prototype.constructor = $ac_D;
 $ac_D.prototype.get = (function(i) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   return this.u[i];
 });
 $ac_D.prototype.set = (function(i, v) {
-  if (((i < 0) || (i >= this.u.length))) {
+  if (((i >>> 0) >= (this.u.length >>> 0))) {
     $throwArrayIndexOutOFBoundsException(i);
   }
   this.u[i] = v;
@@ -806,7 +817,7 @@ $TypeData.prototype.initPrim = (function(zero, arrayEncodedName, displayName, ar
   this.isPrimitive = true;
   this.isInstance = ((obj) => false);
   if ((arrayClass !== (void 0))) {
-    this._arrayOf = new $TypeData().initSpecializedArray(this, arrayClass, typedArrayClass);
+    this._arrayOf = new $TypeData().initSpecializedArray(this, arrayClass, typedArrayClass, (arrayEncodedName === "J"));
   }
   return this;
 });
@@ -824,7 +835,7 @@ $TypeData.prototype.initClass = (function(kindOrCtor, fullName, ancestors, isIns
   }
   return this;
 });
-$TypeData.prototype.initSpecializedArray = (function(componentData, arrayClass, typedArrayClass, isAssignableFromFun) {
+$TypeData.prototype.initSpecializedArray = (function(componentData, arrayClass, typedArrayClass, isLongArray, isAssignableFromFun) {
   arrayClass.prototype.$classData = this;
   var name = ("[" + componentData.arrayEncodedName);
   this.constr = arrayClass;
@@ -840,7 +851,17 @@ $TypeData.prototype.initSpecializedArray = (function(componentData, arrayClass, 
   this.isArrayClass = true;
   var self = this;
   this.isAssignableFromFun = (isAssignableFromFun || ((that) => (self === that)));
-  this.wrapArray = (typedArrayClass ? ((array) => new arrayClass(new typedArrayClass(array))) : ((array) => new arrayClass(array)));
+  this.wrapArray = (isLongArray ? ((array) => {
+    var len = (array.length | 0);
+    var result = new arrayClass(len);
+    var u = result.u;
+    for (var i = 0; (i < len); i = ((i + 1) | 0)) {
+      var srcElem = array[i];
+      u[(i << 1)] = srcElem.l;
+      u[(((i << 1) + 1) | 0)] = srcElem.h;
+    }
+    return result;
+  }) : (typedArrayClass ? ((array) => new arrayClass(new typedArrayClass(array))) : ((array) => new arrayClass(array))));
   this.isInstance = ((obj) => (obj instanceof arrayClass));
   return this;
 });
@@ -861,7 +882,7 @@ $TypeData.prototype.initArray = (function(componentData) {
   ArrayClass.prototype = new $ah_O();
   ArrayClass.prototype.constructor = ArrayClass;
   ArrayClass.prototype.set = (function(i, v) {
-    if (((i < 0) || (i >= this.u.length))) {
+    if (((i >>> 0) >= (this.u.length >>> 0))) {
       $throwArrayIndexOutOFBoundsException(i);
     }
     if ((((v !== null) && (!componentData.isJSType)) && (!componentData.isInstance(v)))) {
@@ -1038,7 +1059,7 @@ $d_O.arrayEncodedName = "Ljava.lang.Object;";
 $d_O.isAssignableFromFun = ((that) => (!that.isPrimitive));
 $d_O.name = "java.lang.Object";
 $d_O.isInstance = ((obj) => (obj !== null));
-$d_O._arrayOf = new $TypeData().initSpecializedArray($d_O, $ac_O, (void 0), ((that) => {
+$d_O._arrayOf = new $TypeData().initSpecializedArray($d_O, $ac_O, (void 0), false, ((that) => {
   var thatDepth = that.arrayDepth;
   return ((thatDepth === 1) ? (!that.arrayBase.isPrimitive) : (thatDepth > 1));
 }));
@@ -1049,7 +1070,7 @@ var $d_C = new $TypeData().initPrim(0, "C", "char", $ac_C, Uint16Array);
 var $d_B = new $TypeData().initPrim(0, "B", "byte", $ac_B, Int8Array);
 var $d_S = new $TypeData().initPrim(0, "S", "short", $ac_S, Int16Array);
 var $d_I = new $TypeData().initPrim(0, "I", "int", $ac_I, Int32Array);
-var $d_J = new $TypeData().initPrim(null, "J", "long", $ac_J, (void 0));
+var $d_J = new $TypeData().initPrim($bL0, "J", "long", $ac_J, Int32Array);
 var $d_F = new $TypeData().initPrim(0.0, "F", "float", $ac_F, Float32Array);
 var $d_D = new $TypeData().initPrim(0.0, "D", "double", $ac_D, Float64Array);
 /** @constructor */
@@ -1057,7 +1078,7 @@ function $c_Lfansi_Attr$() {
   this.Lfansi_Attr$__f_Reset = null;
   this.Lfansi_Attr$__f_categories = null;
   $n_Lfansi_Attr$ = this;
-  this.Lfansi_Attr$__f_Reset = new $c_Lfansi_EscapeAttr("\u001b[0m", new $c_RTLong(2147483647, 0), $L0, new $c_Lsourcecode_Name("Reset"));
+  this.Lfansi_Attr$__f_Reset = new $c_Lfansi_EscapeAttr("\u001b[0m", 2147483647, 0, 0, 0, new $c_Lsourcecode_Name("Reset"));
   var this$4 = $m_sci_Vector$();
   var array = [$m_Lfansi_Color$(), $m_Lfansi_Back$(), $m_Lfansi_Bold$(), $m_Lfansi_Underlined$(), $m_Lfansi_Reversed$()];
   var elems = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
@@ -1079,16 +1100,20 @@ function $m_Lfansi_Attr$() {
   }
   return $n_Lfansi_Attr$;
 }
-function $f_Lfansi_Attrs__transform__J__J($thiz, state) {
-  var b = $thiz.resetMask__J();
-  var lo = (~b.RTLong__f_lo);
-  var hi = (~b.RTLong__f_hi);
-  var lo$1 = (state.RTLong__f_lo & lo);
-  var hi$1 = (state.RTLong__f_hi & hi);
-  var b$1 = $thiz.applyMask__J();
-  var lo$2 = (lo$1 | b$1.RTLong__f_lo);
-  var hi$2 = (hi$1 | b$1.RTLong__f_hi);
-  return new $c_RTLong(lo$2, hi$2);
+function $f_Lfansi_Attrs__transform__J__J($thiz, state_$_lo, state_$_hi) {
+  var $x_1 = $thiz.resetMask__J();
+  var x_$_lo = $x_1.l;
+  var x_$_hi = $x_1.h;
+  var lo = (~x_$_lo);
+  var hi = (~x_$_hi);
+  var lo$1 = (state_$_lo & lo);
+  var hi$1 = (state_$_hi & hi);
+  var $x_2 = $thiz.applyMask__J();
+  var x$1_$_lo = $x_2.l;
+  var x$1_$_hi = $x_2.h;
+  var lo$2 = (lo$1 | x$1_$_lo);
+  var hi$2 = (hi$1 | x$1_$_hi);
+  return $bL(lo$2, hi$2);
 }
 function $is_Lfansi_Attrs(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lfansi_Attrs)));
@@ -1113,42 +1138,42 @@ $c_Lfansi_Attrs$.prototype.constructor = $c_Lfansi_Attrs$;
 function $h_Lfansi_Attrs$() {
 }
 $h_Lfansi_Attrs$.prototype = $c_Lfansi_Attrs$.prototype;
-$c_Lfansi_Attrs$.prototype.emitAnsiCodes0__J__J__scm_StringBuilder__ALfansi_Category__V = (function(currentState, nextState, output, categoryArray) {
-  if ((!((currentState.RTLong__f_lo === nextState.RTLong__f_lo) && (currentState.RTLong__f_hi === nextState.RTLong__f_hi)))) {
+$c_Lfansi_Attrs$.prototype.emitAnsiCodes0__J__J__scm_StringBuilder__ALfansi_Category__V = (function(currentState_$_lo, currentState_$_hi, nextState_$_lo, nextState_$_hi, output, categoryArray) {
+  if ((((currentState_$_lo ^ nextState_$_lo) | (currentState_$_hi ^ nextState_$_hi)) !== 0)) {
     var hardOffMask = $m_Lfansi_Bold$().mask__I();
-    var lo = (~nextState.RTLong__f_lo);
-    var hi = (~nextState.RTLong__f_hi);
-    var lo$1 = (currentState.RTLong__f_lo & lo);
-    var hi$1 = (currentState.RTLong__f_hi & hi);
+    var lo = (~nextState_$_lo);
+    var hi = (~nextState_$_hi);
+    var lo$1 = (currentState_$_lo & lo);
+    var hi$1 = (currentState_$_hi & hi);
     var hi$2 = (hardOffMask >> 31);
     var lo$2 = (lo$1 & hardOffMask);
     var hi$3 = (hi$1 & hi$2);
-    if ((!((lo$2 === 0) && (hi$3 === 0)))) {
+    if (((lo$2 | hi$3) !== 0)) {
       $n(output).append__T__scm_StringBuilder("\u001b[0m");
-      var t = $L0;
+      var currentState2_$_lo = 0;
+      var currentState2_$_hi = 0;
     } else {
-      var t = currentState;
+      var currentState2_$_lo = currentState_$_lo;
+      var currentState2_$_hi = currentState_$_hi;
     }
-    var lo$3 = t.RTLong__f_lo;
-    var hi$4 = t.RTLong__f_hi;
     var categoryIndex = 0;
     while ((categoryIndex < $n(categoryArray).u.length)) {
       var cat = $n(categoryArray).get(categoryIndex);
       var value = $n(cat).mask__I();
-      var hi$5 = (value >> 31);
-      var lo$4 = (value & lo$3);
-      var hi$6 = (hi$5 & hi$4);
+      var hi$4 = (value >> 31);
+      var lo$3 = (value & currentState2_$_lo);
+      var hi$5 = (hi$4 & currentState2_$_hi);
       var value$1 = $n(cat).mask__I();
-      var hi$7 = (value$1 >> 31);
-      var lo$5 = (value$1 & nextState.RTLong__f_lo);
-      var hi$8 = (hi$7 & nextState.RTLong__f_hi);
-      if ((!((lo$4 === lo$5) && (hi$6 === hi$8)))) {
+      var hi$6 = (value$1 >> 31);
+      var lo$4 = (value$1 & nextState_$_lo);
+      var hi$7 = (hi$6 & nextState_$_hi);
+      if ((((lo$3 ^ lo$4) | (hi$5 ^ hi$7)) !== 0)) {
         var $x_1 = $n(cat);
         var value$2 = $n(cat).mask__I();
-        var hi$9 = (value$2 >> 31);
-        var lo$6 = (nextState.RTLong__f_lo & value$2);
-        var hi$10 = (nextState.RTLong__f_hi & hi$9);
-        var escape = $x_1.lookupEscape__J__T(new $c_RTLong(lo$6, hi$10));
+        var hi$8 = (value$2 >> 31);
+        var lo$5 = (nextState_$_lo & value$2);
+        var hi$9 = (nextState_$_hi & hi$8);
+        var escape = $x_1.lookupEscape__J__T(lo$5, hi$9);
         $n(output).append__T__scm_StringBuilder(escape);
       }
       categoryIndex = ((1 + categoryIndex) | 0);
@@ -1159,55 +1184,55 @@ $c_Lfansi_Attrs$.prototype.apply__sci_Seq__Lfansi_Attrs = (function(attrs) {
   var elem = $m_sci_Nil$();
   var elem$1 = null;
   elem$1 = elem;
-  var elem$2__lo = 0;
-  var elem$2__hi = 0;
-  var $x_1__lo = 0;
-  var $x_1__hi = 0;
-  elem$2__lo = $x_1__lo;
-  elem$2__hi = $x_1__hi;
-  var elem$3__lo = 0;
-  var elem$3__hi = 0;
-  var $x_2__lo = 0;
-  var $x_2__hi = 0;
-  elem$3__lo = $x_2__lo;
-  elem$3__hi = $x_2__hi;
+  var elem$2_$_lo = 0;
+  var elem$2_$_hi = 0;
+  elem$2_$_lo = 0;
+  elem$2_$_hi = 0;
+  var elem$3_$_lo = 0;
+  var elem$3_$_hi = 0;
+  elem$3_$_lo = 0;
+  elem$3_$_hi = 0;
   var this$5 = $n($n(attrs).reverseIterator__sc_Iterator());
   while (this$5.hasNext__Z()) {
     var x0 = this$5.next__O();
     var attr$2 = $as_Lfansi_Attr(x0);
-    var a = $n(attr$2).resetMask__J();
-    var b__lo = elem$2__lo;
-    var b__hi = elem$2__hi;
-    var lo = (~b__lo);
-    var hi = (~b__hi);
-    var lo$1 = (a.RTLong__f_lo & lo);
-    var hi$1 = (a.RTLong__f_hi & hi);
-    if ((!((lo$1 === 0) && (hi$1 === 0)))) {
-      var a$1 = $n(attr$2).applyMask__J();
-      var b$1__lo = elem$2__lo;
-      var b$1__hi = elem$2__hi;
-      var lo$2 = (a$1.RTLong__f_lo & b$1__lo);
-      var hi$2 = (a$1.RTLong__f_hi & b$1__hi);
-      if (((lo$2 === 0) && (hi$2 === 0))) {
-        var a$2__lo = elem$3__lo;
-        var a$2__hi = elem$3__hi;
-        var b$2 = $n(attr$2).applyMask__J();
-        var lo$3 = (a$2__lo | b$2.RTLong__f_lo);
-        var hi$3 = (a$2__hi | b$2.RTLong__f_hi);
-        var $x_3__lo = lo$3;
-        var $x_3__hi = hi$3;
-        elem$3__lo = $x_3__lo;
-        elem$3__hi = $x_3__hi;
+    var $x_1 = $n(attr$2).resetMask__J();
+    var x$1_$_lo = $x_1.l;
+    var x$1_$_hi = $x_1.h;
+    var x_$_lo = elem$2_$_lo;
+    var x_$_hi = elem$2_$_hi;
+    var lo = (~x_$_lo);
+    var hi = (~x_$_hi);
+    var lo$1 = (x$1_$_lo & lo);
+    var hi$1 = (x$1_$_hi & hi);
+    if (((lo$1 | hi$1) !== 0)) {
+      var $x_2 = $n(attr$2).applyMask__J();
+      var x$2_$_lo = $x_2.l;
+      var x$2_$_hi = $x_2.h;
+      var x$3_$_lo = elem$2_$_lo;
+      var x$3_$_hi = elem$2_$_hi;
+      var lo$2 = (x$2_$_lo & x$3_$_lo);
+      var hi$2 = (x$2_$_hi & x$3_$_hi);
+      if (((lo$2 | hi$2) === 0)) {
+        var x$4_$_lo = elem$3_$_lo;
+        var x$4_$_hi = elem$3_$_hi;
+        var $x_3 = $n(attr$2).applyMask__J();
+        var x$5_$_lo = $x_3.l;
+        var x$5_$_hi = $x_3.h;
+        var lo$3 = (x$4_$_lo | x$5_$_lo);
+        var hi$3 = (x$4_$_hi | x$5_$_hi);
+        elem$3_$_lo = lo$3;
+        elem$3_$_hi = hi$3;
       }
-      var a$3__lo = elem$2__lo;
-      var a$3__hi = elem$2__hi;
-      var b$3 = $n(attr$2).resetMask__J();
-      var lo$4 = (a$3__lo | b$3.RTLong__f_lo);
-      var hi$4 = (a$3__hi | b$3.RTLong__f_hi);
-      var $x_4__lo = lo$4;
-      var $x_4__hi = hi$4;
-      elem$2__lo = $x_4__lo;
-      elem$2__hi = $x_4__hi;
+      var x$6_$_lo = elem$2_$_lo;
+      var x$6_$_hi = elem$2_$_hi;
+      var $x_4 = $n(attr$2).resetMask__J();
+      var x$7_$_lo = $x_4.l;
+      var x$7_$_hi = $x_4.h;
+      var lo$4 = (x$6_$_lo | x$7_$_lo);
+      var hi$4 = (x$6_$_hi | x$7_$_hi);
+      elem$2_$_lo = lo$4;
+      elem$2_$_hi = hi$4;
       var this$13 = $n($as_sci_List(elem$1));
       elem$1 = new $c_sci_$colon$colon(attr$2, this$13);
     }
@@ -1215,9 +1240,11 @@ $c_Lfansi_Attrs$.prototype.apply__sci_Seq__Lfansi_Attrs = (function(attrs) {
   if (($n($as_sci_List(elem$1)).length__I() === 1)) {
     return $as_Lfansi_Attrs($n($as_sci_List(elem$1)).head__O());
   } else {
-    var $x_8 = new $c_RTLong(elem$2__lo, elem$2__hi);
-    var $x_7 = new $c_RTLong(elem$3__lo, elem$3__hi);
-    var $x_6 = $m_s_Predef$();
+    var $x_7_$_lo = elem$2_$_lo;
+    var $x_7_$_hi = elem$2_$_hi;
+    var $x_6_$_lo = elem$3_$_lo;
+    var $x_6_$_hi = elem$3_$_hi;
+    var $x_5 = $m_s_Predef$();
     var this$15 = $n($as_sci_List(elem$1));
     if ((this$15.knownSize__I() >= 0)) {
       var len = this$15.knownSize__I();
@@ -1240,15 +1267,13 @@ $c_Lfansi_Attrs$.prototype.apply__sci_Seq__Lfansi_Attrs = (function(attrs) {
       var xs = new ($d_Lfansi_Attr.getArrayOf().constr)(jsElems);
     }
     var len$1 = xs.u.length;
-    var $x_5 = $m_s_reflect_ClassTag$();
-    var this$22 = $objectGetClass(xs);
-    var res = $n($x_5.apply__jl_Class__s_reflect_ClassTag(this$22.data.getComponentType())).newArray__I__O(len$1);
+    var res = new ($d_Lfansi_Attr.getArrayOf().constr)(len$1);
     var i = 0;
     while ((i < len$1)) {
-      $m_sr_ScalaRunTime$().array_update__O__I__O__V(res, (((-1) + ((len$1 - i) | 0)) | 0), xs.get(i));
+      res.set(((((len$1 - i) | 0) - 1) | 0), xs.get(i));
       i = ((1 + i) | 0);
     }
-    return new $c_Lfansi_Attrs$Multiple($x_8, $x_7, $x_6.copyArrayToImmutableIndexedSeq__O__sci_IndexedSeq(res));
+    return new $c_Lfansi_Attrs$Multiple($x_7_$_lo, $x_7_$_hi, $x_6_$_lo, $x_6_$_hi, $x_5.copyArrayToImmutableIndexedSeq__O__sci_IndexedSeq(res));
   }
 });
 var $d_Lfansi_Attrs$ = new $TypeData().initClass($c_Lfansi_Attrs$, "fansi.Attrs$", ({
@@ -1266,10 +1291,11 @@ function $p_Lfansi_Category__lookupAttrTable$lzycompute__ALfansi_Attr($thiz) {
     var arr = new ($d_Lfansi_Attr.getArrayOf().constr)($thiz.lookupTableWidth__I());
     $n($thiz.all__sci_Vector()).foreach__F1__V(new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((attr$2$2) => {
       var attr$2 = $as_Lfansi_Attr(attr$2$2);
-      var a = $n(attr$2).applyMask__J();
+      var $x_1 = $n(attr$2).applyMask__J();
+      var x_$_lo = $x_1.l;
+      var x_$_hi = $x_1.h;
       var n = $thiz.Lfansi_Category__f_offset;
-      var hi = a.RTLong__f_hi;
-      var lo = (((32 & n) === 0) ? (((a.RTLong__f_lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : (hi >> n));
+      var lo = (((32 & n) === 0) ? (((x_$_lo >>> n) | 0) | ((x_$_hi << 1) << ((31 - n) | 0))) : (x_$_hi >> n));
       arr.set(lo, attr$2);
     })));
     $thiz.Lfansi_Category__f_lookupAttrTable = arr;
@@ -1298,10 +1324,10 @@ function $h_Lfansi_Category() {
 }
 $h_Lfansi_Category.prototype = $c_Lfansi_Category.prototype;
 $c_Lfansi_Category.prototype.mask__I = (function() {
-  return ((((-1) + (1 << this.Lfansi_Category__f_width)) | 0) << this.Lfansi_Category__f_offset);
+  return ((((1 << this.Lfansi_Category__f_width) - 1) | 0) << this.Lfansi_Category__f_offset);
 });
-$c_Lfansi_Category.prototype.lookupEscape__J__T = (function(applyState) {
-  var escapeOpt = $n(this.lookupAttr__J__Lfansi_Attr(applyState)).escapeOpt__s_Option();
+$c_Lfansi_Category.prototype.lookupEscape__J__T = (function(applyState_$_lo, applyState_$_hi) {
+  var escapeOpt = $n(this.lookupAttr__J__Lfansi_Attr(applyState_$_lo, applyState_$_hi)).escapeOpt__s_Option();
   var this$1 = $n(escapeOpt);
   if ((!this$1.isEmpty__Z())) {
     return $as_T($n(escapeOpt).get__O());
@@ -1309,11 +1335,10 @@ $c_Lfansi_Category.prototype.lookupEscape__J__T = (function(applyState) {
     return "";
   }
 });
-$c_Lfansi_Category.prototype.lookupAttr__J__Lfansi_Attr = (function(applyState) {
+$c_Lfansi_Category.prototype.lookupAttr__J__Lfansi_Attr = (function(applyState_$_lo, applyState_$_hi) {
   var $x_1 = $n(this.lookupAttrTable__ALfansi_Attr());
   var n = this.Lfansi_Category__f_offset;
-  var hi = applyState.RTLong__f_hi;
-  var lo = (((32 & n) === 0) ? (((applyState.RTLong__f_lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : (hi >> n));
+  var lo = (((32 & n) === 0) ? (((applyState_$_lo >>> n) | 0) | ((applyState_$_hi << 1) << ((31 - n) | 0))) : (applyState_$_hi >> n));
   return $x_1.get(lo);
 });
 $c_Lfansi_Category.prototype.lookupTableWidth__I = (function() {
@@ -1322,25 +1347,21 @@ $c_Lfansi_Category.prototype.lookupTableWidth__I = (function() {
 $c_Lfansi_Category.prototype.lookupAttrTable__ALfansi_Attr = (function() {
   return ((!this.Lfansi_Category__f_bitmap$0) ? $p_Lfansi_Category__lookupAttrTable$lzycompute__ALfansi_Attr(this) : this.Lfansi_Category__f_lookupAttrTable);
 });
-$c_Lfansi_Category.prototype.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr = (function(s, applyValue, name) {
+$c_Lfansi_Category.prototype.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr = (function(s, applyValue_$_lo, applyValue_$_hi, name) {
   var value = this.mask__I();
   var hi = (value >> 31);
-  var $x_1 = new $c_RTLong(value, hi);
   var n = this.Lfansi_Category__f_offset;
-  var lo = applyValue.RTLong__f_lo;
-  var lo$1 = (((32 & n) === 0) ? (lo << n) : 0);
-  var hi$1 = (((32 & n) === 0) ? (((((lo >>> 1) | 0) >>> ((31 - n) | 0)) | 0) | (applyValue.RTLong__f_hi << n)) : (lo << n));
-  return new $c_Lfansi_EscapeAttr(s, $x_1, new $c_RTLong(lo$1, hi$1), $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((($n(this.Lfansi_Category__f_catName).Lsourcecode_Name__f_value + ".") + $n(name).Lsourcecode_Name__f_value))));
+  var lo = (((32 & n) === 0) ? (applyValue_$_lo << n) : 0);
+  var hi$1 = (((32 & n) === 0) ? (((((applyValue_$_lo >>> 1) | 0) >>> ((31 - n) | 0)) | 0) | (applyValue_$_hi << n)) : (applyValue_$_lo << n));
+  return new $c_Lfansi_EscapeAttr(s, value, hi, lo, hi$1, $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((($n(this.Lfansi_Category__f_catName).Lsourcecode_Name__f_value + ".") + $n(name).Lsourcecode_Name__f_value))));
 });
-$c_Lfansi_Category.prototype.makeNoneAttr__J__Lsourcecode_Name__Lfansi_ResetAttr = (function(applyValue, name) {
+$c_Lfansi_Category.prototype.makeNoneAttr__J__Lsourcecode_Name__Lfansi_ResetAttr = (function(applyValue_$_lo, applyValue_$_hi, name) {
   var value = this.mask__I();
   var hi = (value >> 31);
-  var $x_1 = new $c_RTLong(value, hi);
   var n = this.Lfansi_Category__f_offset;
-  var lo = applyValue.RTLong__f_lo;
-  var lo$1 = (((32 & n) === 0) ? (lo << n) : 0);
-  var hi$1 = (((32 & n) === 0) ? (((((lo >>> 1) | 0) >>> ((31 - n) | 0)) | 0) | (applyValue.RTLong__f_hi << n)) : (lo << n));
-  return new $c_Lfansi_ResetAttr($x_1, new $c_RTLong(lo$1, hi$1), $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((($n(this.Lfansi_Category__f_catName).Lsourcecode_Name__f_value + ".") + $n(name).Lsourcecode_Name__f_value))));
+  var lo = (((32 & n) === 0) ? (applyValue_$_lo << n) : 0);
+  var hi$1 = (((32 & n) === 0) ? (((((applyValue_$_lo >>> 1) | 0) >>> ((31 - n) | 0)) | 0) | (applyValue_$_hi << n)) : (applyValue_$_lo << n));
+  return new $c_Lfansi_ResetAttr(value, hi, lo, hi$1, $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((($n(this.Lfansi_Category__f_catName).Lsourcecode_Name__f_value + ".") + $n(name).Lsourcecode_Name__f_value))));
 });
 function $as_Lfansi_Category(obj) {
   return (((obj instanceof $c_Lfansi_Category) || (obj === null)) ? obj : $throwClassCastException(obj, "fansi.Category"));
@@ -1371,7 +1392,7 @@ function $c_Lfansi_Str(chars, colors) {
   this.Lfansi_Str__f_bitmap$0 = false;
   this.Lfansi_Str__f_chars = chars;
   this.Lfansi_Str__f_colors = colors;
-  $m_s_Predef$().require__Z__V(($n(chars).u.length === $n(colors).u.length));
+  $m_s_Predef$().require__Z__V(($n(chars).u.length === (($n(colors).u.length >>> 1) | 0)));
 }
 $c_Lfansi_Str.prototype = new $h_O();
 $c_Lfansi_Str.prototype.constructor = $c_Lfansi_Str;
@@ -1422,9 +1443,9 @@ $c_Lfansi_Str.prototype.plainText__T = (function() {
   return ((!this.Lfansi_Str__f_bitmap$0) ? $p_Lfansi_Str__plainText$lzycompute__T(this) : this.Lfansi_Str__f_plainText);
 });
 $c_Lfansi_Str.prototype.render__T = (function() {
-  var output = $ct_scm_StringBuilder__I__(new $c_scm_StringBuilder(), (($n(this.Lfansi_Str__f_chars).u.length + Math.imul(5, $n(this.Lfansi_Str__f_colors).u.length)) | 0));
-  var currentState__lo = 0;
-  var currentState__hi = 0;
+  var output = $ct_scm_StringBuilder__I__(new $c_scm_StringBuilder(), (($n(this.Lfansi_Str__f_chars).u.length + Math.imul(5, (($n(this.Lfansi_Str__f_colors).u.length >>> 1) | 0))) | 0));
+  var currentState_$_lo = 0;
+  var currentState_$_hi = 0;
   var this$2 = $n($m_Lfansi_Attr$().Lfansi_Attr$__f_categories);
   if ((this$2.length__I() >= 0)) {
     var len = this$2.length__I();
@@ -1447,24 +1468,31 @@ $c_Lfansi_Str.prototype.render__T = (function() {
     var categoryArray = new ($d_Lfansi_Category.getArrayOf().constr)(jsElems);
   }
   var i = 0;
-  while ((i < $n(this.Lfansi_Str__f_colors).u.length)) {
-    var a = $n(this.Lfansi_Str__f_colors).get(i);
-    var b__lo = currentState__lo;
-    var b__hi = currentState__hi;
-    if ((!((a.RTLong__f_lo === b__lo) && (a.RTLong__f_hi === b__hi)))) {
-      $m_Lfansi_Attrs$().emitAnsiCodes0__J__J__scm_StringBuilder__ALfansi_Category__V(new $c_RTLong(currentState__lo, currentState__hi), $n(this.Lfansi_Str__f_colors).get(i), output, categoryArray);
-      var t = $n(this.Lfansi_Str__f_colors).get(i);
-      var lo = t.RTLong__f_lo;
-      var hi = t.RTLong__f_hi;
-      var $x_1__lo = lo;
-      var $x_1__hi = hi;
-      currentState__lo = $x_1__lo;
-      currentState__hi = $x_1__hi;
+  while ((i < (($n(this.Lfansi_Str__f_colors).u.length >>> 1) | 0))) {
+    var $x_1 = $n(this.Lfansi_Str__f_colors).u;
+    var $x_2 = $aJCheckGet($x_1, i);
+    var x_$_lo = $x_1[$x_2];
+    var x_$_hi = $x_1[(($x_2 + 1) | 0)];
+    var x$1_$_lo = currentState_$_lo;
+    var x$1_$_hi = currentState_$_hi;
+    if ((((x_$_lo ^ x$1_$_lo) | (x_$_hi ^ x$1_$_hi)) !== 0)) {
+      var $x_7 = $m_Lfansi_Attrs$();
+      var $x_6_$_lo = currentState_$_lo;
+      var $x_6_$_hi = currentState_$_hi;
+      var $x_4 = $n(this.Lfansi_Str__f_colors).u;
+      var $x_5 = $aJCheckGet($x_4, i);
+      var $x_3_$_lo = $x_4[$x_5];
+      var $x_3_$_hi = $x_4[(($x_5 + 1) | 0)];
+      $x_7.emitAnsiCodes0__J__J__scm_StringBuilder__ALfansi_Category__V($x_6_$_lo, $x_6_$_hi, $x_3_$_lo, $x_3_$_hi, output, categoryArray);
+      var $x_8 = $n(this.Lfansi_Str__f_colors).u;
+      var $x_9 = $aJCheckGet($x_8, i);
+      currentState_$_lo = $x_8[$x_9];
+      currentState_$_hi = $x_8[(($x_9 + 1) | 0)];
     }
     output.append__C__scm_StringBuilder($n(this.Lfansi_Str__f_chars).get(i));
     i = ((1 + i) | 0);
   }
-  $m_Lfansi_Attrs$().emitAnsiCodes0__J__J__scm_StringBuilder__ALfansi_Category__V(new $c_RTLong(currentState__lo, currentState__hi), $L0, output, categoryArray);
+  $m_Lfansi_Attrs$().emitAnsiCodes0__J__J__scm_StringBuilder__ALfansi_Category__V(currentState_$_lo, currentState_$_hi, 0, 0, output, categoryArray);
   return $n(output.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content;
 });
 $c_Lfansi_Str.prototype.overlay__Lfansi_Attrs__I__I__Lfansi_Str = (function(attrs, start, end) {
@@ -1492,13 +1520,20 @@ $c_Lfansi_Str.prototype.overlayAll__sci_Seq__Lfansi_Str = (function(overlays) {
       if ((!requirement$1)) {
         throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), (("requirement failed: " + ("start:" + start)) + " must be greater than or equal to 0"));
       }
-      var requirement$2 = (end <= $n(this.Lfansi_Str__f_colors).u.length);
+      var requirement$2 = (end <= (($n(this.Lfansi_Str__f_colors).u.length >>> 1) | 0));
       if ((!requirement$2)) {
-        throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), (("requirement failed: " + (("end:" + end) + " must be less than or equal to length:")) + $n(this.Lfansi_Str__f_colors).u.length));
+        throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), (("requirement failed: " + (("end:" + end) + " must be less than or equal to length:")) + (($n(this.Lfansi_Str__f_colors).u.length >>> 1) | 0)));
       }
       var i = start;
       while ((i < end)) {
-        colorsOut.set(i, $f_Lfansi_Attrs__transform__J__J($n(attrs), colorsOut.get(i)));
+        var $x_6 = i;
+        var $x_5 = $n(attrs);
+        var $x_3 = colorsOut.u;
+        var $x_4 = $aJCheckGet($x_3, i);
+        var $x_2_$_lo = $x_3[$x_4];
+        var $x_2_$_hi = $x_3[(($x_4 + 1) | 0)];
+        var $x_1 = $f_Lfansi_Attrs__transform__J__J($x_5, $x_2_$_lo, $x_2_$_hi);
+        colorsOut.set($x_6, $x_1.l, $x_1.h);
         i = ((1 + i) | 0);
       }
     } else {
@@ -1581,8 +1616,8 @@ $h_Lfansi_Str$.prototype = $c_Lfansi_Str$.prototype;
 $c_Lfansi_Str$.prototype.apply__jl_CharSequence__Lfansi_ErrorMode__Lfansi_Str = (function(raw, errorMode) {
   var chars = new $ac_C($dp_length__I($n(raw)));
   var colors = new $ac_J($dp_length__I($n(raw)));
-  var currentColor__lo = 0;
-  var currentColor__hi = 0;
+  var currentColor_$_lo = 0;
+  var currentColor_$_hi = 0;
   var elem = 0;
   elem = 0;
   var destIndex = 0;
@@ -1606,13 +1641,9 @@ $c_Lfansi_Str$.prototype.apply__jl_CharSequence__Lfansi_ErrorMode__Lfansi_Str = 
             if ((p2 instanceof $c_s_util_Left)) {
               var x3$2 = $as_s_util_Left(p2);
               var color = $as_Lfansi_Attr($n(x3$2).s_util_Left__f_value);
-              var t = $f_Lfansi_Attrs__transform__J__J($n(color), new $c_RTLong(currentColor__lo, currentColor__hi));
-              var lo = t.RTLong__f_lo;
-              var hi = t.RTLong__f_hi;
-              var $x_1__lo = lo;
-              var $x_1__hi = hi;
-              currentColor__lo = $x_1__lo;
-              currentColor__hi = $x_1__hi;
+              var $x_1 = $f_Lfansi_Attrs__transform__J__J($n(color), currentColor_$_lo, currentColor_$_hi);
+              currentColor_$_lo = $x_1.l;
+              currentColor_$_hi = $x_1.h;
               elem = ((elem + newIndex) | 0);
               break matchEnd7;
             }
@@ -1631,7 +1662,7 @@ $c_Lfansi_Str$.prototype.apply__jl_CharSequence__Lfansi_ErrorMode__Lfansi_Str = 
                 var value = 0;
                 var count = 0;
                 while (($ps_Lfansi_Str$__isDigit$1__I__jl_CharSequence__Z(elem, raw) && (count < 3))) {
-                  value = ((Math.imul(10, value) + (((-48) + $dp_charAt__I__C($n(raw), elem)) | 0)) | 0);
+                  value = ((Math.imul(10, value) + (($dp_charAt__I__C($n(raw), elem) - 48) | 0)) | 0);
                   elem = ((1 + elem) | 0);
                   count = ((1 + count) | 0);
                 }
@@ -1644,7 +1675,7 @@ $c_Lfansi_Str$.prototype.apply__jl_CharSequence__Lfansi_ErrorMode__Lfansi_Str = 
                   var value$1 = 0;
                   var count$1 = 0;
                   while (($ps_Lfansi_Str$__isDigit$1__I__jl_CharSequence__Z(elem, raw) && (count$1 < 3))) {
-                    value$1 = ((Math.imul(10, value$1) + (((-48) + $dp_charAt__I__C($n(raw), elem)) | 0)) | 0);
+                    value$1 = ((Math.imul(10, value$1) + (($dp_charAt__I__C($n(raw), elem) - 48) | 0)) | 0);
                     elem = ((1 + elem) | 0);
                     count$1 = ((1 + count$1) | 0);
                   }
@@ -1657,7 +1688,7 @@ $c_Lfansi_Str$.prototype.apply__jl_CharSequence__Lfansi_ErrorMode__Lfansi_Str = 
                     var value$2 = 0;
                     var count$2 = 0;
                     while (($ps_Lfansi_Str$__isDigit$1__I__jl_CharSequence__Z(elem, raw) && (count$2 < 3))) {
-                      value$2 = ((Math.imul(10, value$2) + (((-48) + $dp_charAt__I__C($n(raw), elem)) | 0)) | 0);
+                      value$2 = ((Math.imul(10, value$2) + (($dp_charAt__I__C($n(raw), elem) - 48) | 0)) | 0);
                       elem = ((1 + elem) | 0);
                       count$2 = ((1 + count$2) | 0);
                     }
@@ -1667,24 +1698,22 @@ $c_Lfansi_Str$.prototype.apply__jl_CharSequence__Lfansi_ErrorMode__Lfansi_Str = 
                       break matchEnd7;
                     } else {
                       elem = ((1 + elem) | 0);
-                      if ((!((((((r >= 0) && (r < 256)) && (g >= 0)) && (g < 256)) && (b >= 0)) && (b < 256)))) {
+                      if ((!((((((r >>> 0) <= 255) && (g >= 0)) && (g < 256)) && (b >= 0)) && (b < 256)))) {
                         elem = $n(errorMode).handle__I__jl_CharSequence__I(escapeStartSourceIndex, raw);
                         break matchEnd7;
                       } else {
-                        var a__lo = currentColor__lo;
-                        var a__hi = currentColor__hi;
+                        var x$1_$_lo = currentColor_$_lo;
+                        var x$1_$_hi = currentColor_$_hi;
                         var value$3 = (~$n(category).mask__I());
-                        var hi$1 = (value$3 >> 31);
-                        var lo$1 = (a__lo & value$3);
-                        var hi$2 = (a__hi & hi$1);
+                        var hi = (value$3 >> 31);
+                        var lo = (x$1_$_lo & value$3);
+                        var hi$1 = (x$1_$_hi & hi);
                         var value$4 = (((273 + $n(category).trueIndex__I__I__I__I(r, g, b)) | 0) << $n(category).Lfansi_Category__f_offset);
-                        var hi$3 = (value$4 >> 31);
-                        var lo$2 = (lo$1 | value$4);
-                        var hi$4 = (hi$2 | hi$3);
-                        var $x_2__lo = lo$2;
-                        var $x_2__hi = hi$4;
-                        currentColor__lo = $x_2__lo;
-                        currentColor__hi = $x_2__hi;
+                        var hi$2 = (value$4 >> 31);
+                        var lo$1 = (lo | value$4);
+                        var hi$3 = (hi$1 | hi$2);
+                        currentColor_$_lo = lo$1;
+                        currentColor_$_hi = hi$3;
                         break matchEnd7;
                       }
                     }
@@ -1699,16 +1728,16 @@ $c_Lfansi_Str$.prototype.apply__jl_CharSequence__Lfansi_ErrorMode__Lfansi_Str = 
         throw new $c_s_MatchError(x1);
       }
     } else {
-      colors.set(destIndex, new $c_RTLong(currentColor__lo, currentColor__hi));
+      colors.set(destIndex, currentColor_$_lo, currentColor_$_hi);
       chars.set(destIndex, char);
       elem = ((1 + elem) | 0);
       destIndex = ((1 + destIndex) | 0);
     }
   }
   var end = destIndex;
-  var $x_3 = $m_ju_Arrays$().copyOfRange__AC__I__I__AC(chars, 0, end);
+  var $x_2 = $m_ju_Arrays$().copyOfRange__AC__I__I__AC(chars, 0, end);
   var end$1 = destIndex;
-  return new $c_Lfansi_Str($x_3, $m_ju_Arrays$().copyOfRange__AJ__I__I__AJ(colors, 0, end$1));
+  return new $c_Lfansi_Str($x_2, $m_ju_Arrays$().copyOfRange__AJ__I__I__AJ(colors, 0, end$1));
 });
 var $d_Lfansi_Str$ = new $TypeData().initClass($c_Lfansi_Str$, "fansi.Str$", ({
   Lfansi_Str$: 1
@@ -1809,7 +1838,7 @@ function $c_Lfansi_Trie(strings) {
           } else {
             var originalHash = $m_sr_Statics$().anyHash__O__I($bC(key));
             var hash = (originalHash ^ ((originalHash >>> 16) | 0));
-            var idx = (hash & (((-1) + $n(this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0));
+            var idx = (hash & (($n(this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0));
             var x1$2 = $n(this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get(idx);
             var nd = ((x1$2 === null) ? null : $n(x1$2).findNode__O__I__scm_HashMap$Node($bC(key), hash));
             if ((nd !== null)) {
@@ -1820,7 +1849,7 @@ function $c_Lfansi_Trie(strings) {
               if ((((1 + this$9.scm_HashMap__f_contentSize) | 0) >= this$9.scm_HashMap__f_threshold)) {
                 $p_scm_HashMap__growTable__I__V(this$9, ($n(this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length << 1));
               }
-              var newIdx = ((table0 === this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table) ? idx : (hash & (((-1) + $n(this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0)));
+              var newIdx = ((table0 === this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table) ? idx : (hash & (($n(this$9.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0)));
               $p_scm_HashMap__put0__O__O__Z__I__I__s_Some(this$9, $bC(key), default$1, false, hash, newIdx);
               var $x_1 = default$1;
             }
@@ -2650,16 +2679,15 @@ $c_Lfeatherweightgo_util_Utils$.prototype.unique__sci_List__Z = (function(method
       }
       if ($x_1) {
         methodSpecifications = ts;
-      } else {
-        return false;
+        continue;
       }
+      return false;
     } else {
       var x$1 = $m_sci_Nil$();
-      if (x$1.equals__O__Z(x1)) {
-        return true;
-      } else {
+      if ((!x$1.equals__O__Z(x1))) {
         throw new $c_s_MatchError(x1);
       }
+      return true;
     }
   }
 });
@@ -3204,7 +3232,7 @@ function $p_jl_System$SystemProperties$__loadSystemProperties__O($thiz) {
   result["java.vm.specification.vendor"] = "Oracle Corporation";
   result["java.vm.specification.name"] = "Java Virtual Machine Specification";
   result["java.vm.name"] = "Scala.js";
-  result["java.vm.version"] = "1.20.1";
+  result["java.vm.version"] = "1.20.2";
   result["java.specification.version"] = "1.8";
   result["java.specification.vendor"] = "Oracle Corporation";
   result["java.specification.name"] = "Java Platform API Specification";
@@ -3322,7 +3350,7 @@ $c_jl_reflect_Array$.prototype.getLength__O__I = (function(array) {
     return $n(x7).u.length;
   } else if ((array instanceof $ac_J)) {
     var x8 = $asArrayOf_J(array, 1);
-    return $n(x8).u.length;
+    return (($n(x8).u.length >>> 1) | 0);
   } else if ((array instanceof $ac_F)) {
     var x9 = $asArrayOf_F(array, 1);
     return $n(x9).u.length;
@@ -3379,21 +3407,23 @@ $c_ju_Arrays$.prototype.equals__AJ__AJ__Z = (function(a, b) {
   if (((a === null) || (b === null))) {
     return false;
   }
-  var len = $n(a).u.length;
-  if (($n(b).u.length !== len)) {
+  var len = (($n(a).u.length >>> 1) | 0);
+  if (((($n(b).u.length >>> 1) | 0) !== len)) {
     return false;
   }
   var i = 0;
   while ((i !== len)) {
     var i$1 = i;
-    var t = $n(a).get(i$1);
-    var lo = t.RTLong__f_lo;
-    var hi = t.RTLong__f_hi;
+    var $x_1 = $n(a).u;
+    var $x_2 = $aJCheckGet($x_1, i$1);
+    var a$1_$_lo = $x_1[$x_2];
+    var a$1_$_hi = $x_1[(($x_2 + 1) | 0)];
     var i$2 = i;
-    var t$1 = $n(b).get(i$2);
-    var lo$1 = t$1.RTLong__f_lo;
-    var hi$1 = t$1.RTLong__f_hi;
-    if ((!((lo === lo$1) && (hi === hi$1)))) {
+    var $x_3 = $n(b).u;
+    var $x_4 = $aJCheckGet($x_3, i$2);
+    var b$1_$_lo = $x_3[$x_4];
+    var b$1_$_hi = $x_3[(($x_4 + 1) | 0)];
+    if ((!(((a$1_$_lo ^ b$1_$_lo) | (a$1_$_hi ^ b$1_$_hi)) === 0))) {
       return false;
     }
     i = ((1 + i) | 0);
@@ -3576,7 +3606,7 @@ $c_ju_Arrays$.prototype.copyOf__AJ__I__AJ = (function(original, newLength) {
   if ((newLength < 0)) {
     throw new $c_jl_NegativeArraySizeException();
   }
-  var b = $n(original).u.length;
+  var b = (($n(original).u.length >>> 1) | 0);
   var copyLength = ((newLength < b) ? newLength : b);
   var ret = new $ac_J(newLength);
   $systemArraycopy($n(original), 0, ret, 0, copyLength);
@@ -3641,7 +3671,7 @@ $c_ju_Arrays$.prototype.copyOfRange__AJ__I__I__AJ = (function(original, start, e
   if ((start > end)) {
     throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), ((start + " > ") + end));
   }
-  var len = $n(original).u.length;
+  var len = (($n(original).u.length >>> 1) | 0);
   var retLength = ((end - start) | 0);
   var b = ((len - start) | 0);
   var copyLength = ((retLength < b) ? retLength : b);
@@ -3666,15 +3696,16 @@ $c_ju_Arrays$.prototype.hashCode__AJ__I = (function(a) {
     return 0;
   } else {
     var acc = 1;
-    var len = $n(a).u.length;
+    var len = (($n(a).u.length >>> 1) | 0);
     var i = 0;
     while ((i !== len)) {
-      var $x_1 = acc;
+      var $x_3 = acc;
       var i$1 = i;
-      var t = $n(a).get(i$1);
-      var lo = t.RTLong__f_lo;
-      var hi = t.RTLong__f_hi;
-      acc = ((Math.imul(31, $x_1) + (lo ^ hi)) | 0);
+      var $x_1 = $n(a).u;
+      var $x_2 = $aJCheckGet($x_1, i$1);
+      var o_$_lo = $x_1[$x_2];
+      var o_$_hi = $x_1[(($x_2 + 1) | 0)];
+      acc = ((Math.imul(31, $x_3) + (o_$_lo ^ o_$_hi)) | 0);
       i = ((1 + i) | 0);
     }
     return acc;
@@ -3789,7 +3820,7 @@ $c_ju_Formatter$.prototype.java$util$Formatter$$strOfZeros__I__T = (function(cou
     var remaining = count;
     while ((remaining > 20)) {
       result = (result + "00000000000000000000");
-      remaining = (((-20) + remaining) | 0);
+      remaining = ((remaining - 20) | 0);
     }
     var $x_1 = result;
     var endIndex = remaining;
@@ -3935,7 +3966,7 @@ function $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal($thiz, rou
         return new $c_ju_Formatter$Decimal($x_1, $as_T(this$5.substring(0, roundingPos)), (($thiz.ju_Formatter$Decimal__f_scale - ((digitsLen - roundingPos) | 0)) | 0));
       }
     } else {
-      var lastNonNinePos = (((-1) + roundingPos) | 0);
+      var lastNonNinePos = ((roundingPos - 1) | 0);
       while (true) {
         if ((lastNonNinePos >= 0)) {
           var this$6 = $n(digits);
@@ -3945,7 +3976,7 @@ function $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal($thiz, rou
           var $x_2 = false;
         }
         if ($x_2) {
-          lastNonNinePos = (((-1) + lastNonNinePos) | 0);
+          lastNonNinePos = ((lastNonNinePos - 1) | 0);
         } else {
           break;
         }
@@ -4127,7 +4158,7 @@ function $p_ju_regex_PatternCompiler__literal__I__T($thiz, cp) {
         break;
       }
       default: {
-        return (((66 & $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$flags) !== 2) ? s : (((cp >= 65) && (cp <= 90)) ? ((("[" + s) + $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T(((32 + cp) | 0))) + "]") : (((cp >= 97) && (cp <= 122)) ? ((("[" + $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T((((-32) + cp) | 0))) + s) + "]") : s)));
+        return (((66 & $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$flags) !== 2) ? s : (((((cp - 65) | 0) >>> 0) <= 25) ? ((("[" + s) + $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T(((32 + cp) | 0))) + "]") : (((((cp - 97) | 0) >>> 0) <= 25) ? ((("[" + $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T(((cp - 32) | 0))) + s) + "]") : s)));
       }
     }
   } else {
@@ -4175,7 +4206,7 @@ function $p_ju_regex_PatternCompiler__compileRepeater__I__T__T($thiz, compiledGr
     var this$2 = $n(pattern);
     var repeaterDispatchChar = $charAt(this$2, startOfRepeater);
   }
-  if (((((repeaterDispatchChar === 63) || (repeaterDispatchChar === 42)) || (repeaterDispatchChar === 43)) || (repeaterDispatchChar === 123))) {
+  if (((((repeaterDispatchChar === 42) || (repeaterDispatchChar === 63)) || (repeaterDispatchChar === 43)) || (repeaterDispatchChar === 123))) {
     var this$3 = $n(compiledToken);
     var x1 = $charAt(this$3, 0);
     switch (x1) {
@@ -4197,7 +4228,7 @@ function $p_ju_regex_PatternCompiler__compileRepeater__I__T__T($thiz, compiledGr
       case 92: {
         var this$6 = $n(compiledToken);
         var c = $charAt(this$6, 1);
-        var isTokenAnAssertion = ((c === 98) || (c === 66));
+        var isTokenAnAssertion = ((c === 66) || (c === 98));
         break;
       }
       default: {
@@ -4245,7 +4276,7 @@ function $p_ju_regex_PatternCompiler__parseBaseRepeater__C__T($thiz, repeaterDis
       var this$2 = $n(pattern);
       var index = $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex;
       var c = $charAt(this$2, index);
-      var $x_1 = (!((c >= 48) && (c <= 57)));
+      var $x_1 = (!((((c - 48) | 0) >>> 0) <= 9));
     }
     if ($x_1) {
       $p_ju_regex_PatternCompiler__parseError__T__E($thiz, "Illegal repetition");
@@ -4255,7 +4286,7 @@ function $p_ju_regex_PatternCompiler__parseBaseRepeater__C__T($thiz, repeaterDis
         var this$4 = $n(pattern);
         var index$1 = $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex;
         var c$1 = $charAt(this$4, index$1);
-        var $x_2 = ((c$1 >= 48) && (c$1 <= 57));
+        var $x_2 = ((((c$1 - 48) | 0) >>> 0) <= 9);
       } else {
         var $x_2 = false;
       }
@@ -4277,7 +4308,7 @@ function $p_ju_regex_PatternCompiler__parseBaseRepeater__C__T($thiz, repeaterDis
           var this$7 = $n(pattern);
           var index$3 = $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex;
           var c$2 = $charAt(this$7, index$3);
-          var $x_3 = ((c$2 >= 48) && (c$2 <= 57));
+          var $x_3 = ((((c$2 - 48) | 0) >>> 0) <= 9);
         } else {
           var $x_3 = false;
         }
@@ -4318,7 +4349,9 @@ function $p_ju_regex_PatternCompiler__buildPossessiveQuantifier__I__T__T__T($thi
     var arg2 = $as_T(arg2$2);
     var arg3 = $as_T(arg3$2);
     var this$3 = $n(arg2);
-    if ((((this$3.length % 2) | 0) === 0)) {
+    var num = this$3.length;
+    var t = ((num >>> 31) | 0);
+    if (((((1 & ((num + t) | 0)) - t) | 0) === 0)) {
       return arg1;
     } else {
       var groupNumber = $uI(parseInt(arg3, 10));
@@ -4443,13 +4476,13 @@ function $p_ju_regex_PatternCompiler__compileEscape__T($thiz) {
           var this$7 = $n(pattern);
           var index$1 = end;
           var c = $charAt(this$7, index$1);
-          var $x_2 = ((c >= 48) && (c <= 57));
+          var $x_2 = ((((c - 48) | 0) >>> 0) <= 9);
         } else {
           var $x_2 = false;
         }
         if ($x_2) {
           var s = $as_T(pattern.substring(start, ((1 + end) | 0)));
-          var $x_1 = ($uI(parseInt(s, 10)) <= (((-1) + $uI($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length)) | 0));
+          var $x_1 = ($uI(parseInt(s, 10)) <= (($uI($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length) - 1) | 0));
         } else {
           var $x_1 = false;
         }
@@ -4461,7 +4494,7 @@ function $p_ju_regex_PatternCompiler__compileEscape__T($thiz) {
       }
       var groupString = $as_T(pattern.substring(start, end));
       var groupNumber = $uI(parseInt(groupString, 10));
-      if ((groupNumber > (((-1) + $uI($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length)) | 0))) {
+      if ((groupNumber > (($uI($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length) - 1) | 0))) {
         $p_ju_regex_PatternCompiler__parseError__T__E($thiz, (("numbered capturing group <" + groupNumber) + "> does not exist"));
       }
       var compiledGroupNumber = $uI($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap[groupNumber]);
@@ -4575,7 +4608,7 @@ function $p_ju_regex_PatternCompiler__parseSingleCodePointEscape__I($thiz) {
       break;
     }
     default: {
-      if ((((x1 >= 65) && (x1 <= 90)) || ((x1 >= 97) && (x1 <= 122)))) {
+      if ((((((x1 - 65) | 0) >>> 0) <= 25) || ((((x1 - 97) | 0) >>> 0) <= 25))) {
         $p_ju_regex_PatternCompiler__parseError__T__E($thiz, "Illegal/unsupported escape sequence");
       }
       $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex = (($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex + ((x1 >= 65536) ? 2 : 1)) | 0);
@@ -4591,21 +4624,21 @@ function $p_ju_regex_PatternCompiler__parseOctalEscape__I($thiz) {
   if ((((1 + start) | 0) < len)) {
     var this$2 = $n(pattern);
     var index = ((1 + start) | 0);
-    var d1 = (((-48) + $charAt(this$2, index)) | 0);
+    var d1 = (($charAt(this$2, index) - 48) | 0);
   } else {
     var d1 = (-1);
   }
-  if (((d1 < 0) || (d1 > 7))) {
+  if (((d1 >>> 0) > 7)) {
     $p_ju_regex_PatternCompiler__parseError__T__E($thiz, "Illegal octal escape sequence");
   }
   if ((((2 + start) | 0) < len)) {
     var this$3 = $n(pattern);
     var index$1 = ((2 + start) | 0);
-    var d2 = (((-48) + $charAt(this$3, index$1)) | 0);
+    var d2 = (($charAt(this$3, index$1) - 48) | 0);
   } else {
     var d2 = (-1);
   }
-  if (((d2 < 0) || (d2 > 7))) {
+  if (((d2 >>> 0) > 7)) {
     $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex = ((2 + $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex) | 0);
     return d1;
   } else if ((d1 > 3)) {
@@ -4615,11 +4648,11 @@ function $p_ju_regex_PatternCompiler__parseOctalEscape__I($thiz) {
     if ((((3 + start) | 0) < len)) {
       var this$4 = $n(pattern);
       var index$2 = ((3 + start) | 0);
-      var d3 = (((-48) + $charAt(this$4, index$2)) | 0);
+      var d3 = (($charAt(this$4, index$2) - 48) | 0);
     } else {
       var d3 = (-1);
     }
-    if (((d3 < 0) || (d3 > 7))) {
+    if (((d3 >>> 0) > 7)) {
       $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex = ((3 + $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex) | 0);
       return (((d1 << 3) + d2) | 0);
     } else {
@@ -4679,7 +4712,7 @@ function $p_ju_regex_PatternCompiler__parseHexCodePoint__I__I__T__I($thiz, start
   var pattern = $thiz.ju_regex_PatternCompiler__f_pattern;
   var this$1 = $n(pattern);
   var len = this$1.length;
-  if (((start === end) || (end > len))) {
+  if (((end === start) || (end > len))) {
     $p_ju_regex_PatternCompiler__parseError__T__E($thiz, (("Illegal " + nameForError) + " escape sequence"));
   }
   var i = start;
@@ -4687,7 +4720,7 @@ function $p_ju_regex_PatternCompiler__parseHexCodePoint__I__I__T__I($thiz, start
     var value = i;
     var this$4 = $n(pattern);
     var c = $charAt(this$4, value);
-    if ((!((((c >= 48) && (c <= 57)) || ((c >= 65) && (c <= 70))) || ((c >= 97) && (c <= 102))))) {
+    if ((!((((((c - 48) | 0) >>> 0) <= 9) || ((((c - 65) | 0) >>> 0) <= 5)) || ((((c - 97) | 0) >>> 0) <= 5)))) {
       $p_ju_regex_PatternCompiler__parseError__T__E($thiz, (("Illegal " + nameForError) + " escape sequence"));
     }
     i = ((1 + i) | 0);
@@ -4930,7 +4963,7 @@ function $p_ju_regex_PatternCompiler__compileGroup__T($thiz) {
       var this$4 = $n(pattern);
       var index$2 = ((3 + start) | 0);
       var c2 = $charAt(this$4, index$2);
-      if ((((c2 >= 65) && (c2 <= 90)) || ((c2 >= 97) && (c2 <= 122)))) {
+      if ((((((c2 - 65) | 0) >>> 0) <= 25) || ((((c2 - 97) | 0) >>> 0) <= 25))) {
         $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex = ((3 + start) | 0);
         var name = $p_ju_regex_PatternCompiler__parseGroupName__T($thiz);
         var dict = $thiz.ju_regex_PatternCompiler__f_namedGroups;
@@ -4940,12 +4973,12 @@ function $p_ju_regex_PatternCompiler__compileGroup__T($thiz) {
         $thiz.ju_regex_PatternCompiler__f_compiledGroupCount = ((1 + $thiz.ju_regex_PatternCompiler__f_compiledGroupCount) | 0);
         $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.push($thiz.ju_regex_PatternCompiler__f_compiledGroupCount);
         var dict$1 = $thiz.ju_regex_PatternCompiler__f_namedGroups;
-        var value = (((-1) + $uI($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length)) | 0);
+        var value = (($uI($thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length) - 1) | 0);
         dict$1[name] = value;
         $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex = ((1 + $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex) | 0);
         return (("(" + $thiz.java$util$regex$PatternCompiler$$compileTopLevelOrInsideGroup__Z__T(true)) + ")");
       } else {
-        if (((c2 !== 61) && (c2 !== 33))) {
+        if (((c2 !== 33) && (c2 !== 61))) {
           $p_ju_regex_PatternCompiler__parseError__T__E($thiz, "Unknown look-behind group");
         }
         $thiz.java$util$regex$PatternCompiler$$parseErrorRequireESVersion__T__T__E("Look-behind group", "2018");
@@ -4970,7 +5003,7 @@ function $p_ju_regex_PatternCompiler__parseGroupName__T($thiz) {
       var this$2 = $n(pattern);
       var index = $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex;
       var c = $charAt(this$2, index);
-      var $x_1 = ((((c >= 65) && (c <= 90)) || ((c >= 97) && (c <= 122))) || ((c >= 48) && (c <= 57)));
+      var $x_1 = ((((((c - 65) | 0) >>> 0) <= 25) || ((((c - 97) | 0) >>> 0) <= 25)) || ((((c - 48) | 0) >>> 0) <= 9));
     } else {
       var $x_1 = false;
     }
@@ -5078,7 +5111,7 @@ $c_ju_regex_PatternCompiler.prototype.compile__ju_regex_Pattern = (function() {
   }
   var baseJSFlags = ($m_ju_regex_PatternCompiler$().ju_regex_PatternCompiler$__f_java$util$regex$PatternCompiler$$_supportsDotAll ? "us" : "u");
   var jsFlags = (((66 & this.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$flags) === 66) ? (baseJSFlags + "i") : baseJSFlags);
-  return new $c_ju_regex_Pattern(this.ju_regex_PatternCompiler__f_pattern, this.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$flags, jsPattern, jsFlags, this.ju_regex_PatternCompiler__f_sticky, (((-1) + $uI(this.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length)) | 0), this.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap, this.ju_regex_PatternCompiler__f_namedGroups);
+  return new $c_ju_regex_Pattern(this.ju_regex_PatternCompiler__f_pattern, this.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$flags, jsPattern, jsFlags, this.ju_regex_PatternCompiler__f_sticky, (($uI(this.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap.length) - 1) | 0), this.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$groupNumberMap, this.ju_regex_PatternCompiler__f_namedGroups);
 });
 $c_ju_regex_PatternCompiler.prototype.java$util$regex$PatternCompiler$$parseErrorRequireESVersion__T__T__E = (function(purpose, es) {
   $p_ju_regex_PatternCompiler__parseError__T__E(this, (((((((purpose + " is not supported because it requires RegExp features of ECMAScript ") + es) + ".\n") + ((("If you only target environments with ES" + es) + "+, you can enable ES") + es)) + " features with\n") + ("  scalaJSLinkerConfig ~= { _.withESFeatures(_.withESVersion(ESVersion.ES" + es)) + ")) }\nor an equivalent configuration depending on your build tool."));
@@ -5349,7 +5382,7 @@ function $p_ju_regex_PatternCompiler$CharacterClassBuilder__conjunctResult__T($t
 }
 function $p_ju_regex_PatternCompiler$CharacterClassBuilder__literalCodePoint__I__T($thiz, codePoint) {
   var s = $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T(codePoint);
-  return (((((codePoint === 93) || (codePoint === 92)) || (codePoint === 45)) || (codePoint === 94)) ? ("\\" + s) : s);
+  return (((((((codePoint - 92) | 0) >>> 0) <= 1) || (codePoint === 45)) || (codePoint === 94)) ? ("\\" + s) : s);
 }
 /** @constructor */
 function $c_ju_regex_PatternCompiler$CharacterClassBuilder(asciiCaseInsensitive, isNegated) {
@@ -5420,10 +5453,10 @@ $c_ju_regex_PatternCompiler$CharacterClassBuilder.prototype.addSingleCodePoint__
     this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment = (("" + this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment) + s);
   }
   if (this.ju_regex_PatternCompiler$CharacterClassBuilder__f_asciiCaseInsensitive) {
-    if (((codePoint >= 65) && (codePoint <= 90))) {
+    if (((((codePoint - 65) | 0) >>> 0) <= 25)) {
       this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment = (("" + this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment) + $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T(((32 + codePoint) | 0)));
-    } else if (((codePoint >= 97) && (codePoint <= 122))) {
-      this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment = (("" + this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment) + $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T((((-32) + codePoint) | 0)));
+    } else if (((((codePoint - 97) | 0) >>> 0) <= 25)) {
+      this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment = (("" + this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment) + $m_ju_regex_PatternCompiler$().java$util$regex$PatternCompiler$$codePointToString__I__T(((codePoint - 32) | 0)));
     }
   }
 });
@@ -5447,8 +5480,8 @@ $c_ju_regex_PatternCompiler$CharacterClassBuilder.prototype.addCodePointRange__I
     var end$2 = ((endCodePoint < 122) ? endCodePoint : 122);
     if ((start$2 <= end$2)) {
       var $x_2 = this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment;
-      var start$3 = (((-32) + start$2) | 0);
-      var end$3 = (((-32) + end$2) | 0);
+      var start$3 = ((start$2 - 32) | 0);
+      var end$3 = ((end$2 - 32) | 0);
       this.ju_regex_PatternCompiler$CharacterClassBuilder__f_thisSegment = ($x_2 + (($p_ju_regex_PatternCompiler$CharacterClassBuilder__literalCodePoint__I__T(this, start$3) + "-") + $p_ju_regex_PatternCompiler$CharacterClassBuilder__literalCodePoint__I__T(this, end$3)));
     }
   }
@@ -5493,72 +5526,58 @@ function $asArrayOf_ju_regex_PatternCompiler$CompiledCharClass(obj, depth) {
 var $d_ju_regex_PatternCompiler$CompiledCharClass = new $TypeData().initClass($c_ju_regex_PatternCompiler$CompiledCharClass, "java.util.regex.PatternCompiler$CompiledCharClass", ({
   ju_regex_PatternCompiler$CompiledCharClass: 1
 }));
-function $s_RTLong__remainderUnsigned__RTLong__RTLong__RTLong(a, b) {
+function $s_RTLong__remainderUnsigned__I__I__I__I__J(alo, ahi, blo, bhi) {
   var this$1 = $m_RTLong$();
-  var lo = this$1.remainderUnsignedImpl__I__I__I__I__I($n(a).RTLong__f_lo, $n(a).RTLong__f_hi, $n(b).RTLong__f_lo, $n(b).RTLong__f_hi);
-  return new $c_RTLong(lo, this$1.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn);
+  return this$1.remainderUnsignedImpl__I__I__I__I__J(alo, ahi, blo, bhi);
 }
-function $s_RTLong__remainder__RTLong__RTLong__RTLong(a, b) {
+function $s_RTLong__remainder__I__I__I__I__J(alo, ahi, blo, bhi) {
+  return $m_RTLong$().remainder__I__I__I__I__J(alo, ahi, blo, bhi);
+}
+function $s_RTLong__divideUnsigned__I__I__I__I__J(alo, ahi, blo, bhi) {
   var this$1 = $m_RTLong$();
-  var lo = this$1.remainderImpl__I__I__I__I__I($n(a).RTLong__f_lo, $n(a).RTLong__f_hi, $n(b).RTLong__f_lo, $n(b).RTLong__f_hi);
-  return new $c_RTLong(lo, this$1.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn);
+  return this$1.divideUnsignedImpl__I__I__I__I__J(alo, ahi, blo, bhi);
 }
-function $s_RTLong__divideUnsigned__RTLong__RTLong__RTLong(a, b) {
-  var this$1 = $m_RTLong$();
-  var lo = this$1.divideUnsignedImpl__I__I__I__I__I($n(a).RTLong__f_lo, $n(a).RTLong__f_hi, $n(b).RTLong__f_lo, $n(b).RTLong__f_hi);
-  return new $c_RTLong(lo, this$1.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn);
+function $s_RTLong__divide__I__I__I__I__J(alo, ahi, blo, bhi) {
+  return $m_RTLong$().divide__I__I__I__I__J(alo, ahi, blo, bhi);
 }
-function $s_RTLong__divide__RTLong__RTLong__RTLong(a, b) {
-  var this$1 = $m_RTLong$();
-  var lo = this$1.divideImpl__I__I__I__I__I($n(a).RTLong__f_lo, $n(a).RTLong__f_hi, $n(b).RTLong__f_lo, $n(b).RTLong__f_hi);
-  return new $c_RTLong(lo, this$1.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn);
-}
-function $s_RTLong__fromDoubleBits__D__O__RTLong(value, fpBitsDataView) {
+function $s_RTLong__fromDoubleBits__D__O__J(value, fpBitsDataView) {
   fpBitsDataView.setFloat64(0, value, true);
-  return new $c_RTLong($uI(fpBitsDataView.getInt32(0, true)), $uI(fpBitsDataView.getInt32(4, true)));
+  var lo = $uI(fpBitsDataView.getInt32(0, true));
+  var hi = $uI(fpBitsDataView.getInt32(4, true));
+  return $bL(lo, hi);
 }
-function $s_RTLong__fromDouble__D__RTLong(value) {
-  var this$1 = $m_RTLong$();
-  var lo = this$1.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(value);
-  return new $c_RTLong(lo, this$1.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn);
+function $s_RTLong__fromDouble__D__J(value) {
+  return $m_RTLong$().fromDouble__D__J(value);
 }
-function $s_RTLong__fromUnsignedInt__I__RTLong(value) {
-  return new $c_RTLong(value, 0);
+function $s_RTLong__fromUnsignedInt__I__J(value) {
+  return $bL(value, 0);
 }
-function $s_RTLong__fromInt__I__RTLong(value) {
-  return new $c_RTLong(value, (value >> 31));
+function $s_RTLong__fromInt__I__J(value) {
+  var hi = (value >> 31);
+  return $bL(value, hi);
 }
-function $s_RTLong__clz__RTLong__I(a) {
-  var hi = $n(a).RTLong__f_hi;
-  if ((hi !== 0)) {
-    return Math.clz32(hi);
-  } else {
-    var i = $n(a).RTLong__f_lo;
-    return ((32 + Math.clz32(i)) | 0);
-  }
+function $s_RTLong__clz__I__I__I(lo, hi) {
+  return ((hi !== 0) ? Math.clz32(hi) : ((32 + Math.clz32(lo)) | 0));
 }
-function $s_RTLong__toFloat__RTLong__F(a) {
-  var lo = $n(a).RTLong__f_lo;
-  var hi = $n(a).RTLong__f_hi;
+function $s_RTLong__toFloat__I__I__F(lo, hi) {
   var compressedLo = (((((-2097152) & (hi ^ (hi >> 10))) === 0) || ((65535 & lo) === 0)) ? lo : (32768 | ((-32768) & lo)));
   return Math.fround(((4.294967296E9 * hi) + (compressedLo >>> 0.0)));
 }
-function $s_RTLong__toDouble__RTLong__D(a) {
-  var lo = $n(a).RTLong__f_lo;
-  var hi = $n(a).RTLong__f_hi;
+function $s_RTLong__toDouble__I__I__D(lo, hi) {
   return ((4.294967296E9 * hi) + (lo >>> 0.0));
 }
-function $s_RTLong__toInt__RTLong__I(a) {
-  return $n(a).RTLong__f_lo;
+function $s_RTLong__toInt__I__I__I(lo, hi) {
+  return lo;
 }
-function $s_RTLong__bitsToDouble__RTLong__O__D(a, fpBitsDataView) {
-  fpBitsDataView.setInt32(0, $n(a).RTLong__f_lo, true);
-  fpBitsDataView.setInt32(4, $n(a).RTLong__f_hi, true);
+function $s_RTLong__toString__I__I__T(lo, hi) {
+  return $m_RTLong$().toString__I__I__T(lo, hi);
+}
+function $s_RTLong__bitsToDouble__I__I__O__D(lo, hi, fpBitsDataView) {
+  fpBitsDataView.setInt32(0, lo, true);
+  fpBitsDataView.setInt32(4, hi, true);
   return $uD(fpBitsDataView.getFloat64(0, true));
 }
-function $s_RTLong__mul__RTLong__RTLong__RTLong(a, b) {
-  var alo = $n(a).RTLong__f_lo;
-  var blo = $n(b).RTLong__f_lo;
+function $s_RTLong__mul__I__I__I__I__J(alo, ahi, blo, bhi) {
   var a0 = (65535 & alo);
   var a1 = ((alo >>> 16) | 0);
   var b0 = (65535 & blo);
@@ -5568,280 +5587,81 @@ function $s_RTLong__mul__RTLong__RTLong__RTLong(a, b) {
   var a0b1 = Math.imul(a0, b1);
   var lo = ((a0b0 + (((a1b0 + a0b1) | 0) << 16)) | 0);
   var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
-  var hi = ((((((((Math.imul(alo, $n(b).RTLong__f_hi) + Math.imul($n(a).RTLong__f_hi, blo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
-  return new $c_RTLong(lo, hi);
+  var hi = ((((((((Math.imul(alo, bhi) + Math.imul(ahi, blo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
+  return $bL(lo, hi);
 }
-function $s_RTLong__sub__RTLong__RTLong__RTLong(a, b) {
-  var alo = $n(a).RTLong__f_lo;
-  var blo = $n(b).RTLong__f_lo;
+function $s_RTLong__sub__I__I__I__I__J(alo, ahi, blo, bhi) {
   var lo = ((alo - blo) | 0);
-  return new $c_RTLong(lo, (((($n(a).RTLong__f_hi - $n(b).RTLong__f_hi) | 0) + ((((~alo) & blo) | ((~(alo ^ blo)) & lo)) >> 31)) | 0));
+  var hi = ((((ahi - bhi) | 0) + ((((~alo) & blo) | ((~(alo ^ blo)) & lo)) >> 31)) | 0);
+  return $bL(lo, hi);
 }
-function $s_RTLong__add__RTLong__RTLong__RTLong(a, b) {
-  var alo = $n(a).RTLong__f_lo;
-  var blo = $n(b).RTLong__f_lo;
+function $s_RTLong__add__I__I__I__I__J(alo, ahi, blo, bhi) {
   var lo = ((alo + blo) | 0);
-  return new $c_RTLong(lo, (((($n(a).RTLong__f_hi + $n(b).RTLong__f_hi) | 0) + ((((alo & blo) | ((alo | blo) & (~lo))) >>> 31) | 0)) | 0));
+  var hi = ((((ahi + bhi) | 0) + ((((alo & blo) | ((alo | blo) & (~lo))) >>> 31) | 0)) | 0);
+  return $bL(lo, hi);
 }
-function $s_RTLong__sar__RTLong__I__RTLong(a, n) {
-  var hi = $n(a).RTLong__f_hi;
-  return new $c_RTLong((((32 & n) === 0) ? ((($n(a).RTLong__f_lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : (hi >> n)), (((32 & n) === 0) ? (hi >> n) : (hi >> 31)));
+function $s_RTLong__sar__I__I__I__J(lo, hi, n) {
+  var lo$1 = (((32 & n) === 0) ? (((lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : (hi >> n));
+  var hi$1 = (((32 & n) === 0) ? (hi >> n) : (hi >> 31));
+  return $bL(lo$1, hi$1);
 }
-function $s_RTLong__shr__RTLong__I__RTLong(a, n) {
-  var hi = $n(a).RTLong__f_hi;
-  return new $c_RTLong((((32 & n) === 0) ? ((($n(a).RTLong__f_lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : ((hi >>> n) | 0)), (((32 & n) === 0) ? ((hi >>> n) | 0) : 0));
+function $s_RTLong__shr__I__I__I__J(lo, hi, n) {
+  var lo$1 = (((32 & n) === 0) ? (((lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : ((hi >>> n) | 0));
+  var hi$1 = (((32 & n) === 0) ? ((hi >>> n) | 0) : 0);
+  return $bL(lo$1, hi$1);
 }
-function $s_RTLong__shl__RTLong__I__RTLong(a, n) {
-  var lo = $n(a).RTLong__f_lo;
-  return new $c_RTLong((((32 & n) === 0) ? (lo << n) : 0), (((32 & n) === 0) ? (((((lo >>> 1) | 0) >>> ((31 - n) | 0)) | 0) | ($n(a).RTLong__f_hi << n)) : (lo << n)));
+function $s_RTLong__shl__I__I__I__J(lo, hi, n) {
+  var lo$1 = (((32 & n) === 0) ? (lo << n) : 0);
+  var hi$1 = (((32 & n) === 0) ? (((((lo >>> 1) | 0) >>> ((31 - n) | 0)) | 0) | (hi << n)) : (lo << n));
+  return $bL(lo$1, hi$1);
 }
-function $s_RTLong__xor__RTLong__RTLong__RTLong(a, b) {
-  return new $c_RTLong(($n(a).RTLong__f_lo ^ $n(b).RTLong__f_lo), ($n(a).RTLong__f_hi ^ $n(b).RTLong__f_hi));
+function $s_RTLong__xor__I__I__I__I__J(alo, ahi, blo, bhi) {
+  var lo = (alo ^ blo);
+  var hi = (ahi ^ bhi);
+  return $bL(lo, hi);
 }
-function $s_RTLong__and__RTLong__RTLong__RTLong(a, b) {
-  return new $c_RTLong(($n(a).RTLong__f_lo & $n(b).RTLong__f_lo), ($n(a).RTLong__f_hi & $n(b).RTLong__f_hi));
+function $s_RTLong__and__I__I__I__I__J(alo, ahi, blo, bhi) {
+  var lo = (alo & blo);
+  var hi = (ahi & bhi);
+  return $bL(lo, hi);
 }
-function $s_RTLong__or__RTLong__RTLong__RTLong(a, b) {
-  return new $c_RTLong(($n(a).RTLong__f_lo | $n(b).RTLong__f_lo), ($n(a).RTLong__f_hi | $n(b).RTLong__f_hi));
+function $s_RTLong__or__I__I__I__I__J(alo, ahi, blo, bhi) {
+  var lo = (alo | blo);
+  var hi = (ahi | bhi);
+  return $bL(lo, hi);
 }
-function $s_RTLong__geu__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) >= ($n(b).RTLong__f_lo >>> 0)) : ((ahi >>> 0) >= (bhi >>> 0)));
+function $s_RTLong__geu__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) >= (blo >>> 0)) : ((ahi >>> 0) > (bhi >>> 0)));
 }
-function $s_RTLong__gtu__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) > ($n(b).RTLong__f_lo >>> 0)) : ((ahi >>> 0) > (bhi >>> 0)));
+function $s_RTLong__gtu__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) > (blo >>> 0)) : ((ahi >>> 0) > (bhi >>> 0)));
 }
-function $s_RTLong__leu__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) <= ($n(b).RTLong__f_lo >>> 0)) : ((ahi >>> 0) <= (bhi >>> 0)));
+function $s_RTLong__leu__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) <= (blo >>> 0)) : ((ahi >>> 0) < (bhi >>> 0)));
 }
-function $s_RTLong__ltu__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) < ($n(b).RTLong__f_lo >>> 0)) : ((ahi >>> 0) < (bhi >>> 0)));
+function $s_RTLong__ltu__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) < (blo >>> 0)) : ((ahi >>> 0) < (bhi >>> 0)));
 }
-function $s_RTLong__ge__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) >= ($n(b).RTLong__f_lo >>> 0)) : (ahi > bhi));
+function $s_RTLong__ge__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) >= (blo >>> 0)) : (ahi > bhi));
 }
-function $s_RTLong__gt__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) > ($n(b).RTLong__f_lo >>> 0)) : (ahi > bhi));
+function $s_RTLong__gt__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) > (blo >>> 0)) : (ahi > bhi));
 }
-function $s_RTLong__le__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) <= ($n(b).RTLong__f_lo >>> 0)) : (ahi < bhi));
+function $s_RTLong__le__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) <= (blo >>> 0)) : (ahi < bhi));
 }
-function $s_RTLong__lt__RTLong__RTLong__Z(a, b) {
-  var ahi = $n(a).RTLong__f_hi;
-  var bhi = $n(b).RTLong__f_hi;
-  return ((ahi === bhi) ? (($n(a).RTLong__f_lo >>> 0) < ($n(b).RTLong__f_lo >>> 0)) : (ahi < bhi));
+function $s_RTLong__lt__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return ((ahi === bhi) ? ((alo >>> 0) < (blo >>> 0)) : (ahi < bhi));
 }
-function $s_RTLong__notEquals__RTLong__RTLong__Z(a, b) {
-  return (!(($n(a).RTLong__f_lo === $n(b).RTLong__f_lo) && ($n(a).RTLong__f_hi === $n(b).RTLong__f_hi)));
+function $s_RTLong__notEquals__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return (((alo ^ blo) | (ahi ^ bhi)) !== 0);
 }
-function $s_RTLong__equals__RTLong__RTLong__Z(a, b) {
-  return (($n(a).RTLong__f_lo === $n(b).RTLong__f_lo) && ($n(a).RTLong__f_hi === $n(b).RTLong__f_hi));
-}
-/** @constructor */
-function $c_RTLong(lo, hi) {
-  this.RTLong__f_lo = 0;
-  this.RTLong__f_hi = 0;
-  this.RTLong__f_lo = lo;
-  this.RTLong__f_hi = hi;
-}
-$c_RTLong.prototype = new $h_O();
-$c_RTLong.prototype.constructor = $c_RTLong;
-/** @constructor */
-function $h_RTLong() {
-}
-$h_RTLong.prototype = $c_RTLong.prototype;
-$c_RTLong.prototype.equals__O__Z = (function(that) {
-  if ((that instanceof $c_RTLong)) {
-    var x2 = $as_RTLong(that);
-    return ((this.RTLong__f_lo === $n(x2).RTLong__f_lo) && (this.RTLong__f_hi === $n(x2).RTLong__f_hi));
-  } else {
-    return false;
-  }
-});
-$c_RTLong.prototype.hashCode__I = (function() {
-  return (this.RTLong__f_lo ^ this.RTLong__f_hi);
-});
-$c_RTLong.prototype.toString__T = (function() {
-  var this$1 = $m_RTLong$();
-  return this$1.org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T(this.RTLong__f_lo, this.RTLong__f_hi);
-});
-$c_RTLong.prototype.byteValue__B = (function() {
-  return ((this.RTLong__f_lo << 24) >> 24);
-});
-$c_RTLong.prototype.shortValue__S = (function() {
-  return ((this.RTLong__f_lo << 16) >> 16);
-});
-$c_RTLong.prototype.intValue__I = (function() {
-  return this.RTLong__f_lo;
-});
-$c_RTLong.prototype.longValue__J = (function() {
-  return this;
-});
-$c_RTLong.prototype.floatValue__F = (function() {
-  var lo = this.RTLong__f_lo;
-  var hi = this.RTLong__f_hi;
-  var compressedLo = (((((-2097152) & (hi ^ (hi >> 10))) === 0) || ((65535 & lo) === 0)) ? lo : (32768 | ((-32768) & lo)));
-  return Math.fround(((4.294967296E9 * hi) + (compressedLo >>> 0.0)));
-});
-$c_RTLong.prototype.doubleValue__D = (function() {
-  var lo = this.RTLong__f_lo;
-  var hi = this.RTLong__f_hi;
-  return ((4.294967296E9 * hi) + (lo >>> 0.0));
-});
-$c_RTLong.prototype.compareTo__O__I = (function(that) {
-  var b = $as_RTLong(that);
-  return $m_RTLong$().org$scalajs$linker$runtime$RuntimeLong$$compare__I__I__I__I__I(this.RTLong__f_lo, this.RTLong__f_hi, $n(b).RTLong__f_lo, $n(b).RTLong__f_hi);
-});
-$c_RTLong.prototype.compareTo__jl_Long__I = (function(that) {
-  return $m_RTLong$().org$scalajs$linker$runtime$RuntimeLong$$compare__I__I__I__I__I(this.RTLong__f_lo, this.RTLong__f_hi, $n(that).RTLong__f_lo, $n(that).RTLong__f_hi);
-});
-function $as_RTLong(obj) {
-  return (((obj instanceof $c_RTLong) || (obj === null)) ? obj : $throwClassCastException(obj, "org.scalajs.linker.runtime.RuntimeLong"));
-}
-function $isArrayOf_RTLong(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.RTLong)));
-}
-function $asArrayOf_RTLong(obj, depth) {
-  return (($isArrayOf_RTLong(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lorg.scalajs.linker.runtime.RuntimeLong;", depth));
-}
-var $d_RTLong = new $TypeData().initClass($c_RTLong, "org.scalajs.linker.runtime.RuntimeLong", ({
-  RTLong: 1
-}));
-function $p_RTLong$__unsigned_$div__I__I__I__I__I($thiz, alo, ahi, blo, bhi) {
-  if ((((-2097152) & ahi) === 0)) {
-    if ((((-2097152) & bhi) === 0)) {
-      var aDouble = ((4.294967296E9 * ahi) + (alo >>> 0.0));
-      var bDouble = ((4.294967296E9 * bhi) + (blo >>> 0.0));
-      var rDouble = (aDouble / bDouble);
-      var x = (rDouble / 4.294967296E9);
-      $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (x | 0.0);
-      return (rDouble | 0.0);
-    } else {
-      $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-      return 0;
-    }
-  } else if (((bhi === 0) && ((blo & (((-1) + blo) | 0)) === 0))) {
-    var pow = ((31 - Math.clz32(blo)) | 0);
-    $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = ((ahi >>> pow) | 0);
-    return (((alo >>> pow) | 0) | ((ahi << 1) << ((31 - pow) | 0)));
-  } else if (((blo === 0) && ((bhi & (((-1) + bhi) | 0)) === 0))) {
-    var pow$2 = ((31 - Math.clz32(bhi)) | 0);
-    $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-    return ((ahi >>> pow$2) | 0);
-  } else {
-    return $p_RTLong$__unsignedDivModHelper__I__I__I__I__Z__I($thiz, alo, ahi, blo, bhi, true);
-  }
-}
-function $p_RTLong$__unsigned_$percent__I__I__I__I__I($thiz, alo, ahi, blo, bhi) {
-  if ((((-2097152) & ahi) === 0)) {
-    if ((((-2097152) & bhi) === 0)) {
-      var aDouble = ((4.294967296E9 * ahi) + (alo >>> 0.0));
-      var bDouble = ((4.294967296E9 * bhi) + (blo >>> 0.0));
-      var rDouble = (aDouble % bDouble);
-      var x = (rDouble / 4.294967296E9);
-      $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (x | 0.0);
-      return (rDouble | 0.0);
-    } else {
-      $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = ahi;
-      return alo;
-    }
-  } else if (((bhi === 0) && ((blo & (((-1) + blo) | 0)) === 0))) {
-    $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-    return (alo & (((-1) + blo) | 0));
-  } else if (((blo === 0) && ((bhi & (((-1) + bhi) | 0)) === 0))) {
-    $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (ahi & (((-1) + bhi) | 0));
-    return alo;
-  } else {
-    return $p_RTLong$__unsignedDivModHelper__I__I__I__I__Z__I($thiz, alo, ahi, blo, bhi, false);
-  }
-}
-function $p_RTLong$__unsignedDivModHelper__I__I__I__I__Z__I($thiz, alo, ahi, blo, bhi, askQuotient) {
-  var shift = ((((bhi !== 0) ? Math.clz32(bhi) : ((32 + Math.clz32(blo)) | 0)) - ((ahi !== 0) ? Math.clz32(ahi) : ((32 + Math.clz32(alo)) | 0))) | 0);
-  var b = shift;
-  var lo = (((32 & b) === 0) ? (blo << b) : 0);
-  var hi = (((32 & b) === 0) ? (((((blo >>> 1) | 0) >>> ((31 - b) | 0)) | 0) | (bhi << b)) : (blo << b));
-  var bShiftLo = lo;
-  var bShiftHi = hi;
-  var remLo = alo;
-  var remHi = ahi;
-  var quotLo = 0;
-  var quotHi = 0;
-  while (((shift >= 0) && (((-2097152) & remHi) !== 0))) {
-    var alo$1 = remLo;
-    var ahi$1 = remHi;
-    var blo$1 = bShiftLo;
-    var bhi$1 = bShiftHi;
-    if (((ahi$1 === bhi$1) ? ((alo$1 >>> 0) >= (blo$1 >>> 0)) : ((ahi$1 >>> 0) >= (bhi$1 >>> 0)))) {
-      var lo$1 = remLo;
-      var hi$1 = remHi;
-      var lo$2 = bShiftLo;
-      var hi$2 = bShiftHi;
-      var lo$3 = ((lo$1 - lo$2) | 0);
-      var hi$3 = ((((hi$1 - hi$2) | 0) + ((((~lo$1) & lo$2) | ((~(lo$1 ^ lo$2)) & lo$3)) >> 31)) | 0);
-      remLo = lo$3;
-      remHi = hi$3;
-      if ((shift < 32)) {
-        quotLo = (quotLo | (1 << shift));
-      } else {
-        quotHi = (quotHi | (1 << shift));
-      }
-    }
-    shift = (((-1) + shift) | 0);
-    var lo$4 = bShiftLo;
-    var hi$4 = bShiftHi;
-    var lo$5 = (((lo$4 >>> 1) | 0) | (hi$4 << 31));
-    var hi$5 = ((hi$4 >>> 1) | 0);
-    bShiftLo = lo$5;
-    bShiftHi = hi$5;
-  }
-  var alo$2 = remLo;
-  var ahi$2 = remHi;
-  if (((ahi$2 === bhi) ? ((alo$2 >>> 0) >= (blo >>> 0)) : ((ahi$2 >>> 0) >= (bhi >>> 0)))) {
-    var lo$6 = remLo;
-    var hi$6 = remHi;
-    var remDouble = ((4.294967296E9 * hi$6) + (lo$6 >>> 0.0));
-    var bDouble = ((4.294967296E9 * bhi) + (blo >>> 0.0));
-    if (askQuotient) {
-      var x = (remDouble / bDouble);
-      var lo$7 = (x | 0.0);
-      var x$1 = (x / 4.294967296E9);
-      var hi$7 = (x$1 | 0.0);
-      var lo$8 = quotLo;
-      var hi$8 = quotHi;
-      var lo$9 = ((lo$8 + lo$7) | 0);
-      var hi$9 = ((((hi$8 + hi$7) | 0) + ((((lo$8 & lo$7) | ((lo$8 | lo$7) & (~lo$9))) >>> 31) | 0)) | 0);
-      $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = hi$9;
-      return lo$9;
-    } else {
-      var rem_mod_bDouble = (remDouble % bDouble);
-      var x$2 = (rem_mod_bDouble / 4.294967296E9);
-      $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (x$2 | 0.0);
-      return (rem_mod_bDouble | 0.0);
-    }
-  } else if (askQuotient) {
-    $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = quotHi;
-    return quotLo;
-  } else {
-    $thiz.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = remHi;
-    return remLo;
-  }
+function $s_RTLong__equals__I__I__I__I__Z(alo, ahi, blo, bhi) {
+  return (((alo ^ blo) | (ahi ^ bhi)) === 0);
 }
 /** @constructor */
 function $c_RTLong$() {
-  this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
 }
 $c_RTLong$.prototype = new $h_O();
 $c_RTLong$.prototype.constructor = $c_RTLong$;
@@ -5849,7 +5669,7 @@ $c_RTLong$.prototype.constructor = $c_RTLong$;
 function $h_RTLong$() {
 }
 $h_RTLong$.prototype = $c_RTLong$.prototype;
-$c_RTLong$.prototype.org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T = (function(lo, hi) {
+$c_RTLong$.prototype.toString__I__I__T = (function(lo, hi) {
   if ((hi === (lo >> 31))) {
     return ("" + lo);
   } else if ((((-2097152) & (hi ^ (hi >> 10))) === 0)) {
@@ -5869,143 +5689,273 @@ $c_RTLong$.prototype.org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T =
       approxRem = ((1000000000 + approxRem) | 0);
     } else if ((approxRem >= 1000000000)) {
       approxQuot = (approxQuot + 1.0);
-      approxRem = (((-1000000000) + approxRem) | 0);
+      approxRem = ((approxRem - 1000000000) | 0);
     }
-    var this$4 = approxRem;
-    var remStr = ("" + this$4);
-    var this$6 = approxQuot;
+    var this$7 = approxRem;
+    var remStr = ("" + this$7);
+    var this$9 = approxQuot;
     var start = remStr.length;
-    var s = ((("" + this$6) + $as_T("000000000".substring(start))) + remStr);
+    var s = ((("" + this$9) + $as_T("000000000".substring(start))) + remStr);
     return ((hi < 0) ? ("-" + s) : s);
   }
 });
-$c_RTLong$.prototype.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I = (function(value) {
+$c_RTLong$.prototype.fromDouble__D__J = (function(value) {
   if ((value < (-9.223372036854776E18))) {
-    this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (-2147483648);
-    return 0;
+    return $bL(0, (-2147483648));
   } else if ((value >= 9.223372036854776E18)) {
-    this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 2147483647;
-    return (-1);
+    return $bL((-1), 2147483647);
   } else {
     var rawLo = (value | 0.0);
     var x = (value / 4.294967296E9);
     var rawHi = (x | 0.0);
-    this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (((value < 0.0) && (rawLo !== 0)) ? (((-1) + rawHi) | 0) : rawHi);
-    return rawLo;
+    var hi = (((value < 0.0) && (rawLo !== 0)) ? ((rawHi - 1) | 0) : rawHi);
+    return $bL(rawLo, hi);
   }
 });
-$c_RTLong$.prototype.org$scalajs$linker$runtime$RuntimeLong$$compare__I__I__I__I__I = (function(alo, ahi, blo, bhi) {
-  return ((ahi === bhi) ? ((alo === blo) ? 0 : (((alo >>> 0) < (blo >>> 0)) ? (-1) : 1)) : ((ahi < bhi) ? (-1) : 1));
-});
-$c_RTLong$.prototype.divideImpl__I__I__I__I__I = (function(alo, ahi, blo, bhi) {
-  if (((blo | bhi) === 0)) {
-    throw new $c_jl_ArithmeticException("/ by zero");
-  }
-  if ((ahi === (alo >> 31))) {
-    if ((bhi === (blo >> 31))) {
-      if (((alo === (-2147483648)) && (blo === (-1)))) {
-        this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-        return (-2147483648);
-      } else {
-        var lo = ((alo / $checkIntDivisor(blo)) | 0);
-        this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (lo >> 31);
-        return lo;
-      }
-    } else if (((alo === (-2147483648)) && ((blo === (-2147483648)) && (bhi === 0)))) {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (-1);
-      return (-1);
+$c_RTLong$.prototype.divide__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
+  var sign = (ahi >> 31);
+  var xlo = (alo ^ sign);
+  var rlo = ((xlo - sign) | 0);
+  var rhi = (((ahi ^ sign) + (((xlo & (~rlo)) >>> 31) | 0)) | 0);
+  var sign$1 = (bhi >> 31);
+  var xlo$1 = (blo ^ sign$1);
+  var rlo$1 = ((xlo$1 - sign$1) | 0);
+  var rhi$1 = (((bhi ^ sign$1) + (((xlo$1 & (~rlo$1)) >>> 31) | 0)) | 0);
+  var b = ((-2097152) & rlo$1);
+  if (((rhi$1 | b) === 0)) {
+    var quotHi = (((rhi >>> 0) / ($checkIntDivisor(rlo$1) >>> 0)) | 0);
+    var k = ((rhi - Math.imul(rlo$1, quotHi)) | 0);
+    var x = (((4.294967296E9 * k) + (rlo >>> 0.0)) / rlo$1);
+    var quotLo = (x | 0.0);
+    var absR_$_lo = quotLo;
+    var absR_$_hi = quotHi;
+  } else if ((((-1073741824) & rhi$1) === 0)) {
+    var aHat = ((4.294967296E9 * (rhi >>> 0.0)) + (rlo >>> 0.0));
+    var bHat = ((4.294967296E9 * (rhi$1 >>> 0.0)) + (rlo$1 >>> 0.0));
+    var x$1 = (aHat / bHat);
+    var lo = (x$1 | 0.0);
+    var x$2 = (x$1 / 4.294967296E9);
+    var hi = (x$2 | 0.0);
+    var a0 = (65535 & rlo$1);
+    var a1 = ((rlo$1 >>> 16) | 0);
+    var b0 = (65535 & lo);
+    var b1 = ((lo >>> 16) | 0);
+    var a0b0 = Math.imul(a0, b0);
+    var a1b0 = Math.imul(a1, b0);
+    var a0b1 = Math.imul(a0, b1);
+    var lo$1 = ((a0b0 + (((a1b0 + a0b1) | 0) << 16)) | 0);
+    var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
+    var hi$1 = ((((((((Math.imul(rlo$1, hi) + Math.imul(rhi$1, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
+    var lo$2 = ((rlo - lo$1) | 0);
+    var hi$2 = ((((rhi - hi$1) | 0) + ((((~rlo) & lo$1) | ((~(rlo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    if ((hi$2 < 0)) {
+      var lo$3 = ((lo - 1) | 0);
+      var hi$3 = ((((hi - 1) | 0) + (((lo | (~lo$3)) >>> 31) | 0)) | 0);
+      var absR_$_lo = lo$3;
+      var absR_$_hi = hi$3;
+    } else if (((hi$2 === rhi$1) ? ((lo$2 >>> 0) >= (rlo$1 >>> 0)) : ((hi$2 >>> 0) > (rhi$1 >>> 0)))) {
+      var lo$4 = ((1 + lo) | 0);
+      var hi$4 = ((hi + (((lo & (~lo$4)) >>> 31) | 0)) | 0);
+      var absR_$_lo = lo$4;
+      var absR_$_hi = hi$4;
     } else {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-      return 0;
+      var absR_$_lo = lo;
+      var absR_$_hi = hi;
     }
   } else {
-    var sign = (ahi >> 31);
-    var xlo = (alo ^ sign);
-    var rlo = ((xlo - sign) | 0);
-    var rhi = (((ahi ^ sign) + (((xlo & (~rlo)) >>> 31) | 0)) | 0);
-    var sign$1 = (bhi >> 31);
-    var xlo$1 = (blo ^ sign$1);
-    var rlo$1 = ((xlo$1 - sign$1) | 0);
-    var rhi$1 = (((bhi ^ sign$1) + (((xlo$1 & (~rlo$1)) >>> 31) | 0)) | 0);
-    var absRLo = $p_RTLong$__unsigned_$div__I__I__I__I__I(this, rlo, rhi, rlo$1, rhi$1);
-    if (((ahi ^ bhi) >= 0)) {
-      return absRLo;
-    } else {
-      var hi = this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn;
-      var lo$1 = ((-absRLo) | 0);
-      var hi$1 = ((((-hi) | 0) + ((absRLo | lo$1) >> 31)) | 0);
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = hi$1;
-      return lo$1;
-    }
+    var $x_1 = this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(rlo, rhi, rlo$1, rhi$1, true);
+    var absR_$_lo = $x_1.l;
+    var absR_$_hi = $x_1.h;
+  }
+  if (((ahi ^ bhi) >= 0)) {
+    return $bL(absR_$_lo, absR_$_hi);
+  } else {
+    var lo$5 = ((-absR_$_lo) | 0);
+    var hi$5 = ((((-absR_$_hi) | 0) + ((absR_$_lo | lo$5) >> 31)) | 0);
+    return $bL(lo$5, hi$5);
   }
 });
-$c_RTLong$.prototype.divideUnsignedImpl__I__I__I__I__I = (function(alo, ahi, blo, bhi) {
-  if (((blo | bhi) === 0)) {
-    throw new $c_jl_ArithmeticException("/ by zero");
-  }
-  if ((ahi === 0)) {
-    if ((bhi === 0)) {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-      return (((alo >>> 0) / ($checkIntDivisor(blo) >>> 0)) | 0);
+$c_RTLong$.prototype.divideUnsignedImpl__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
+  var b = ((-2097152) & blo);
+  if (((bhi | b) === 0)) {
+    var quotHi = (((ahi >>> 0) / ($checkIntDivisor(blo) >>> 0)) | 0);
+    var k = ((ahi - Math.imul(blo, quotHi)) | 0);
+    var x = (((4.294967296E9 * k) + (alo >>> 0.0)) / blo);
+    var quotLo = (x | 0.0);
+    return $bL(quotLo, quotHi);
+  } else if ((((-1073741824) & bhi) === 0)) {
+    var aHat = ((4.294967296E9 * (ahi >>> 0.0)) + (alo >>> 0.0));
+    var bHat = ((4.294967296E9 * (bhi >>> 0.0)) + (blo >>> 0.0));
+    var x$1 = (aHat / bHat);
+    var lo = (x$1 | 0.0);
+    var x$2 = (x$1 / 4.294967296E9);
+    var hi = (x$2 | 0.0);
+    var a0 = (65535 & blo);
+    var a1 = ((blo >>> 16) | 0);
+    var b0 = (65535 & lo);
+    var b1 = ((lo >>> 16) | 0);
+    var a0b0 = Math.imul(a0, b0);
+    var a1b0 = Math.imul(a1, b0);
+    var a0b1 = Math.imul(a0, b1);
+    var lo$1 = ((a0b0 + (((a1b0 + a0b1) | 0) << 16)) | 0);
+    var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
+    var hi$1 = ((((((((Math.imul(blo, hi) + Math.imul(bhi, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
+    var lo$2 = ((alo - lo$1) | 0);
+    var hi$2 = ((((ahi - hi$1) | 0) + ((((~alo) & lo$1) | ((~(alo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    if ((hi$2 < 0)) {
+      var lo$3 = ((lo - 1) | 0);
+      var hi$3 = ((((hi - 1) | 0) + (((lo | (~lo$3)) >>> 31) | 0)) | 0);
+      return $bL(lo$3, hi$3);
+    } else if (((hi$2 === bhi) ? ((lo$2 >>> 0) >= (blo >>> 0)) : ((hi$2 >>> 0) > (bhi >>> 0)))) {
+      var lo$4 = ((1 + lo) | 0);
+      var hi$4 = ((hi + (((lo & (~lo$4)) >>> 31) | 0)) | 0);
+      return $bL(lo$4, hi$4);
     } else {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-      return 0;
+      return $bL(lo, hi);
     }
   } else {
-    return $p_RTLong$__unsigned_$div__I__I__I__I__I(this, alo, ahi, blo, bhi);
+    return this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(alo, ahi, blo, bhi, true);
   }
 });
-$c_RTLong$.prototype.remainderImpl__I__I__I__I__I = (function(alo, ahi, blo, bhi) {
-  if (((blo | bhi) === 0)) {
-    throw new $c_jl_ArithmeticException("/ by zero");
-  }
-  if ((ahi === (alo >> 31))) {
-    if ((bhi === (blo >> 31))) {
-      var lo = ((alo % $checkIntDivisor(blo)) | 0);
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = (lo >> 31);
-      return lo;
-    } else if (((alo === (-2147483648)) && ((blo === (-2147483648)) && (bhi === 0)))) {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-      return 0;
+$c_RTLong$.prototype.remainder__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
+  var sign = (ahi >> 31);
+  var xlo = (alo ^ sign);
+  var rlo = ((xlo - sign) | 0);
+  var rhi = (((ahi ^ sign) + (((xlo & (~rlo)) >>> 31) | 0)) | 0);
+  var sign$1 = (bhi >> 31);
+  var xlo$1 = (blo ^ sign$1);
+  var rlo$1 = ((xlo$1 - sign$1) | 0);
+  var rhi$1 = (((bhi ^ sign$1) + (((xlo$1 & (~rlo$1)) >>> 31) | 0)) | 0);
+  var b = ((-2097152) & rlo$1);
+  if (((rhi$1 | b) === 0)) {
+    var k$2 = (((rhi >>> 0) % ($checkIntDivisor(rlo$1) >>> 0)) | 0);
+    var x = (((4.294967296E9 * k$2) + (rlo >>> 0.0)) / rlo$1);
+    var quotLo$2 = (x | 0.0);
+    var remLo = ((rlo - Math.imul(rlo$1, quotLo$2)) | 0);
+    var absR_$_lo = remLo;
+    var absR_$_hi = 0;
+  } else if ((((-1073741824) & rhi$1) === 0)) {
+    var aHat = ((4.294967296E9 * (rhi >>> 0.0)) + (rlo >>> 0.0));
+    var bHat = ((4.294967296E9 * (rhi$1 >>> 0.0)) + (rlo$1 >>> 0.0));
+    var x$1 = (aHat / bHat);
+    var lo = (x$1 | 0.0);
+    var x$2 = (x$1 / 4.294967296E9);
+    var hi = (x$2 | 0.0);
+    var a0 = (65535 & rlo$1);
+    var a1 = ((rlo$1 >>> 16) | 0);
+    var b0 = (65535 & lo);
+    var b1 = ((lo >>> 16) | 0);
+    var a0b0 = Math.imul(a0, b0);
+    var a1b0 = Math.imul(a1, b0);
+    var a0b1 = Math.imul(a0, b1);
+    var lo$1 = ((a0b0 + (((a1b0 + a0b1) | 0) << 16)) | 0);
+    var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
+    var hi$1 = ((((((((Math.imul(rlo$1, hi) + Math.imul(rhi$1, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
+    var lo$2 = ((rlo - lo$1) | 0);
+    var hi$2 = ((((rhi - hi$1) | 0) + ((((~rlo) & lo$1) | ((~(rlo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    if ((hi$2 < 0)) {
+      var lo$3 = ((lo$2 + rlo$1) | 0);
+      var hi$3 = ((((hi$2 + rhi$1) | 0) + ((((lo$2 & rlo$1) | ((lo$2 | rlo$1) & (~lo$3))) >>> 31) | 0)) | 0);
+      var absR_$_lo = lo$3;
+      var absR_$_hi = hi$3;
+    } else if (((hi$2 === rhi$1) ? ((lo$2 >>> 0) >= (rlo$1 >>> 0)) : ((hi$2 >>> 0) > (rhi$1 >>> 0)))) {
+      var lo$4 = ((lo$2 - rlo$1) | 0);
+      var hi$4 = ((((hi$2 - rhi$1) | 0) + ((((~lo$2) & rlo$1) | ((~(lo$2 ^ rlo$1)) & lo$4)) >> 31)) | 0);
+      var absR_$_lo = lo$4;
+      var absR_$_hi = hi$4;
     } else {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = ahi;
-      return alo;
+      var absR_$_lo = lo$2;
+      var absR_$_hi = hi$2;
     }
   } else {
-    var sign = (ahi >> 31);
-    var xlo = (alo ^ sign);
-    var rlo = ((xlo - sign) | 0);
-    var rhi = (((ahi ^ sign) + (((xlo & (~rlo)) >>> 31) | 0)) | 0);
-    var sign$1 = (bhi >> 31);
-    var xlo$1 = (blo ^ sign$1);
-    var rlo$1 = ((xlo$1 - sign$1) | 0);
-    var rhi$1 = (((bhi ^ sign$1) + (((xlo$1 & (~rlo$1)) >>> 31) | 0)) | 0);
-    var absRLo = $p_RTLong$__unsigned_$percent__I__I__I__I__I(this, rlo, rhi, rlo$1, rhi$1);
-    if ((ahi < 0)) {
-      var hi = this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn;
-      var lo$1 = ((-absRLo) | 0);
-      var hi$1 = ((((-hi) | 0) + ((absRLo | lo$1) >> 31)) | 0);
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = hi$1;
-      return lo$1;
-    } else {
-      return absRLo;
-    }
+    var $x_1 = this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(rlo, rhi, rlo$1, rhi$1, false);
+    var absR_$_lo = $x_1.l;
+    var absR_$_hi = $x_1.h;
+  }
+  if ((ahi < 0)) {
+    var lo$5 = ((-absR_$_lo) | 0);
+    var hi$5 = ((((-absR_$_hi) | 0) + ((absR_$_lo | lo$5) >> 31)) | 0);
+    return $bL(lo$5, hi$5);
+  } else {
+    return $bL(absR_$_lo, absR_$_hi);
   }
 });
-$c_RTLong$.prototype.remainderUnsignedImpl__I__I__I__I__I = (function(alo, ahi, blo, bhi) {
-  if (((blo | bhi) === 0)) {
-    throw new $c_jl_ArithmeticException("/ by zero");
-  }
-  if ((ahi === 0)) {
-    if ((bhi === 0)) {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = 0;
-      return (((alo >>> 0) % ($checkIntDivisor(blo) >>> 0)) | 0);
+$c_RTLong$.prototype.remainderUnsignedImpl__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
+  var b = ((-2097152) & blo);
+  if (((bhi | b) === 0)) {
+    var k$2 = (((ahi >>> 0) % ($checkIntDivisor(blo) >>> 0)) | 0);
+    var x = (((4.294967296E9 * k$2) + (alo >>> 0.0)) / blo);
+    var quotLo$2 = (x | 0.0);
+    var remLo = ((alo - Math.imul(blo, quotLo$2)) | 0);
+    return $bL(remLo, 0);
+  } else if ((((-1073741824) & bhi) === 0)) {
+    var aHat = ((4.294967296E9 * (ahi >>> 0.0)) + (alo >>> 0.0));
+    var bHat = ((4.294967296E9 * (bhi >>> 0.0)) + (blo >>> 0.0));
+    var x$1 = (aHat / bHat);
+    var lo = (x$1 | 0.0);
+    var x$2 = (x$1 / 4.294967296E9);
+    var hi = (x$2 | 0.0);
+    var a0 = (65535 & blo);
+    var a1 = ((blo >>> 16) | 0);
+    var b0 = (65535 & lo);
+    var b1 = ((lo >>> 16) | 0);
+    var a0b0 = Math.imul(a0, b0);
+    var a1b0 = Math.imul(a1, b0);
+    var a0b1 = Math.imul(a0, b1);
+    var lo$1 = ((a0b0 + (((a1b0 + a0b1) | 0) << 16)) | 0);
+    var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
+    var hi$1 = ((((((((Math.imul(blo, hi) + Math.imul(bhi, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
+    var lo$2 = ((alo - lo$1) | 0);
+    var hi$2 = ((((ahi - hi$1) | 0) + ((((~alo) & lo$1) | ((~(alo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    if ((hi$2 < 0)) {
+      var lo$3 = ((lo$2 + blo) | 0);
+      var hi$3 = ((((hi$2 + bhi) | 0) + ((((lo$2 & blo) | ((lo$2 | blo) & (~lo$3))) >>> 31) | 0)) | 0);
+      return $bL(lo$3, hi$3);
+    } else if (((hi$2 === bhi) ? ((lo$2 >>> 0) >= (blo >>> 0)) : ((hi$2 >>> 0) > (bhi >>> 0)))) {
+      var lo$4 = ((lo$2 - blo) | 0);
+      var hi$4 = ((((hi$2 - bhi) | 0) + ((((~lo$2) & blo) | ((~(lo$2 ^ blo)) & lo$4)) >> 31)) | 0);
+      return $bL(lo$4, hi$4);
     } else {
-      this.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn = ahi;
-      return alo;
+      return $bL(lo$2, hi$2);
     }
   } else {
-    return $p_RTLong$__unsigned_$percent__I__I__I__I__I(this, alo, ahi, blo, bhi);
+    return this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(alo, ahi, blo, bhi, false);
+  }
+});
+$c_RTLong$.prototype.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J = (function(alo, ahi, blo, bhi, askQuotient) {
+  var quot1 = 0;
+  if ((bhi >= 0)) {
+    var lo = (blo << 1);
+    var hi = (((blo >>> 31) | 0) | (bhi << 1));
+    if (((ahi === hi) ? ((alo >>> 0) >= (lo >>> 0)) : ((ahi >>> 0) > (hi >>> 0)))) {
+      quot1 = 2;
+      var lo$1 = ((alo - lo) | 0);
+      var hi$1 = ((((ahi - hi) | 0) + ((((~alo) & lo) | ((~(alo ^ lo)) & lo$1)) >> 31)) | 0);
+      var rem1_$_lo = lo$1;
+      var rem1_$_hi = hi$1;
+    } else {
+      var rem1_$_lo = alo;
+      var rem1_$_hi = ahi;
+    }
+  } else {
+    var rem1_$_lo = alo;
+    var rem1_$_hi = ahi;
+  }
+  var rem1LTUb = ((rem1_$_hi === bhi) ? ((rem1_$_lo >>> 0) < (blo >>> 0)) : ((rem1_$_hi >>> 0) < (bhi >>> 0)));
+  if (askQuotient) {
+    if (rem1LTUb) {
+      var lo$2 = quot1;
+      return $bL(lo$2, 0);
+    } else {
+      var lo$3 = ((1 + quot1) | 0);
+      return $bL(lo$3, 0);
+    }
+  } else if (rem1LTUb) {
+    return $bL(rem1_$_lo, rem1_$_hi);
+  } else {
+    var lo$4 = ((rem1_$_lo - blo) | 0);
+    var hi$2 = ((((rem1_$_hi - bhi) | 0) + ((((~rem1_$_lo) & blo) | ((~(rem1_$_lo ^ blo)) & lo$4)) >> 31)) | 0);
+    return $bL(lo$4, hi$2);
   }
 });
 var $d_RTLong$ = new $TypeData().initClass($c_RTLong$, "org.scalajs.linker.runtime.RuntimeLong$", ({
@@ -6042,7 +5992,7 @@ function $p_Lpprint_ProductSupport$__isIdentifier__T__Z($thiz, name) {
   return false;
 }
 function $ps_Lpprint_ProductSupport$__isStart$1__C__Z(c) {
-  if (((c === 95) || (c === 36))) {
+  if (((c === 36) || (c === 95))) {
     return true;
   } else {
     var this$1 = $m_jl_Character$();
@@ -6130,7 +6080,7 @@ function $ps_Lpprint_Renderer__bufferedFragments$1__scm_Buffer__sr_ObjectRef__Lf
     if ((x$6$2 !== null)) {
       var v = $as_sc_Seq($n(x$6$2)._1__O());
       var i = $n(x$6$2)._2$mcI$sp__I();
-      if ((i < (((-1) + $n(buffer$1).length__I()) | 0))) {
+      if ((i < (($n(buffer$1).length__I() - 1) | 0))) {
         return $n(v).iterator__sc_Iterator();
       } else {
         var this$3 = $n($n(v).iterator__sc_Iterator());
@@ -6539,7 +6489,7 @@ $c_Lpprint_Result$.prototype.fromString__F0__Lpprint_Result = (function(s) {
   var array = [$as_Lfansi_Str($n(s).apply__O())];
   var xs = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
   var this$5 = new $c_sc_IndexedSeqView$Id(xs);
-  return new $c_Lpprint_Result($ct_sc_IndexedSeqView$IndexedSeqViewIterator__sc_IndexedSeqView__(new $c_sc_IndexedSeqView$IndexedSeqViewIterator(), this$5), new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => (((-1) + $n($ps_Lpprint_Result$__lines$1__sr_LazyRef__F0__AT(lines$lzy, s)).u.length) | 0))), new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => {
+  return new $c_Lpprint_Result($ct_sc_IndexedSeqView$IndexedSeqViewIterator__sc_IndexedSeqView__(new $c_sc_IndexedSeqView$IndexedSeqViewIterator(), this$5), new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => (($n($ps_Lpprint_Result$__lines$1__sr_LazyRef__F0__AT(lines$lzy, s)).u.length - 1) | 0))), new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => {
     var $x_1 = $m_sc_ArrayOps$();
     var xs$1 = $ps_Lpprint_Result$__lines$1__sr_LazyRef__F0__AT(lines$lzy, s);
     var this$7 = $n($as_T($x_1.last$extension__O__O(xs$1)));
@@ -6613,13 +6563,13 @@ $c_Lpprint_Truncated$Internal$.prototype.handleNormalChar__C__O = (function(char
     var this$3 = $n($n(this.Lpprint_Truncated$Internal$__f_$outer).Lpprint_Truncated__f_lineLengths);
     return $as_scm_Buffer(this$3.addOne__O__scm_Growable(1));
   } else {
-    var ev$1 = (((-1) + $n($n(this.Lpprint_Truncated$Internal$__f_$outer).Lpprint_Truncated__f_lineLengths).length__I()) | 0);
+    var ev$1 = (($n($n(this.Lpprint_Truncated$Internal$__f_$outer).Lpprint_Truncated__f_lineLengths).length__I() - 1) | 0);
     $n($n(this.Lpprint_Truncated$Internal$__f_$outer).Lpprint_Truncated__f_lineLengths).update__I__O__V(ev$1, ((1 + $uI($n($n(this.Lpprint_Truncated$Internal$__f_$outer).Lpprint_Truncated__f_lineLengths).apply__I__O(ev$1))) | 0));
     return (void 0);
   }
 });
 $c_Lpprint_Truncated$Internal$.prototype.completedLines__I = (function() {
-  return (((-1) + $n($n(this.Lpprint_Truncated$Internal$__f_$outer).Lpprint_Truncated__f_lineLengths).length__I()) | 0);
+  return (($n($n(this.Lpprint_Truncated$Internal$__f_$outer).Lpprint_Truncated__f_lineLengths).length__I() - 1) | 0);
 });
 $c_Lpprint_Truncated$Internal$.prototype.consumeChunkUntilLine__Lfansi_Str__I__s_Option = (function(chunk, lineLimit) {
   var i = 0;
@@ -6796,12 +6746,11 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
     } else if ($isInt(x)) {
       var x7 = $uI(x);
       var $x_1 = new $c_Lpprint_Tree$Literal(("" + x7));
-    } else if ((x instanceof $c_RTLong)) {
-      var t = $uJ(x);
-      var lo = t.RTLong__f_lo;
-      var hi = t.RTLong__f_hi;
-      var this$6 = $m_RTLong$();
-      var $x_1 = new $c_Lpprint_Tree$Literal((this$6.org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T(lo, hi) + "L"));
+    } else if ((x instanceof $Long)) {
+      var $x_2 = $uJ(x);
+      var x8_$_lo = $x_2.l;
+      var x8_$_hi = $x_2.h;
+      var $x_1 = new $c_Lpprint_Tree$Literal(($m_RTLong$().toString__I__I__T(x8_$_lo, x8_$_hi) + "L"));
     } else if ($isFloat(x)) {
       var x9 = $uF(x);
       var $x_1 = new $c_Lpprint_Tree$Literal((x9 + "F"));
@@ -6811,22 +6760,22 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
     } else if (((typeof x) === "string")) {
       var x11 = $as_T(x);
       _return: {
-        var this$12 = $n(x11);
-        var len = this$12.length;
+        var this$11 = $n(x11);
+        var len = this$11.length;
         var i = 0;
         while ((i < len)) {
-          var this$13 = $n(x11);
+          var this$12 = $n(x11);
           var index = i;
-          var x0 = $charAt(this$13, index);
+          var x0 = $charAt(this$12, index);
           if (((x0 === 10) || (x0 === 13))) {
-            var $x_2 = i;
+            var $x_3 = i;
             break _return;
           }
           i = ((1 + i) | 0);
         }
-        var $x_2 = (-1);
+        var $x_3 = (-1);
       }
-      if (($x_2 !== (-1))) {
+      if (($x_3 !== (-1))) {
         var $x_1 = new $c_Lpprint_Tree$Literal((("\"\"\"" + x11) + "\"\"\""));
       } else {
         var $x_1 = new $c_Lpprint_Tree$Literal($m_Lpprint_Util$().literalize__sci_IndexedSeq__Z__T($m_s_Predef$().wrapString__T__sci_WrappedString(x11), escapeUnicode));
@@ -6837,66 +6786,66 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
     } else if ($is_sc_Map(x)) {
       var x13 = $as_sc_Map(x);
       if ((x13 instanceof $c_sci_HashMap)) {
-        var $x_4 = "Map";
+        var $x_5 = "Map";
       } else {
-        var this$16 = $n(x13);
-        var $x_4 = this$16.className__T();
+        var this$15 = $n(x13);
+        var $x_5 = this$15.className__T();
       }
-      var this$21 = $n($n(x13).iterator__sc_Iterator());
+      var this$20 = $n($n(x13).iterator__sc_Iterator());
       var f = new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((x0$1$2$2) => {
         var x0$1$2 = $as_T2(x0$1$2$2);
         if ((x0$1$2 !== null)) {
           var k = $n(x0$1$2)._1__O();
           var v = $n(x0$1$2)._2__O();
-          var $x_3 = $m_sci_Seq$();
+          var $x_4 = $m_sci_Seq$();
           var array = [new $c_Lpprint_Tree$Infix(this.treeify__O__Z__Z__Lpprint_Tree(k, escapeUnicode, showFieldNames), "->", this.treeify__O__Z__Z__Lpprint_Tree(v, escapeUnicode, showFieldNames))];
-          return $x_3.apply__sci_Seq__sc_SeqOps($ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array));
+          return $x_4.apply__sci_Seq__sc_SeqOps($ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array));
         } else {
           throw new $c_s_MatchError(x0$1$2);
         }
       }));
-      var $x_1 = new $c_Lpprint_Tree$Apply($x_4, new $c_sc_Iterator$$anon$10(this$21, f));
+      var $x_1 = new $c_Lpprint_Tree$Apply($x_5, new $c_sc_Iterator$$anon$10(this$20, f));
     } else if ($is_sc_Iterable(x)) {
       var x14 = $as_sc_Iterable(x);
       if ((x14 instanceof $c_scm_ArraySeq)) {
-        var $x_5 = "Seq";
+        var $x_6 = "Seq";
       } else if ((x14 instanceof $c_sci_HashSet)) {
-        var $x_5 = "Set";
+        var $x_6 = "Set";
       } else {
-        var this$24 = $n(x14);
-        var $x_5 = this$24.className__T();
+        var this$23 = $n(x14);
+        var $x_6 = this$23.className__T();
       }
-      var this$26 = $n($n(x14).iterator__sc_Iterator());
+      var this$25 = $n($n(x14).iterator__sc_Iterator());
       var f$1 = new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((x$2$2) => this.treeify__O__Z__Z__Lpprint_Tree(x$2$2, escapeUnicode, showFieldNames)));
-      var $x_1 = new $c_Lpprint_Tree$Apply($x_5, new $c_sc_Iterator$$anon$9(this$26, f$1));
+      var $x_1 = new $c_Lpprint_Tree$Apply($x_6, new $c_sc_Iterator$$anon$9(this$25, f$1));
     } else {
       var x$2 = $m_s_None$();
       if ((x$2 === x)) {
         var $x_1 = new $c_Lpprint_Tree$Literal("None");
       } else if ($is_sc_Iterator(x)) {
         var x16 = $as_sc_Iterator(x);
-        var this$27 = $n(x16);
-        if ((!this$27.hasNext__Z())) {
+        var this$26 = $n(x16);
+        if ((!this$26.hasNext__Z())) {
           var $x_1 = new $c_Lpprint_Tree$Literal("empty iterator");
         } else {
           var $x_1 = new $c_Lpprint_Tree$Literal("non-empty iterator");
         }
       } else if ($m_sr_ScalaRunTime$().isArray__O__I__Z(x, 1)) {
-        var this$30 = $n($m_sc_ArrayOps$().iterator$extension__O__sc_Iterator(x));
+        var this$29 = $n($m_sc_ArrayOps$().iterator$extension__O__sc_Iterator(x));
         var f$2 = new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((x$2$2$1) => this.treeify__O__Z__Z__Lpprint_Tree(x$2$2$1, escapeUnicode, showFieldNames)));
-        var $x_1 = new $c_Lpprint_Tree$Apply("Array", new $c_sc_Iterator$$anon$9(this$30, f$2));
+        var $x_1 = new $c_Lpprint_Tree$Apply("Array", new $c_sc_Iterator$$anon$9(this$29, f$2));
       } else if ($is_s_Product(x)) {
         var x18 = $as_s_Product(x);
-        var this$31 = $n(x18);
-        var this$32 = $objectGetClass(this$31);
-        var className = this$32.data.name;
+        var this$30 = $n(x18);
+        var this$31 = $objectGetClass(this$30);
+        var className = this$31.data.name;
         if (($n(x18).productArity__I() === 0)) {
           var $x_1 = new $c_Lpprint_Tree$Lazy(new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((ctx$2$2) => {
             $as_Lpprint_Tree$Ctx(ctx$2$2);
             var array$1 = [$n(x18).toString__T()];
             var xs = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array$1);
-            var this$37 = new $c_sc_IndexedSeqView$Id(xs);
-            return $ct_sc_IndexedSeqView$IndexedSeqViewIterator__sc_IndexedSeqView__(new $c_sc_IndexedSeqView$IndexedSeqViewIterator(), this$37);
+            var this$36 = new $c_sc_IndexedSeqView$Id(xs);
+            return $ct_sc_IndexedSeqView$IndexedSeqViewIterator__sc_IndexedSeqView__(new $c_sc_IndexedSeqView$IndexedSeqViewIterator(), this$36);
           })));
         } else if ((($n(x18).productArity__I() === 2) && $m_Lpprint_Util$().isOperator__T__Z($n(x18).productPrefix__T()))) {
           var $x_1 = new $c_Lpprint_Tree$Infix(this.treeify__O__Z__Z__Lpprint_Tree($n(x18).productElement__I__O(0), escapeUnicode, showFieldNames), $n(x18).productPrefix__T(), this.treeify__O__Z__Z__Lpprint_Tree($n(x18).productElement__I__O(1), escapeUnicode, showFieldNames));
@@ -6904,20 +6853,20 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
           var prefix = this.Lpprint_Walker__f_tuplePrefix;
           $n(prefix);
           var _1 = $uZ(className.startsWith(prefix));
-          var this$39 = $n($m_s_Predef$().wrapString__T__sci_WrappedString(className));
-          var this$41 = new $c_s_PartialFunction$Lifted(this$39);
-          var this$40 = $n(this.Lpprint_Walker__f_tuplePrefix);
-          var v1 = this$40.length;
-          var _2 = this$41.apply__O__s_Option(v1);
+          var this$38 = $n($m_s_Predef$().wrapString__T__sci_WrappedString(className));
+          var this$40 = new $c_s_PartialFunction$Lifted(this$38);
+          var this$39 = $n(this.Lpprint_Walker__f_tuplePrefix);
+          var v1 = this$39.length;
+          var _2 = this$40.apply__O__s_Option(v1);
           matchEnd16: {
             var $x_1;
             if (((_1 === true) && (_2 instanceof $c_s_Some))) {
               var x4$2 = $as_s_Some(_2);
               var p5 = $uC($n(x4$2).s_Some__f_value);
-              if (((p5 === 50) || ((p5 === 51) || ((p5 === 52) || ((p5 === 53) || ((p5 === 54) || ((p5 === 55) || ((p5 === 56) || (p5 === 57))))))))) {
-                var this$43 = $n($n(x18).productIterator__sc_Iterator());
+              if (((p5 === 50) || ((p5 === 51) || ((p5 === 52) || ((p5 === 53) || ((p5 === 54) || ((p5 === 55) || ((((p5 - 56) | 0) >>> 0) <= 1)))))))) {
+                var this$42 = $n($n(x18).productIterator__sc_Iterator());
                 var f$3 = new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((x$2$2$2) => this.treeify__O__Z__Z__Lpprint_Tree(x$2$2$2, escapeUnicode, showFieldNames)));
-                var $x_1 = new $c_Lpprint_Tree$Apply("", new $c_sc_Iterator$$anon$9(this$43, f$3));
+                var $x_1 = new $c_Lpprint_Tree$Apply("", new $c_sc_Iterator$$anon$9(this$42, f$3));
                 break matchEnd16;
               }
             }
@@ -6930,8 +6879,8 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
           var x1$2 = $dp_toString__T($n(x));
           var array$2 = [((x1$2 === null) ? "null" : x1$2)];
           var xs$1 = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array$2);
-          var this$48 = new $c_sc_IndexedSeqView$Id(xs$1);
-          return $ct_sc_IndexedSeqView$IndexedSeqViewIterator__sc_IndexedSeqView__(new $c_sc_IndexedSeqView$IndexedSeqViewIterator(), this$48);
+          var this$47 = new $c_sc_IndexedSeqView$Id(xs$1);
+          return $ct_sc_IndexedSeqView$IndexedSeqViewIterator__sc_IndexedSeqView__(new $c_sc_IndexedSeqView$IndexedSeqViewIterator(), this$47);
         })));
       }
     }
@@ -7041,7 +6990,7 @@ function $h_sc_ArrayOps$() {
 $h_sc_ArrayOps$.prototype = $c_sc_ArrayOps$.prototype;
 $c_sc_ArrayOps$.prototype.last$extension__O__O = (function(this$) {
   if (($m_jl_reflect_Array$().getLength__O__I(this$) !== 0)) {
-    return $m_sr_ScalaRunTime$().array_apply__O__I__O(this$, (((-1) + $m_jl_reflect_Array$().getLength__O__I(this$)) | 0));
+    return $m_sr_ScalaRunTime$().array_apply__O__I__O(this$, (($m_jl_reflect_Array$().getLength__O__I(this$) - 1) | 0));
   } else {
     throw $ct_ju_NoSuchElementException__T__(new $c_ju_NoSuchElementException(), "last of empty array");
   }
@@ -7704,7 +7653,7 @@ function $m_sci_MapNode$() {
   return $n_sci_MapNode$;
 }
 function $p_sci_Node__arrayIndexOutOfBounds__O__I__jl_ArrayIndexOutOfBoundsException($thiz, as, ix) {
-  return $ct_jl_ArrayIndexOutOfBoundsException__T__(new $c_jl_ArrayIndexOutOfBoundsException(), ((ix + " is out of bounds (min 0, max ") + (((-1) + $m_jl_reflect_Array$().getLength__O__I(as)) | 0)));
+  return $ct_jl_ArrayIndexOutOfBoundsException__T__(new $c_jl_ArrayIndexOutOfBoundsException(), ((ix + " is out of bounds (min 0, max ") + (($m_jl_reflect_Array$().getLength__O__I(as) - 1) | 0)));
 }
 /** @constructor */
 function $c_sci_Node() {
@@ -7719,13 +7668,13 @@ $c_sci_Node.prototype.removeElement__AI__I__AI = (function(as, ix) {
   if ((ix < 0)) {
     throw $n($p_sci_Node__arrayIndexOutOfBounds__O__I__jl_ArrayIndexOutOfBoundsException(this, as, ix));
   }
-  if ((ix > (((-1) + $n(as).u.length) | 0))) {
+  if ((ix > (($n(as).u.length - 1) | 0))) {
     throw $n($p_sci_Node__arrayIndexOutOfBounds__O__I__jl_ArrayIndexOutOfBoundsException(this, as, ix));
   }
-  var result = new $ac_I((((-1) + $n(as).u.length) | 0));
+  var result = new $ac_I((($n(as).u.length - 1) | 0));
   $systemArraycopy($n(as), 0, result, 0, ix);
   var srcPos = ((1 + ix) | 0);
-  var length = (((-1) + (($n(as).u.length - ix) | 0)) | 0);
+  var length = (((($n(as).u.length - ix) | 0) - 1) | 0);
   $systemArraycopy($n(as), srcPos, result, ix, length);
   return result;
 });
@@ -7766,7 +7715,7 @@ $c_sci_Node$.prototype.bitposFrom__I__I = (function(mask) {
   return (1 << mask);
 });
 $c_sci_Node$.prototype.indexFrom__I__I__I = (function(bitmap, bitpos) {
-  var i = (bitmap & (((-1) + bitpos) | 0));
+  var i = (bitmap & ((bitpos - 1) | 0));
   return $m_jl_Integer$().bitCount__I__I(i);
 });
 $c_sci_Node$.prototype.indexFrom__I__I__I__I = (function(bitmap, mask, bitpos) {
@@ -7836,7 +7785,7 @@ $c_sci_VectorStatics$.prototype.copyAppend1__AO__O__AO = (function(a, elem) {
 $c_sci_VectorStatics$.prototype.copyAppend__AO__O__AO = (function(a, elem) {
   var newLength = ((1 + $n(a).u.length) | 0);
   var ac = $m_ju_Arrays$().copyOf__AO__I__AO(a, newLength);
-  $n(ac).set((((-1) + $n(ac).u.length) | 0), elem);
+  $n(ac).set((($n(ac).u.length - 1) | 0), elem);
   return ac;
 });
 $c_sci_VectorStatics$.prototype.copyPrepend1__O__AO__AO = (function(elem, a) {
@@ -7866,7 +7815,7 @@ $c_sci_VectorStatics$.prototype.foreachRec__I__AO__F1__V = (function(level, a, f
       i = ((1 + i) | 0);
     }
   } else {
-    var l = (((-1) + level) | 0);
+    var l = ((level - 1) | 0);
     while ((i < len)) {
       this.foreachRec__I__AO__F1__V(l, $asArrayOf_O($n(a).get(i), 1), f);
       i = ((1 + i) | 0);
@@ -7905,7 +7854,7 @@ $c_sci_VectorStatics$.prototype.mapElems__I__AO__F1__AO = (function(n, a, f) {
     var i = 0;
     while ((i < $n(a).u.length)) {
       var v1 = $n(a).get(i);
-      var v2 = this.mapElems__I__AO__F1__AO((((-1) + n) | 0), $asArrayOf_O(v1, 1), f);
+      var v2 = this.mapElems__I__AO__F1__AO(((n - 1) | 0), $asArrayOf_O(v1, 1), f);
       if ((v1 !== v2)) {
         return this.mapElemsRest__I__AO__F1__I__O__AO(n, a, f, i, v2);
       }
@@ -7926,7 +7875,7 @@ $c_sci_VectorStatics$.prototype.mapElemsRest__I__AO__F1__I__O__AO = (function(n,
   $n(ac).set(at, v2);
   var i = ((1 + at) | 0);
   while ((i < $n(a).u.length)) {
-    $n(ac).set(i, this.mapElems__I__AO__F1__AO((((-1) + n) | 0), $asArrayOf_O($n(a).get(i), 1), f));
+    $n(ac).set(i, this.mapElems__I__AO__F1__AO(((n - 1) | 0), $asArrayOf_O($n(a).get(i), 1), f));
     i = ((1 + i) | 0);
   }
   return ac;
@@ -8174,14 +8123,14 @@ $c_sr_BoxesRunTime$.prototype.equalsNumObject__jl_Number__O__Z = (function(xn, y
       var x2$1 = $uD(xn);
       var this$1 = $n(x3).c;
       return (x2$1 === this$1);
-    } else if ((xn instanceof $c_RTLong)) {
-      var t = $uJ(xn);
-      var lo = t.RTLong__f_lo;
-      var hi = t.RTLong__f_hi;
+    } else if ((xn instanceof $Long)) {
+      var $x_1 = $uJ(xn);
+      var x3$1_$_lo = $x_1.l;
+      var x3$1_$_hi = $x_1.h;
       var this$2 = $n(x3).c;
       var value = this$2;
-      var hi$1 = (value >> 31);
-      return ((lo === value) && (hi === hi$1));
+      var hi = (value >> 31);
+      return (((x3$1_$_lo ^ value) | (x3$1_$_hi ^ hi)) === 0);
     } else {
       return ((xn === null) ? (x3 === null) : $dp_equals__O__Z($n(xn), x3));
     }
@@ -8195,32 +8144,32 @@ $c_sr_BoxesRunTime$.prototype.equalsNumNum__jl_Number__jl_Number__Z = (function(
     if (((typeof yn) === "number")) {
       var x2$2 = $uD(yn);
       return (x2 === x2$2);
-    } else if ((yn instanceof $c_RTLong)) {
-      var t = $uJ(yn);
-      var lo = t.RTLong__f_lo;
-      var hi = t.RTLong__f_hi;
-      return (x2 === ((4.294967296E9 * hi) + (lo >>> 0.0)));
+    } else if ((yn instanceof $Long)) {
+      var $x_1 = $uJ(yn);
+      var x3_$_lo = $x_1.l;
+      var x3_$_hi = $x_1.h;
+      return (x2 === ((4.294967296E9 * x3_$_hi) + (x3_$_lo >>> 0.0)));
     } else if (false) {
       var x4 = $as_s_math_ScalaNumber(yn);
       return $n(x4).equals__O__Z(x2);
     } else {
       return false;
     }
-  } else if ((xn instanceof $c_RTLong)) {
-    var t$1 = $uJ(xn);
-    var lo$1 = t$1.RTLong__f_lo;
-    var hi$1 = t$1.RTLong__f_hi;
-    if ((yn instanceof $c_RTLong)) {
-      var t$2 = $uJ(yn);
-      var lo$2 = t$2.RTLong__f_lo;
-      var hi$2 = t$2.RTLong__f_hi;
-      return ((lo$1 === lo$2) && (hi$1 === hi$2));
+  } else if ((xn instanceof $Long)) {
+    var $x_2 = $uJ(xn);
+    var x3$2_$_lo = $x_2.l;
+    var x3$2_$_hi = $x_2.h;
+    if ((yn instanceof $Long)) {
+      var $x_3 = $uJ(yn);
+      var x2$3_$_lo = $x_3.l;
+      var x2$3_$_hi = $x_3.h;
+      return (((x3$2_$_lo ^ x2$3_$_lo) | (x3$2_$_hi ^ x2$3_$_hi)) === 0);
     } else if (((typeof yn) === "number")) {
       var x3$3 = $uD(yn);
-      return (((4.294967296E9 * hi$1) + (lo$1 >>> 0.0)) === x3$3);
+      return (((4.294967296E9 * x3$2_$_hi) + (x3$2_$_lo >>> 0.0)) === x3$3);
     } else if (false) {
       var x4$2 = $as_s_math_ScalaNumber(yn);
-      return $n(x4$2).equals__O__Z(new $c_RTLong(lo$1, hi$1));
+      return $n(x4$2).equals__O__Z($bL(x3$2_$_lo, x3$2_$_hi));
     } else {
       return false;
     }
@@ -8240,14 +8189,14 @@ $c_sr_BoxesRunTime$.prototype.equalsCharObject__jl_Character__O__Z = (function(x
       var x2$1 = $uD(x3);
       var this$3 = $n(xc).c;
       return (x2$1 === this$3);
-    } else if ((x3 instanceof $c_RTLong)) {
-      var t = $uJ(x3);
-      var lo = t.RTLong__f_lo;
-      var hi = t.RTLong__f_hi;
+    } else if ((x3 instanceof $Long)) {
+      var $x_1 = $uJ(x3);
+      var x3$1_$_lo = $x_1.l;
+      var x3$1_$_hi = $x_1.h;
       var this$4 = $n(xc).c;
       var value = this$4;
-      var hi$1 = (value >> 31);
-      return ((lo === value) && (hi === hi$1));
+      var hi = (value >> 31);
+      return (((x3$1_$_lo ^ value) | (x3$1_$_hi ^ hi)) === 0);
     } else {
       return ((x3 === null) ? (xc === null) : $dp_equals__O__Z($n(x3), xc));
     }
@@ -8277,15 +8226,15 @@ function $p_sr_ScalaRunTime$__isArrayClass__jl_Class__I__Z($thiz, clazz, atLevel
       var $x_1 = false;
     }
     if ($x_1) {
-      if ((atLevel === 1)) {
-        return true;
-      } else {
+      if ((atLevel !== 1)) {
         var this$2 = $n(clazz);
         var temp$clazz = this$2.data.getComponentType();
-        var temp$atLevel = (((-1) + atLevel) | 0);
+        var temp$atLevel = ((atLevel - 1) | 0);
         clazz = temp$clazz;
         atLevel = temp$atLevel;
+        continue;
       }
+      return true;
     } else {
       return false;
     }
@@ -8320,7 +8269,9 @@ $c_sr_ScalaRunTime$.prototype.array_apply__O__I__O = (function(xs, idx) {
     return $n(x4).get(idx);
   } else if ((xs instanceof $ac_J)) {
     var x5 = $asArrayOf_J(xs, 1);
-    return $n(x5).get(idx);
+    var $x_1 = $n(x5).u;
+    var $x_2 = $aJCheckGet($x_1, idx);
+    return $bL($x_1[$x_2], $x_1[(($x_2 + 1) | 0)]);
   } else if ((xs instanceof $ac_F)) {
     var x6 = $asArrayOf_F(xs, 1);
     return $n(x6).get(idx);
@@ -8354,7 +8305,9 @@ $c_sr_ScalaRunTime$.prototype.array_update__O__I__O__V = (function(xs, idx, valu
     $n(x4).set(idx, $uD(value));
   } else if ((xs instanceof $ac_J)) {
     var x5 = $asArrayOf_J(xs, 1);
-    $n(x5).set(idx, $uJ(value));
+    var $x_2 = $n(x5);
+    var $x_1 = $uJ(value);
+    $x_2.set(idx, $x_1.l, $x_1.h);
   } else if ((xs instanceof $ac_F)) {
     var x6 = $asArrayOf_F(xs, 1);
     $n(x6).set(idx, $uF(value));
@@ -8402,7 +8355,7 @@ $c_sr_Statics$.prototype.mix__I__I__I = (function(hash, data) {
   var h = this.mixLast__I__I__I(hash, data);
   var i = h;
   h = ((i << 13) | ((i >>> 19) | 0));
-  return (((-430675100) + Math.imul(5, h)) | 0);
+  return ((Math.imul(5, h) - 430675100) | 0);
 });
 $c_sr_Statics$.prototype.mixLast__I__I__I = (function(hash, data) {
   var k = data;
@@ -8424,21 +8377,19 @@ $c_sr_Statics$.prototype.avalanche__I__I = (function(h0) {
   h = (h ^ ((h >>> 16) | 0));
   return h;
 });
-$c_sr_Statics$.prototype.longHash__J__I = (function(lv) {
-  var lo = lv.RTLong__f_lo;
-  var hi = lv.RTLong__f_hi;
-  return ((hi === (lo >> 31)) ? lo : (lo ^ hi));
+$c_sr_Statics$.prototype.longHash__J__I = (function(lv_$_lo, lv_$_hi) {
+  return ((lv_$_hi === (lv_$_lo >> 31)) ? lv_$_lo : (lv_$_lo ^ lv_$_hi));
 });
 $c_sr_Statics$.prototype.doubleHash__D__I = (function(dv) {
   var iv = $doubleToInt(dv);
   if ((iv === dv)) {
     return iv;
   } else {
-    var this$1 = $m_RTLong$();
-    var lo = this$1.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(dv);
-    var hi = this$1.RTLong$__f_org$scalajs$linker$runtime$RuntimeLong$$hiReturn;
-    if ((((4.294967296E9 * hi) + (lo >>> 0.0)) === dv)) {
-      return (lo ^ hi);
+    var $x_1 = $m_RTLong$().fromDouble__D__J(dv);
+    var lv_$_lo = $x_1.l;
+    var lv_$_hi = $x_1.h;
+    if ((((4.294967296E9 * lv_$_hi) + (lv_$_lo >>> 0.0)) === dv)) {
+      return (lv_$_lo ^ lv_$_hi);
     } else {
       var valueInt = (dv | 0);
       if (((valueInt === dv) && ((1.0 / dv) !== (-Infinity)))) {
@@ -8448,9 +8399,9 @@ $c_sr_Statics$.prototype.doubleHash__D__I = (function(dv) {
       } else {
         var fpBitsDataView = $fpBitsDataView;
         fpBitsDataView.setFloat64(0, dv, true);
-        var lo$1 = $uI(fpBitsDataView.getInt32(0, true));
-        var hi$1 = $uI(fpBitsDataView.getInt32(4, true));
-        return (lo$1 ^ hi$1);
+        var lo = $uI(fpBitsDataView.getInt32(0, true));
+        var hi = $uI(fpBitsDataView.getInt32(4, true));
+        return (lo ^ hi);
       }
     }
   }
@@ -8461,11 +8412,11 @@ $c_sr_Statics$.prototype.anyHash__O__I = (function(x) {
   } else if (((typeof x) === "number")) {
     var x3 = $uD(x);
     return this.doubleHash__D__I(x3);
-  } else if ((x instanceof $c_RTLong)) {
-    var t = $uJ(x);
-    var lo = t.RTLong__f_lo;
-    var hi = t.RTLong__f_hi;
-    return this.longHash__J__I(new $c_RTLong(lo, hi));
+  } else if ((x instanceof $Long)) {
+    var $x_1 = $uJ(x);
+    var x4_$_lo = $x_1.l;
+    var x4_$_hi = $x_1.h;
+    return this.longHash__J__I(x4_$_lo, x4_$_hi);
   } else {
     return $dp_hashCode__I($n(x));
   }
@@ -8554,7 +8505,7 @@ $c_s_util_hashing_MurmurHash3.prototype.mix__I__I__I = (function(hash, data) {
   var h = this.mixLast__I__I__I(hash, data);
   var i = h;
   h = ((i << 13) | ((i >>> 19) | 0));
-  return (((-430675100) + Math.imul(5, h)) | 0);
+  return ((Math.imul(5, h) - 430675100) | 0);
 });
 $c_s_util_hashing_MurmurHash3.prototype.mixLast__I__I__I = (function(hash, data) {
   var k = data;
@@ -9057,48 +9008,53 @@ $c_s_util_hashing_MurmurHash3.prototype.arrayHash$mIc$sp__AI__I__I = (function(a
 });
 $c_s_util_hashing_MurmurHash3.prototype.arrayHash$mJc$sp__AJ__I__I = (function(a, seed) {
   var h = seed;
-  var l = $n(a).u.length;
+  var l = (($n(a).u.length >>> 1) | 0);
   switch (l) {
     case 0: {
       return this.finalizeHash__I__I__I(h, 0);
       break;
     }
     case 1: {
-      var $x_1 = h;
-      var t = $n(a).get(0);
-      var lo = t.RTLong__f_lo;
-      var hi = t.RTLong__f_hi;
-      return this.finalizeHash__I__I__I(this.mix__I__I__I($x_1, $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo, hi))), 1);
+      var $x_2 = h;
+      var $x_1 = $n(a).u;
+      $aJCheckGet($x_1, 0);
+      var lv_$_lo = $x_1[0];
+      var lv_$_hi = $x_1[1];
+      return this.finalizeHash__I__I__I(this.mix__I__I__I($x_2, $m_sr_Statics$().longHash__J__I(lv_$_lo, lv_$_hi)), 1);
       break;
     }
     default: {
-      var t$1 = $n(a).get(0);
-      var lo$1 = t$1.RTLong__f_lo;
-      var hi$1 = t$1.RTLong__f_hi;
-      var initial = $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo$1, hi$1));
+      var $x_3 = $n(a).u;
+      $aJCheckGet($x_3, 0);
+      var lv$1_$_lo = $x_3[0];
+      var lv$1_$_hi = $x_3[1];
+      var initial = $m_sr_Statics$().longHash__J__I(lv$1_$_lo, lv$1_$_hi);
       h = this.mix__I__I__I(h, initial);
       var h0 = h;
-      var t$2 = $n(a).get(1);
-      var lo$2 = t$2.RTLong__f_lo;
-      var hi$2 = t$2.RTLong__f_hi;
-      var prev = $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo$2, hi$2));
+      var $x_4 = $n(a).u;
+      $aJCheckGet($x_4, 1);
+      var lv$2_$_lo = $x_4[2];
+      var lv$2_$_hi = $x_4[3];
+      var prev = $m_sr_Statics$().longHash__J__I(lv$2_$_lo, lv$2_$_hi);
       var rangeDiff = ((prev - initial) | 0);
       var i = 2;
       while ((i < l)) {
         h = this.mix__I__I__I(h, prev);
-        var t$3 = $n(a).get(i);
-        var lo$3 = t$3.RTLong__f_lo;
-        var hi$3 = t$3.RTLong__f_hi;
-        var hash = $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo$3, hi$3));
+        var $x_5 = $n(a).u;
+        var $x_6 = $aJCheckGet($x_5, i);
+        var lv$3_$_lo = $x_5[$x_6];
+        var lv$3_$_hi = $x_5[(($x_6 + 1) | 0)];
+        var hash = $m_sr_Statics$().longHash__J__I(lv$3_$_lo, lv$3_$_hi);
         if (((rangeDiff !== ((hash - prev) | 0)) || (rangeDiff === 0))) {
           h = this.mix__I__I__I(h, hash);
           i = ((1 + i) | 0);
           while ((i < l)) {
-            var $x_2 = h;
-            var t$4 = $n(a).get(i);
-            var lo$4 = t$4.RTLong__f_lo;
-            var hi$4 = t$4.RTLong__f_hi;
-            h = this.mix__I__I__I($x_2, $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo$4, hi$4)));
+            var $x_9 = h;
+            var $x_7 = $n(a).u;
+            var $x_8 = $aJCheckGet($x_7, i);
+            var lv$4_$_lo = $x_7[$x_8];
+            var lv$4_$_hi = $x_7[(($x_8 + 1) | 0)];
+            h = this.mix__I__I__I($x_9, $m_sr_Statics$().longHash__J__I(lv$4_$_lo, lv$4_$_hi));
             i = ((1 + i) | 0);
           }
           return this.finalizeHash__I__I__I(h, l);
@@ -9349,7 +9305,7 @@ function $f_s_util_parsing_input_Position__longString__T($thiz) {
   var $x_3 = $thiz.lineContents__T();
   var $x_1 = $m_sc_StringOps$();
   var x = $thiz.lineContents__T();
-  var x$1 = $x_1.take$extension__T__I__T(x, (((-1) + $thiz.column__I()) | 0));
+  var x$1 = $x_1.take$extension__T__I__T(x, (($thiz.column__I() - 1) | 0));
   var this$4 = $n(x$1);
   var len = this$4.length;
   var dst = new $ac_C(len);
@@ -9455,12 +9411,16 @@ var $d_Lfansi_Attr = new $TypeData().initClass(1, "fansi.Attr", ({
   Lfansi_Attrs: 1
 }));
 /** @constructor */
-function $c_Lfansi_Attrs$Multiple(resetMask, applyMask, attrs) {
-  this.Lfansi_Attrs$Multiple__f_resetMask = $L0;
-  this.Lfansi_Attrs$Multiple__f_applyMask = $L0;
+function $c_Lfansi_Attrs$Multiple(resetMask_$_lo, resetMask_$_hi, applyMask_$_lo, applyMask_$_hi, attrs) {
+  this.Lfansi_Attrs$Multiple__f_resetMask_$lo = 0;
+  this.Lfansi_Attrs$Multiple__f_resetMask_$hi = 0;
+  this.Lfansi_Attrs$Multiple__f_applyMask_$lo = 0;
+  this.Lfansi_Attrs$Multiple__f_applyMask_$hi = 0;
   this.Lfansi_Attrs$Multiple__f_attrs = null;
-  this.Lfansi_Attrs$Multiple__f_resetMask = resetMask;
-  this.Lfansi_Attrs$Multiple__f_applyMask = applyMask;
+  this.Lfansi_Attrs$Multiple__f_resetMask_$lo = resetMask_$_lo;
+  this.Lfansi_Attrs$Multiple__f_resetMask_$hi = resetMask_$_hi;
+  this.Lfansi_Attrs$Multiple__f_applyMask_$lo = applyMask_$_lo;
+  this.Lfansi_Attrs$Multiple__f_applyMask_$hi = applyMask_$_hi;
   this.Lfansi_Attrs$Multiple__f_attrs = attrs;
   $m_s_Predef$().assert__Z__V(($n(attrs).length__I() !== 1));
 }
@@ -9471,10 +9431,10 @@ function $h_Lfansi_Attrs$Multiple() {
 }
 $h_Lfansi_Attrs$Multiple.prototype = $c_Lfansi_Attrs$Multiple.prototype;
 $c_Lfansi_Attrs$Multiple.prototype.resetMask__J = (function() {
-  return this.Lfansi_Attrs$Multiple__f_resetMask;
+  return $bL(this.Lfansi_Attrs$Multiple__f_resetMask_$lo, this.Lfansi_Attrs$Multiple__f_resetMask_$hi);
 });
 $c_Lfansi_Attrs$Multiple.prototype.applyMask__J = (function() {
-  return this.Lfansi_Attrs$Multiple__f_applyMask;
+  return $bL(this.Lfansi_Attrs$Multiple__f_applyMask_$lo, this.Lfansi_Attrs$Multiple__f_applyMask_$hi);
 });
 $c_Lfansi_Attrs$Multiple.prototype.hashCode__I = (function() {
   return $n(this.Lfansi_Attrs$Multiple__f_attrs).hashCode__I();
@@ -9536,9 +9496,9 @@ function $c_Lfansi_Bold$() {
   this.Lfansi_Bold$__f_all = null;
   $ct_Lfansi_Category__I__I__Lsourcecode_Name__(this, 0, 2, new $c_Lsourcecode_Name("Bold"));
   $n_Lfansi_Bold$ = this;
-  this.Lfansi_Bold$__f_Faint = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[2m", new $c_RTLong(2, 0), $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue("Faint")));
-  this.Lfansi_Bold$__f_On = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[1m", new $c_RTLong(1, 0), new $c_Lsourcecode_Name("On"));
-  this.Lfansi_Bold$__f_Off = this.makeNoneAttr__J__Lsourcecode_Name__Lfansi_ResetAttr($L0, new $c_Lsourcecode_Name("Off"));
+  this.Lfansi_Bold$__f_Faint = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[2m", 2, 0, $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue("Faint")));
+  this.Lfansi_Bold$__f_On = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[1m", 1, 0, new $c_Lsourcecode_Name("On"));
+  this.Lfansi_Bold$__f_Off = this.makeNoneAttr__J__Lsourcecode_Name__Lfansi_ResetAttr(0, 0, new $c_Lsourcecode_Name("Off"));
   var this$4 = $m_sci_Vector$();
   var array = [this.Lfansi_Bold$__f_On, this.Lfansi_Bold$__f_Off, this.Lfansi_Bold$__f_Faint];
   var elems = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
@@ -9568,7 +9528,7 @@ function $p_Lfansi_ColorCategory__True0__I__I__I__I__Lfansi_EscapeAttr($thiz, r,
   var $x_1 = $thiz.trueRgbEscape__I__I__I__T(r, g, b);
   var value = ((273 + index) | 0);
   var hi = (value >> 31);
-  return $thiz.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr($x_1, new $c_RTLong(value, hi), $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((((((("True(" + r) + ",") + g) + ",") + b) + ")"))));
+  return $thiz.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr($x_1, value, hi, $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((((((("True(" + r) + ",") + g) + ",") + b) + ")"))));
 }
 function $ct_Lfansi_ColorCategory__I__I__I__Lsourcecode_Name__($thiz, offset, width, colorCode, catName) {
   $thiz.Lfansi_ColorCategory__f_colorCode = colorCode;
@@ -9581,7 +9541,7 @@ function $ct_Lfansi_ColorCategory__I__I__I__Lsourcecode_Name__($thiz, offset, wi
     var $x_1 = $thiz.Lfansi_ColorCategory__f_colorCode;
     var value = ((17 + x0) | 0);
     var hi = (value >> 31);
-    var elem = $thiz.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr((((("\u001b[" + $x_1) + ";5;") + x0) + "m"), new $c_RTLong(value, hi), $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((("Full(" + x0) + ")"))));
+    var elem = $thiz.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr((((("\u001b[" + $x_1) + ";5;") + x0) + "m"), value, hi, $as_Lsourcecode_Name($m_Lsourcecode_Name$().wrap__O__Lsourcecode_SourceValue((("Full(" + x0) + ")"))));
     this$6.addOne__O__scm_Growable(elem);
   }
   $thiz.Lfansi_ColorCategory__f_Full = $as_sci_IndexedSeq($n(b).result__O());
@@ -9607,7 +9567,7 @@ $c_Lfansi_ColorCategory.prototype.trueRgbEscape__I__I__I__T = (function(r, g, b)
   return (((((((("\u001b[" + this.Lfansi_ColorCategory__f_colorCode) + ";2;") + r) + ";") + g) + ";") + b) + "m");
 });
 $c_Lfansi_ColorCategory.prototype.True__I__Lfansi_EscapeAttr = (function(index) {
-  var requirement = ((index >= 0) && (index <= 16777216));
+  var requirement = ((index >>> 0) <= 16777216);
   if ((!requirement)) {
     throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), (("requirement failed: " + "True parameter `index` must be 273 <= index <= 16777488, not ") + index));
   }
@@ -9617,36 +9577,34 @@ $c_Lfansi_ColorCategory.prototype.True__I__Lfansi_EscapeAttr = (function(index) 
   return $p_Lfansi_ColorCategory__True0__I__I__I__I__Lfansi_EscapeAttr(this, r, g, b, index);
 });
 $c_Lfansi_ColorCategory.prototype.trueIndex__I__I__I__I = (function(r, g, b) {
-  var requirement = ((r >= 0) && (r < 256));
+  var requirement = ((r >>> 0) <= 255);
   if ((!requirement)) {
     throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), (("requirement failed: " + "True parameter `r` must be 0 <= r < 256, not ") + r));
   }
-  var requirement$1 = ((g >= 0) && (g < 256));
+  var requirement$1 = ((g >>> 0) <= 255);
   if ((!requirement$1)) {
     throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), (("requirement failed: " + "True parameter `g` must be 0 <= r < 256, not ") + g));
   }
-  var requirement$2 = ((b >= 0) && (b < 256));
+  var requirement$2 = ((b >>> 0) <= 255);
   if ((!requirement$2)) {
     throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), (("requirement failed: " + "True parameter `b` must be 0 <= r < 256, not ") + b));
   }
   return (((r << 16) | (g << 8)) | b);
 });
-$c_Lfansi_ColorCategory.prototype.lookupEscape__J__T = (function(applyState) {
+$c_Lfansi_ColorCategory.prototype.lookupEscape__J__T = (function(applyState_$_lo, applyState_$_hi) {
   var n = this.Lfansi_Category__f_offset;
-  var hi = applyState.RTLong__f_hi;
-  var lo = (((32 & n) === 0) ? (((applyState.RTLong__f_lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : (hi >> n));
+  var lo = (((32 & n) === 0) ? (((applyState_$_lo >>> n) | 0) | ((applyState_$_hi << 1) << ((31 - n) | 0))) : (applyState_$_hi >> n));
   if ((lo < 273)) {
-    return $c_Lfansi_Category.prototype.lookupEscape__J__T.call(this, applyState);
+    return $c_Lfansi_Category.prototype.lookupEscape__J__T.call(this, applyState_$_lo, applyState_$_hi);
   } else {
-    var index = (((-273) + lo) | 0);
+    var index = ((lo - 273) | 0);
     return this.trueRgbEscape__I__I__I__T((index >> 16), (255 & (index >> 8)), (255 & index));
   }
 });
-$c_Lfansi_ColorCategory.prototype.lookupAttr__J__Lfansi_Attr = (function(applyState) {
+$c_Lfansi_ColorCategory.prototype.lookupAttr__J__Lfansi_Attr = (function(applyState_$_lo, applyState_$_hi) {
   var n = this.Lfansi_Category__f_offset;
-  var hi = applyState.RTLong__f_hi;
-  var lo = (((32 & n) === 0) ? (((applyState.RTLong__f_lo >>> n) | 0) | ((hi << 1) << ((31 - n) | 0))) : (hi >> n));
-  return ((lo < 273) ? $n(this.lookupAttrTable__ALfansi_Attr()).get(lo) : this.True__I__Lfansi_EscapeAttr((((-273) + lo) | 0)));
+  var lo = (((32 & n) === 0) ? (((applyState_$_lo >>> n) | 0) | ((applyState_$_hi << 1) << ((31 - n) | 0))) : (applyState_$_hi >> n));
+  return ((lo < 273) ? $n(this.lookupAttrTable__ALfansi_Attr()).get(lo) : this.True__I__Lfansi_EscapeAttr(((lo - 273) | 0)));
 });
 $c_Lfansi_ColorCategory.prototype.lookupTableWidth__I = (function() {
   return 273;
@@ -9672,8 +9630,8 @@ function $c_Lfansi_Reversed$() {
   this.Lfansi_Reversed$__f_all = null;
   $ct_Lfansi_Category__I__I__Lsourcecode_Name__(this, 2, 1, new $c_Lsourcecode_Name("Reversed"));
   $n_Lfansi_Reversed$ = this;
-  this.Lfansi_Reversed$__f_On = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[7m", new $c_RTLong(1, 0), new $c_Lsourcecode_Name("On"));
-  this.Lfansi_Reversed$__f_Off = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[27m", $L0, new $c_Lsourcecode_Name("Off"));
+  this.Lfansi_Reversed$__f_On = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[7m", 1, 0, new $c_Lsourcecode_Name("On"));
+  this.Lfansi_Reversed$__f_Off = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[27m", 0, 0, new $c_Lsourcecode_Name("Off"));
   var this$4 = $m_sci_Vector$();
   var array = [this.Lfansi_Reversed$__f_On, this.Lfansi_Reversed$__f_Off];
   var elems = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
@@ -9711,8 +9669,8 @@ function $c_Lfansi_Underlined$() {
   this.Lfansi_Underlined$__f_all = null;
   $ct_Lfansi_Category__I__I__Lsourcecode_Name__(this, 3, 1, new $c_Lsourcecode_Name("Underlined"));
   $n_Lfansi_Underlined$ = this;
-  this.Lfansi_Underlined$__f_On = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[4m", new $c_RTLong(1, 0), new $c_Lsourcecode_Name("On"));
-  this.Lfansi_Underlined$__f_Off = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[24m", $L0, new $c_Lsourcecode_Name("Off"));
+  this.Lfansi_Underlined$__f_On = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[4m", 1, 0, new $c_Lsourcecode_Name("On"));
+  this.Lfansi_Underlined$__f_Off = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[24m", 0, 0, new $c_Lsourcecode_Name("Off"));
   var this$4 = $m_sci_Vector$();
   var array = [this.Lfansi_Underlined$__f_On, this.Lfansi_Underlined$__f_Off];
   var elems = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
@@ -10959,7 +10917,10 @@ function $ps_Lfeatherweightgo_typer_TyperImpl__typeLiteralCheck$1__sci_List__Lfe
     } else {
       return false;
     }
-  } else if ((typeLiteral instanceof $c_Lfeatherweightgo_model_ast_Interface)) {
+  } else {
+    if ((!(typeLiteral instanceof $c_Lfeatherweightgo_model_ast_Interface))) {
+      throw new $c_s_MatchError(typeLiteral);
+    }
     var x3 = $as_Lfeatherweightgo_model_ast_Interface(typeLiteral);
     var methods = $n(x3).Lfeatherweightgo_model_ast_Interface__f_methods;
     if ($m_Lfeatherweightgo_util_Utils$().unique__sci_List__Z(methods)) {
@@ -10983,8 +10944,6 @@ function $ps_Lfeatherweightgo_typer_TyperImpl__typeLiteralCheck$1__sci_List__Lfe
     } else {
       return false;
     }
-  } else {
-    throw new $c_s_MatchError(typeLiteral);
   }
 }
 function $ps_Lfeatherweightgo_typer_TyperImpl__typeDeclarationCheck$1__Lfeatherweightgo_model_ast_TypeDeclaration__sci_List__Z(typeDeclaration, declarations$1) {
@@ -11880,7 +11839,7 @@ function $h_jl_Character$() {
 }
 $h_jl_Character$.prototype = $c_jl_Character$.prototype;
 $c_jl_Character$.prototype.toString__I__T = (function(codePoint) {
-  if ((!((codePoint >= 0) && (codePoint <= 1114111)))) {
+  if (((codePoint >>> 0) > 1114111)) {
     throw $ct_jl_IllegalArgumentException__(new $c_jl_IllegalArgumentException());
   }
   return $as_T(String.fromCodePoint(codePoint));
@@ -11890,11 +11849,11 @@ $c_jl_Character$.prototype.getType__I__I = (function(codePoint) {
 });
 $c_jl_Character$.prototype.digitWithValidRadix__I__I__I = (function(codePoint, radix) {
   if ((codePoint < 256)) {
-    var value = (((codePoint >= 48) && (codePoint <= 57)) ? (((-48) + codePoint) | 0) : (((codePoint >= 65) && (codePoint <= 90)) ? (((-55) + codePoint) | 0) : (((codePoint >= 97) && (codePoint <= 122)) ? (((-87) + codePoint) | 0) : (-1))));
-  } else if (((codePoint >= 65313) && (codePoint <= 65338))) {
-    var value = (((-65303) + codePoint) | 0);
-  } else if (((codePoint >= 65345) && (codePoint <= 65370))) {
-    var value = (((-65335) + codePoint) | 0);
+    var value = (((((codePoint - 48) | 0) >>> 0) <= 9) ? ((codePoint - 48) | 0) : (((((codePoint - 65) | 0) >>> 0) <= 25) ? ((codePoint - 55) | 0) : (((((codePoint - 97) | 0) >>> 0) <= 25) ? ((codePoint - 87) | 0) : (-1))));
+  } else if (((((codePoint - 65313) | 0) >>> 0) <= 25)) {
+    var value = ((codePoint - 65303) | 0);
+  } else if (((((codePoint - 65345) | 0) >>> 0) <= 25)) {
+    var value = ((codePoint - 65335) | 0);
   } else {
     var p = $m_ju_Arrays$().binarySearch__AI__I__I($p_jl_Character$__nonASCIIZeroDigitCodePoints__AI(this), codePoint);
     var zeroCodePointIndex = ((p < 0) ? (((-2) - p) | 0) : p);
@@ -11909,13 +11868,13 @@ $c_jl_Character$.prototype.digitWithValidRadix__I__I__I = (function(codePoint, r
 });
 $c_jl_Character$.prototype.isUnicodeIdentifierStart__I__Z = (function(codePoint) {
   var tpe = this.getType__I__I(codePoint);
-  return ((((((tpe === 1) || (tpe === 2)) || (tpe === 3)) || (tpe === 4)) || (tpe === 5)) || (tpe === 10));
+  return ((((((((tpe - 1) | 0) >>> 0) <= 1) || (tpe === 3)) || (tpe === 4)) || (tpe === 5)) || (tpe === 10));
 });
 $c_jl_Character$.prototype.isUnicodeIdentifierPart__I__Z = (function(codePoint) {
   return this.isUnicodeIdentifierPartImpl__I__I__Z(codePoint, this.getType__I__I(codePoint));
 });
 $c_jl_Character$.prototype.isUnicodeIdentifierPartImpl__I__I__Z = (function(codePoint, tpe) {
-  return ((((((tpe === 23) || (tpe === 9)) || (tpe === 8)) || (tpe === 6)) || ((((((tpe === 1) || (tpe === 2)) || (tpe === 3)) || (tpe === 4)) || (tpe === 5)) || (tpe === 10))) || (((((codePoint >= 0) && (codePoint <= 8)) || ((codePoint >= 14) && (codePoint <= 27))) || ((codePoint >= 127) && (codePoint <= 159))) || (tpe === 16)));
+  return ((((((tpe === 9) || (tpe === 23)) || (tpe === 8)) || (tpe === 6)) || ((((((((tpe - 1) | 0) >>> 0) <= 1) || (tpe === 3)) || (tpe === 4)) || (tpe === 5)) || (tpe === 10))) || (((((codePoint >>> 0) <= 8) || ((((codePoint - 14) | 0) >>> 0) <= 13)) || ((((codePoint - 127) | 0) >>> 0) <= 32)) || (tpe === 16)));
 });
 $c_jl_Character$.prototype.java$lang$Character$$charTypesFirst256__AI = (function() {
   return (((((1 & this.jl_Character$__f_bitmap$0) << 24) >> 24) === 0) ? $p_jl_Character$__java$lang$Character$$charTypesFirst256$lzycompute__AI(this) : this.jl_Character$__f_java$lang$Character$$charTypesFirst256);
@@ -11940,42 +11899,56 @@ $c_jl_Integer$.prototype.constructor = $c_jl_Integer$;
 function $h_jl_Integer$() {
 }
 $h_jl_Integer$.prototype = $c_jl_Integer$.prototype;
-$c_jl_Integer$.prototype.java$lang$Integer$$parseIntFail__T__E = (function(s) {
+$c_jl_Integer$.prototype.parseIntFail__T__E = (function(s) {
   throw new $c_jl_NumberFormatException((("For input string: \"" + s) + "\""));
 });
 $c_jl_Integer$.prototype.java$lang$Integer$$parseIntImpl__T__I__I__I = (function(s, radix, overflowBarrier) {
   if ((s === null)) {
-    this.java$lang$Integer$$parseIntFail__T__E(s);
+    $m_jl_Integer$().parseIntFail__T__E(s);
   }
-  var this$1 = $n(s);
-  var len = this$1.length;
+  var this$3 = $n(s);
+  var len = this$3.length;
   if ((len === 0)) {
-    this.java$lang$Integer$$parseIntFail__T__E(s);
+    $m_jl_Integer$().parseIntFail__T__E(s);
   }
   var character = $m_jl_Character$();
-  var this$2 = $n(s);
-  var firstChar = $charAt(this$2, 0);
+  var this$5 = $n(s);
+  var firstChar = $charAt(this$5, 0);
   var negative = (firstChar === 45);
   var sign = (negative ? (-1) : 0);
   var i = ((negative || (firstChar === 43)) ? 1 : 0);
   if ((i >= len)) {
-    this.java$lang$Integer$$parseIntFail__T__E(s);
+    $m_jl_Integer$().parseIntFail__T__E(s);
   }
-  var result = 0;
+  var java$lang$IntFloatBits$Int32Box$$value = 0;
+  java$lang$IntFloatBits$Int32Box$$value = 0;
   while ((i !== len)) {
-    var this$3 = $n(s);
+    var this$7 = $n(s);
     var index = i;
-    var digit = character.digitWithValidRadix__I__I__I($charAt(this$3, index), radix);
-    if (((digit === (-1)) || ((result >>> 0) > (overflowBarrier >>> 0)))) {
-      this.java$lang$Integer$$parseIntFail__T__E(s);
+    var x = character.digitWithValidRadix__I__I__I($charAt(this$7, index), radix);
+    if ((x < 0)) {
+      var $x_1 = true;
+    } else {
+      var x$1 = java$lang$IntFloatBits$Int32Box$$value;
+      var $x_1 = ((x$1 >>> 0) > (overflowBarrier >>> 0));
     }
-    result = ((Math.imul(result, radix) + digit) | 0);
+    if ($x_1) {
+      $m_jl_Integer$().parseIntFail__T__E(s);
+    }
+    var x$2 = java$lang$IntFloatBits$Int32Box$$value;
+    var x$3 = Math.imul(x$2, radix);
+    var v = ((x$3 + x) | 0);
+    java$lang$IntFloatBits$Int32Box$$value = v;
     i = ((1 + i) | 0);
   }
-  if (((result >>> 0) > (((2147483647 - sign) | 0) >>> 0))) {
-    this.java$lang$Integer$$parseIntFail__T__E(s);
+  var x$4 = java$lang$IntFloatBits$Int32Box$$value;
+  var y = ((2147483647 - sign) | 0);
+  if (((x$4 >>> 0) > (y >>> 0))) {
+    $m_jl_Integer$().parseIntFail__T__E(s);
   }
-  return (((result ^ sign) - sign) | 0);
+  var x$5 = java$lang$IntFloatBits$Int32Box$$value;
+  var x$6 = (x$5 ^ sign);
+  return ((x$6 - sign) | 0);
 });
 $c_jl_Integer$.prototype.bitCount__I__I = (function(i) {
   var t1 = ((i - (1431655765 & (i >> 1))) | 0);
@@ -12008,7 +11981,7 @@ $c_jl_Long$.prototype.java$lang$Long$$toHexString__I__I__T = (function(lo, hi) {
     var s = $as_T((lo >>> 0.0).toString(16));
     var this$7 = $n(s);
     var beginIndex = this$7.length;
-    if (((beginIndex < 0) || (beginIndex > 8))) {
+    if (((beginIndex >>> 0) > 8)) {
       $charAt("00000000", beginIndex);
     }
     return ($x_1 + (("" + $as_T("00000000".substring(beginIndex))) + s));
@@ -12025,14 +11998,14 @@ $c_jl_Long$.prototype.java$lang$Long$$toOctalString__I__I__T = (function(lo, hi)
     var s = $as_T((mp >>> 0.0).toString(8));
     var this$7 = $n(s);
     var beginIndex = this$7.length;
-    if (((beginIndex < 0) || (beginIndex > 10))) {
+    if (((beginIndex >>> 0) > 10)) {
       $charAt("0000000000", beginIndex);
     }
     var $x_1 = $as_T("0000000000".substring(beginIndex));
     var s$1 = $as_T((lp >>> 0.0).toString(8));
     var this$11 = $n(s$1);
     var beginIndex$1 = this$11.length;
-    if (((beginIndex$1 < 0) || (beginIndex$1 > 10))) {
+    if (((beginIndex$1 >>> 0) > 10)) {
       $charAt("0000000000", beginIndex$1);
     }
     return (($x_2 + (("" + $x_1) + s)) + (("" + $as_T("0000000000".substring(beginIndex$1))) + s$1));
@@ -12041,7 +12014,7 @@ $c_jl_Long$.prototype.java$lang$Long$$toOctalString__I__I__T = (function(lo, hi)
     var s$2 = $as_T((lp >>> 0.0).toString(8));
     var this$18 = $n(s$2);
     var beginIndex$2 = this$18.length;
-    if (((beginIndex$2 < 0) || (beginIndex$2 > 10))) {
+    if (((beginIndex$2 >>> 0) > 10)) {
       $charAt("0000000000", beginIndex$2);
     }
     return ($x_3 + (("" + $as_T("0000000000".substring(beginIndex$2))) + s$2));
@@ -12070,7 +12043,7 @@ function $h_jl_Number() {
 }
 $h_jl_Number.prototype = $c_jl_Number.prototype;
 function $is_jl_Number(obj) {
-  return (((obj instanceof $c_jl_Number) || ((typeof obj) === "number")) || (obj instanceof $c_RTLong));
+  return (((obj instanceof $c_jl_Number) || ((typeof obj) === "number")) || (obj instanceof $Long));
 }
 function $as_jl_Number(obj) {
   return (($is_jl_Number(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "java.lang.Number"));
@@ -12155,7 +12128,7 @@ function $h_jl_String$() {
 $h_jl_String$.prototype = $c_jl_String$.prototype;
 $c_jl_String$.prototype.new__AC__I__I__T = (function(value, offset, count) {
   var end = ((offset + count) | 0);
-  if ((((offset < 0) || (end < offset)) || (end > $n(value).u.length))) {
+  if ((((offset < 0) || (offset > end)) || (end > $n(value).u.length))) {
     throw $ct_jl_StringIndexOutOfBoundsException__(new $c_jl_StringIndexOutOfBoundsException());
   }
   var result = "";
@@ -12256,8 +12229,8 @@ class $c_jl_Throwable extends Error {
           var sameFrameCount = 0;
           while (true) {
             if (((sameFrameCount < thisLength) && (sameFrameCount < parentLength))) {
-              var x = $n(thisTrace).get((((-1) + ((thisLength - sameFrameCount) | 0)) | 0));
-              var x$2 = $n(parentTrace).get((((-1) + ((parentLength - sameFrameCount) | 0)) | 0));
+              var x = $n(thisTrace).get(((((thisLength - sameFrameCount) | 0) - 1) | 0));
+              var x$2 = $n(parentTrace).get(((((parentLength - sameFrameCount) | 0) - 1) | 0));
               var $x_1 = ((x === null) ? (x$2 === null) : $n(x).equals__O__Z(x$2));
             } else {
               var $x_1 = false;
@@ -12269,7 +12242,7 @@ class $c_jl_Throwable extends Error {
             }
           }
           if ((sameFrameCount > 0)) {
-            sameFrameCount = (((-1) + sameFrameCount) | 0);
+            sameFrameCount = ((sameFrameCount - 1) | 0);
           }
           var lengthToPrint = ((thisLength - sameFrameCount) | 0);
           var i$2 = 0;
@@ -12476,14 +12449,14 @@ function $c_ju_regex_Matcher(pattern0, input0) {
   this.ju_regex_Matcher__f_pattern0 = null;
   this.ju_regex_Matcher__f_java$util$regex$Matcher$$input0 = null;
   this.ju_regex_Matcher__f_regionStart0 = 0;
-  this.ju_regex_Matcher__f_inputstr = null;
+  this.ju_regex_Matcher__f_java$util$regex$Matcher$$inputstr = null;
   this.ju_regex_Matcher__f_position = 0;
   this.ju_regex_Matcher__f_lastMatch = null;
   this.ju_regex_Matcher__f_pattern0 = pattern0;
   this.ju_regex_Matcher__f_java$util$regex$Matcher$$input0 = input0;
   this.ju_regex_Matcher__f_regionStart0 = 0;
   $n(this.ju_regex_Matcher__f_java$util$regex$Matcher$$input0);
-  this.ju_regex_Matcher__f_inputstr = this.ju_regex_Matcher__f_java$util$regex$Matcher$$input0;
+  this.ju_regex_Matcher__f_java$util$regex$Matcher$$inputstr = this.ju_regex_Matcher__f_java$util$regex$Matcher$$input0;
   this.ju_regex_Matcher__f_position = 0;
   this.ju_regex_Matcher__f_lastMatch = null;
 }
@@ -12503,14 +12476,14 @@ $c_ju_regex_Matcher.prototype.lookingAt__Z = (function() {
 });
 $c_ju_regex_Matcher.prototype.find__Z = (function() {
   var this$1 = $n(this.ju_regex_Matcher__f_pattern0);
-  var input = this.ju_regex_Matcher__f_inputstr;
+  var input = this.ju_regex_Matcher__f_java$util$regex$Matcher$$inputstr;
   var start = this.ju_regex_Matcher__f_position;
   var mtch = this$1.java$util$regex$Pattern$$execFindInternal__T__I__O(input, start);
   var end = $uI(this$1.ju_regex_Pattern__f_java$util$regex$Pattern$$jsRegExpForFind.lastIndex);
   if ((mtch !== null)) {
     var $x_1 = ((end === $uI(mtch.index)) ? ((1 + end) | 0) : end);
   } else {
-    var this$2 = $n(this.ju_regex_Matcher__f_inputstr);
+    var this$2 = $n(this.ju_regex_Matcher__f_java$util$regex$Matcher$$inputstr);
     var $x_1 = ((1 + this$2.length) | 0);
   }
   this.ju_regex_Matcher__f_position = $x_1;
@@ -12790,7 +12763,7 @@ function $f_s_Product__productElementName__I__T($thiz, n) {
   if (((n >= 0) && (n < $thiz.productArity__I()))) {
     return "";
   } else {
-    throw $ct_jl_IndexOutOfBoundsException__T__(new $c_jl_IndexOutOfBoundsException(), (((n + " is out of bounds (min 0, max ") + (((-1) + $thiz.productArity__I()) | 0)) + ")"));
+    throw $ct_jl_IndexOutOfBoundsException__T__(new $c_jl_IndexOutOfBoundsException(), (((n + " is out of bounds (min 0, max ") + (($thiz.productArity__I() - 1) | 0)) + ")"));
   }
 }
 function $is_s_Product(obj) {
@@ -13503,23 +13476,23 @@ function $c_Lfansi_Back$() {
   this.Lfansi_Back$__f_all = null;
   $ct_Lfansi_ColorCategory__I__I__I__Lsourcecode_Name__(this, 29, 25, 48, new $c_Lsourcecode_Name("Back"));
   $n_Lfansi_Back$ = this;
-  this.Lfansi_Back$__f_Reset = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[49m", $L0, new $c_Lsourcecode_Name("Reset"));
-  this.Lfansi_Back$__f_Black = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[40m", new $c_RTLong(1, 0), new $c_Lsourcecode_Name("Black"));
-  this.Lfansi_Back$__f_Red = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[41m", new $c_RTLong(2, 0), new $c_Lsourcecode_Name("Red"));
-  this.Lfansi_Back$__f_Green = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[42m", new $c_RTLong(3, 0), new $c_Lsourcecode_Name("Green"));
-  this.Lfansi_Back$__f_Yellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[43m", new $c_RTLong(4, 0), new $c_Lsourcecode_Name("Yellow"));
-  this.Lfansi_Back$__f_Blue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[44m", new $c_RTLong(5, 0), new $c_Lsourcecode_Name("Blue"));
-  this.Lfansi_Back$__f_Magenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[45m", new $c_RTLong(6, 0), new $c_Lsourcecode_Name("Magenta"));
-  this.Lfansi_Back$__f_Cyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[46m", new $c_RTLong(7, 0), new $c_Lsourcecode_Name("Cyan"));
-  this.Lfansi_Back$__f_LightGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[47m", new $c_RTLong(8, 0), new $c_Lsourcecode_Name("LightGray"));
-  this.Lfansi_Back$__f_DarkGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[100m", new $c_RTLong(9, 0), new $c_Lsourcecode_Name("DarkGray"));
-  this.Lfansi_Back$__f_LightRed = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[101m", new $c_RTLong(10, 0), new $c_Lsourcecode_Name("LightRed"));
-  this.Lfansi_Back$__f_LightGreen = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[102m", new $c_RTLong(11, 0), new $c_Lsourcecode_Name("LightGreen"));
-  this.Lfansi_Back$__f_LightYellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[103m", new $c_RTLong(12, 0), new $c_Lsourcecode_Name("LightYellow"));
-  this.Lfansi_Back$__f_LightBlue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[104m", new $c_RTLong(13, 0), new $c_Lsourcecode_Name("LightBlue"));
-  this.Lfansi_Back$__f_LightMagenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[105m", new $c_RTLong(14, 0), new $c_Lsourcecode_Name("LightMagenta"));
-  this.Lfansi_Back$__f_LightCyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[106m", new $c_RTLong(15, 0), new $c_Lsourcecode_Name("LightCyan"));
-  this.Lfansi_Back$__f_White = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[107m", new $c_RTLong(16, 0), new $c_Lsourcecode_Name("White"));
+  this.Lfansi_Back$__f_Reset = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[49m", 0, 0, new $c_Lsourcecode_Name("Reset"));
+  this.Lfansi_Back$__f_Black = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[40m", 1, 0, new $c_Lsourcecode_Name("Black"));
+  this.Lfansi_Back$__f_Red = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[41m", 2, 0, new $c_Lsourcecode_Name("Red"));
+  this.Lfansi_Back$__f_Green = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[42m", 3, 0, new $c_Lsourcecode_Name("Green"));
+  this.Lfansi_Back$__f_Yellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[43m", 4, 0, new $c_Lsourcecode_Name("Yellow"));
+  this.Lfansi_Back$__f_Blue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[44m", 5, 0, new $c_Lsourcecode_Name("Blue"));
+  this.Lfansi_Back$__f_Magenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[45m", 6, 0, new $c_Lsourcecode_Name("Magenta"));
+  this.Lfansi_Back$__f_Cyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[46m", 7, 0, new $c_Lsourcecode_Name("Cyan"));
+  this.Lfansi_Back$__f_LightGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[47m", 8, 0, new $c_Lsourcecode_Name("LightGray"));
+  this.Lfansi_Back$__f_DarkGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[100m", 9, 0, new $c_Lsourcecode_Name("DarkGray"));
+  this.Lfansi_Back$__f_LightRed = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[101m", 10, 0, new $c_Lsourcecode_Name("LightRed"));
+  this.Lfansi_Back$__f_LightGreen = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[102m", 11, 0, new $c_Lsourcecode_Name("LightGreen"));
+  this.Lfansi_Back$__f_LightYellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[103m", 12, 0, new $c_Lsourcecode_Name("LightYellow"));
+  this.Lfansi_Back$__f_LightBlue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[104m", 13, 0, new $c_Lsourcecode_Name("LightBlue"));
+  this.Lfansi_Back$__f_LightMagenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[105m", 14, 0, new $c_Lsourcecode_Name("LightMagenta"));
+  this.Lfansi_Back$__f_LightCyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[106m", 15, 0, new $c_Lsourcecode_Name("LightCyan"));
+  this.Lfansi_Back$__f_White = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[107m", 16, 0, new $c_Lsourcecode_Name("White"));
   var this$4 = $m_sci_Vector$();
   var array = [this.Lfansi_Back$__f_Reset, this.Lfansi_Back$__f_Black, this.Lfansi_Back$__f_Red, this.Lfansi_Back$__f_Green, this.Lfansi_Back$__f_Yellow, this.Lfansi_Back$__f_Blue, this.Lfansi_Back$__f_Magenta, this.Lfansi_Back$__f_Cyan, this.Lfansi_Back$__f_LightGray, this.Lfansi_Back$__f_DarkGray, this.Lfansi_Back$__f_LightRed, this.Lfansi_Back$__f_LightGreen, this.Lfansi_Back$__f_LightYellow, this.Lfansi_Back$__f_LightBlue, this.Lfansi_Back$__f_LightMagenta, this.Lfansi_Back$__f_LightCyan, this.Lfansi_Back$__f_White];
   var elems = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
@@ -13577,23 +13550,23 @@ function $c_Lfansi_Color$() {
   this.Lfansi_Color$__f_all = null;
   $ct_Lfansi_ColorCategory__I__I__I__Lsourcecode_Name__(this, 4, 25, 38, new $c_Lsourcecode_Name("Color"));
   $n_Lfansi_Color$ = this;
-  this.Lfansi_Color$__f_Reset = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[39m", $L0, new $c_Lsourcecode_Name("Reset"));
-  this.Lfansi_Color$__f_Black = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[30m", new $c_RTLong(1, 0), new $c_Lsourcecode_Name("Black"));
-  this.Lfansi_Color$__f_Red = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[31m", new $c_RTLong(2, 0), new $c_Lsourcecode_Name("Red"));
-  this.Lfansi_Color$__f_Green = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[32m", new $c_RTLong(3, 0), new $c_Lsourcecode_Name("Green"));
-  this.Lfansi_Color$__f_Yellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[33m", new $c_RTLong(4, 0), new $c_Lsourcecode_Name("Yellow"));
-  this.Lfansi_Color$__f_Blue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[34m", new $c_RTLong(5, 0), new $c_Lsourcecode_Name("Blue"));
-  this.Lfansi_Color$__f_Magenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[35m", new $c_RTLong(6, 0), new $c_Lsourcecode_Name("Magenta"));
-  this.Lfansi_Color$__f_Cyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[36m", new $c_RTLong(7, 0), new $c_Lsourcecode_Name("Cyan"));
-  this.Lfansi_Color$__f_LightGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[37m", new $c_RTLong(8, 0), new $c_Lsourcecode_Name("LightGray"));
-  this.Lfansi_Color$__f_DarkGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[90m", new $c_RTLong(9, 0), new $c_Lsourcecode_Name("DarkGray"));
-  this.Lfansi_Color$__f_LightRed = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[91m", new $c_RTLong(10, 0), new $c_Lsourcecode_Name("LightRed"));
-  this.Lfansi_Color$__f_LightGreen = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[92m", new $c_RTLong(11, 0), new $c_Lsourcecode_Name("LightGreen"));
-  this.Lfansi_Color$__f_LightYellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[93m", new $c_RTLong(12, 0), new $c_Lsourcecode_Name("LightYellow"));
-  this.Lfansi_Color$__f_LightBlue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[94m", new $c_RTLong(13, 0), new $c_Lsourcecode_Name("LightBlue"));
-  this.Lfansi_Color$__f_LightMagenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[95m", new $c_RTLong(14, 0), new $c_Lsourcecode_Name("LightMagenta"));
-  this.Lfansi_Color$__f_LightCyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[96m", new $c_RTLong(15, 0), new $c_Lsourcecode_Name("LightCyan"));
-  this.Lfansi_Color$__f_White = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[97m", new $c_RTLong(16, 0), new $c_Lsourcecode_Name("White"));
+  this.Lfansi_Color$__f_Reset = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[39m", 0, 0, new $c_Lsourcecode_Name("Reset"));
+  this.Lfansi_Color$__f_Black = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[30m", 1, 0, new $c_Lsourcecode_Name("Black"));
+  this.Lfansi_Color$__f_Red = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[31m", 2, 0, new $c_Lsourcecode_Name("Red"));
+  this.Lfansi_Color$__f_Green = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[32m", 3, 0, new $c_Lsourcecode_Name("Green"));
+  this.Lfansi_Color$__f_Yellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[33m", 4, 0, new $c_Lsourcecode_Name("Yellow"));
+  this.Lfansi_Color$__f_Blue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[34m", 5, 0, new $c_Lsourcecode_Name("Blue"));
+  this.Lfansi_Color$__f_Magenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[35m", 6, 0, new $c_Lsourcecode_Name("Magenta"));
+  this.Lfansi_Color$__f_Cyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[36m", 7, 0, new $c_Lsourcecode_Name("Cyan"));
+  this.Lfansi_Color$__f_LightGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[37m", 8, 0, new $c_Lsourcecode_Name("LightGray"));
+  this.Lfansi_Color$__f_DarkGray = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[90m", 9, 0, new $c_Lsourcecode_Name("DarkGray"));
+  this.Lfansi_Color$__f_LightRed = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[91m", 10, 0, new $c_Lsourcecode_Name("LightRed"));
+  this.Lfansi_Color$__f_LightGreen = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[92m", 11, 0, new $c_Lsourcecode_Name("LightGreen"));
+  this.Lfansi_Color$__f_LightYellow = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[93m", 12, 0, new $c_Lsourcecode_Name("LightYellow"));
+  this.Lfansi_Color$__f_LightBlue = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[94m", 13, 0, new $c_Lsourcecode_Name("LightBlue"));
+  this.Lfansi_Color$__f_LightMagenta = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[95m", 14, 0, new $c_Lsourcecode_Name("LightMagenta"));
+  this.Lfansi_Color$__f_LightCyan = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[96m", 15, 0, new $c_Lsourcecode_Name("LightCyan"));
+  this.Lfansi_Color$__f_White = this.makeAttr__T__J__Lsourcecode_Name__Lfansi_EscapeAttr("\u001b[97m", 16, 0, new $c_Lsourcecode_Name("White"));
   var this$4 = $m_sci_Vector$();
   var array = [this.Lfansi_Color$__f_Reset, this.Lfansi_Color$__f_Black, this.Lfansi_Color$__f_Red, this.Lfansi_Color$__f_Green, this.Lfansi_Color$__f_Yellow, this.Lfansi_Color$__f_Blue, this.Lfansi_Color$__f_Magenta, this.Lfansi_Color$__f_Cyan, this.Lfansi_Color$__f_LightGray, this.Lfansi_Color$__f_DarkGray, this.Lfansi_Color$__f_LightRed, this.Lfansi_Color$__f_LightGreen, this.Lfansi_Color$__f_LightYellow, this.Lfansi_Color$__f_LightBlue, this.Lfansi_Color$__f_LightMagenta, this.Lfansi_Color$__f_LightCyan, this.Lfansi_Color$__f_White];
   var elems = $ct_sjsr_WrappedVarArgs__sjs_js_Array__(new $c_sjsr_WrappedVarArgs(), array);
@@ -14743,7 +14716,7 @@ $c_sci_BitmapIndexedMapNode.prototype.getHash__I__I = (function(index) {
   return $n(this.sci_BitmapIndexedMapNode__f_originalHashes).get(index);
 });
 $c_sci_BitmapIndexedMapNode.prototype.getNode__I__sci_MapNode = (function(index) {
-  return $as_sci_MapNode($n(this.sci_BitmapIndexedMapNode__f_content).get((((((-1) + $n(this.sci_BitmapIndexedMapNode__f_content).u.length) | 0) - index) | 0)));
+  return $as_sci_MapNode($n(this.sci_BitmapIndexedMapNode__f_content).get((((($n(this.sci_BitmapIndexedMapNode__f_content).u.length - 1) | 0) - index) | 0)));
 });
 $c_sci_BitmapIndexedMapNode.prototype.apply__O__I__I__I__O = (function(key, originalHash, keyHash, shift) {
   var mask = $m_sci_Node$().maskFrom__I__I__I(keyHash, shift);
@@ -14872,7 +14845,7 @@ $c_sci_BitmapIndexedMapNode.prototype.updateWithShallowMutations__O__O__I__I__I_
       }
       var subNodeNew$2 = result;
     }
-    $n(this.sci_BitmapIndexedMapNode__f_content).set((((((-1) + $n(this.sci_BitmapIndexedMapNode__f_content).u.length) | 0) - this.nodeIndex__I__I(bitpos)) | 0), subNodeNew$2);
+    $n(this.sci_BitmapIndexedMapNode__f_content).set((((($n(this.sci_BitmapIndexedMapNode__f_content).u.length - 1) | 0) - this.nodeIndex__I__I(bitpos)) | 0), subNodeNew$2);
     this.sci_BitmapIndexedMapNode__f_size = ((((this.sci_BitmapIndexedMapNode__f_size - subNodeSize) | 0) + $n(subNodeNew$2).size__I()) | 0);
     this.sci_BitmapIndexedMapNode__f_cachedJavaKeySetHashCode = ((((this.sci_BitmapIndexedMapNode__f_cachedJavaKeySetHashCode - subNodeHashCode) | 0) + $n(subNodeNew$2).cachedJavaKeySetHashCode__I()) | 0);
     return returnMutableNodeMap;
@@ -14932,11 +14905,11 @@ $c_sci_BitmapIndexedMapNode.prototype.payloadArity__I = (function() {
   return $m_jl_Integer$().bitCount__I__I(i);
 });
 $c_sci_BitmapIndexedMapNode.prototype.dataIndex__I__I = (function(bitpos) {
-  var i = (this.sci_BitmapIndexedMapNode__f_dataMap & (((-1) + bitpos) | 0));
+  var i = (this.sci_BitmapIndexedMapNode__f_dataMap & ((bitpos - 1) | 0));
   return $m_jl_Integer$().bitCount__I__I(i);
 });
 $c_sci_BitmapIndexedMapNode.prototype.nodeIndex__I__I = (function(bitpos) {
-  var i = (this.sci_BitmapIndexedMapNode__f_nodeMap & (((-1) + bitpos) | 0));
+  var i = (this.sci_BitmapIndexedMapNode__f_nodeMap & ((bitpos - 1) | 0));
   return $m_jl_Integer$().bitCount__I__I(i);
 });
 $c_sci_BitmapIndexedMapNode.prototype.copyAndSetValue__I__O__O__sci_BitmapIndexedMapNode = (function(bitpos, newKey, newValue) {
@@ -14950,7 +14923,7 @@ $c_sci_BitmapIndexedMapNode.prototype.copyAndSetValue__I__O__O__sci_BitmapIndexe
   return new $c_sci_BitmapIndexedMapNode(this.sci_BitmapIndexedMapNode__f_dataMap, this.sci_BitmapIndexedMapNode__f_nodeMap, dst, this.sci_BitmapIndexedMapNode__f_originalHashes, this.sci_BitmapIndexedMapNode__f_size, this.sci_BitmapIndexedMapNode__f_cachedJavaKeySetHashCode);
 });
 $c_sci_BitmapIndexedMapNode.prototype.copyAndSetNode__I__sci_MapNode__sci_MapNode__sci_BitmapIndexedMapNode = (function(bitpos, oldNode, newNode) {
-  var idx = (((((-1) + $n(this.sci_BitmapIndexedMapNode__f_content).u.length) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
+  var idx = (((($n(this.sci_BitmapIndexedMapNode__f_content).u.length - 1) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
   var src = this.sci_BitmapIndexedMapNode__f_content;
   var dst = new $ac_O($n(src).u.length);
   var length = $n(src).u.length;
@@ -14975,9 +14948,9 @@ $c_sci_BitmapIndexedMapNode.prototype.copyAndInsertValue__I__O__I__I__O__sci_Bit
 $c_sci_BitmapIndexedMapNode.prototype.migrateFromInlineToNodeInPlace__I__I__sci_MapNode__sci_BitmapIndexedMapNode = (function(bitpos, keyHash, node) {
   var dataIx = this.dataIndex__I__I(bitpos);
   var idxOld = (dataIx << 1);
-  var idxNew = (((((-2) + $n(this.sci_BitmapIndexedMapNode__f_content).u.length) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
+  var idxNew = (((($n(this.sci_BitmapIndexedMapNode__f_content).u.length - 2) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
   var src = this.sci_BitmapIndexedMapNode__f_content;
-  var dst = new $ac_O((((-1) + $n(src).u.length) | 0));
+  var dst = new $ac_O((($n(src).u.length - 1) | 0));
   $systemArraycopyRefs($n(src), 0, dst, 0, idxOld);
   var srcPos = ((2 + idxOld) | 0);
   var length = ((idxNew - idxOld) | 0);
@@ -14985,23 +14958,23 @@ $c_sci_BitmapIndexedMapNode.prototype.migrateFromInlineToNodeInPlace__I__I__sci_
   dst.set(idxNew, node);
   var srcPos$1 = ((2 + idxNew) | 0);
   var destPos = ((1 + idxNew) | 0);
-  var length$1 = (((-2) + (($n(src).u.length - idxNew) | 0)) | 0);
+  var length$1 = (((($n(src).u.length - idxNew) | 0) - 2) | 0);
   $systemArraycopyRefs($n(src), srcPos$1, dst, destPos, length$1);
   var dstHashes = this.removeElement__AI__I__AI(this.sci_BitmapIndexedMapNode__f_originalHashes, dataIx);
   this.sci_BitmapIndexedMapNode__f_dataMap = (this.sci_BitmapIndexedMapNode__f_dataMap ^ bitpos);
   this.sci_BitmapIndexedMapNode__f_nodeMap = (this.sci_BitmapIndexedMapNode__f_nodeMap | bitpos);
   this.sci_BitmapIndexedMapNode__f_content = dst;
   this.sci_BitmapIndexedMapNode__f_originalHashes = dstHashes;
-  this.sci_BitmapIndexedMapNode__f_size = (((((-1) + this.sci_BitmapIndexedMapNode__f_size) | 0) + $n(node).size__I()) | 0);
+  this.sci_BitmapIndexedMapNode__f_size = ((((this.sci_BitmapIndexedMapNode__f_size - 1) | 0) + $n(node).size__I()) | 0);
   this.sci_BitmapIndexedMapNode__f_cachedJavaKeySetHashCode = ((((this.sci_BitmapIndexedMapNode__f_cachedJavaKeySetHashCode - keyHash) | 0) + $n(node).cachedJavaKeySetHashCode__I()) | 0);
   return this;
 });
 $c_sci_BitmapIndexedMapNode.prototype.copyAndMigrateFromInlineToNode__I__I__sci_MapNode__sci_BitmapIndexedMapNode = (function(bitpos, keyHash, node) {
   var dataIx = this.dataIndex__I__I(bitpos);
   var idxOld = (dataIx << 1);
-  var idxNew = (((((-2) + $n(this.sci_BitmapIndexedMapNode__f_content).u.length) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
+  var idxNew = (((($n(this.sci_BitmapIndexedMapNode__f_content).u.length - 2) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
   var src = this.sci_BitmapIndexedMapNode__f_content;
-  var dst = new $ac_O((((-1) + $n(src).u.length) | 0));
+  var dst = new $ac_O((($n(src).u.length - 1) | 0));
   $systemArraycopyRefs($n(src), 0, dst, 0, idxOld);
   var srcPos = ((2 + idxOld) | 0);
   var length = ((idxNew - idxOld) | 0);
@@ -15009,10 +14982,10 @@ $c_sci_BitmapIndexedMapNode.prototype.copyAndMigrateFromInlineToNode__I__I__sci_
   dst.set(idxNew, node);
   var srcPos$1 = ((2 + idxNew) | 0);
   var destPos = ((1 + idxNew) | 0);
-  var length$1 = (((-2) + (($n(src).u.length - idxNew) | 0)) | 0);
+  var length$1 = (((($n(src).u.length - idxNew) | 0) - 2) | 0);
   $systemArraycopyRefs($n(src), srcPos$1, dst, destPos, length$1);
   var dstHashes = this.removeElement__AI__I__AI(this.sci_BitmapIndexedMapNode__f_originalHashes, dataIx);
-  return new $c_sci_BitmapIndexedMapNode((this.sci_BitmapIndexedMapNode__f_dataMap ^ bitpos), (this.sci_BitmapIndexedMapNode__f_nodeMap | bitpos), dst, dstHashes, (((((-1) + this.sci_BitmapIndexedMapNode__f_size) | 0) + $n(node).size__I()) | 0), ((((this.sci_BitmapIndexedMapNode__f_cachedJavaKeySetHashCode - keyHash) | 0) + $n(node).cachedJavaKeySetHashCode__I()) | 0));
+  return new $c_sci_BitmapIndexedMapNode((this.sci_BitmapIndexedMapNode__f_dataMap ^ bitpos), (this.sci_BitmapIndexedMapNode__f_nodeMap | bitpos), dst, dstHashes, ((((this.sci_BitmapIndexedMapNode__f_size - 1) | 0) + $n(node).size__I()) | 0), ((((this.sci_BitmapIndexedMapNode__f_cachedJavaKeySetHashCode - keyHash) | 0) + $n(node).cachedJavaKeySetHashCode__I()) | 0));
 });
 $c_sci_BitmapIndexedMapNode.prototype.foreach__F1__V = (function(f) {
   var i = this.sci_BitmapIndexedMapNode__f_dataMap;
@@ -15119,7 +15092,7 @@ $c_sci_BitmapIndexedMapNode.prototype.concat__sci_MapNode__I__sci_BitmapIndexedM
     var anyChangesMadeSoFar = false;
     var allMap = (((this.sci_BitmapIndexedMapNode__f_dataMap | $n(x2).sci_BitmapIndexedMapNode__f_dataMap) | this.sci_BitmapIndexedMapNode__f_nodeMap) | $n(x2).sci_BitmapIndexedMapNode__f_nodeMap);
     var $x_1 = $m_sci_Node$();
-    var i = ((~allMap) & (((-1) + allMap) | 0));
+    var i = ((~allMap) & ((allMap - 1) | 0));
     var minimumBitPos = $x_1.bitposFrom__I__I(((32 - Math.clz32(i)) | 0));
     var maximumBitPos = $m_sci_Node$().bitposFrom__I__I(((31 - Math.clz32(allMap)) | 0));
     var leftNodeRightNode = 0;
@@ -15201,7 +15174,7 @@ $c_sci_BitmapIndexedMapNode.prototype.concat__sci_MapNode__I__sci_BitmapIndexedM
         if ((rightNode !== newNode)) {
           anyChangesMadeSoFar = true;
         }
-        newContent.set((((-1) + ((newContentSize - compressedNodeIdx) | 0)) | 0), newNode);
+        newContent.set(((((newContentSize - compressedNodeIdx) | 0) - 1) | 0), newNode);
         compressedNodeIdx = ((1 + compressedNodeIdx) | 0);
         rightNodeIdx = ((1 + rightNodeIdx) | 0);
         leftNodeIdx = ((1 + leftNodeIdx) | 0);
@@ -15217,7 +15190,7 @@ $c_sci_BitmapIndexedMapNode.prototype.concat__sci_MapNode__I__sci_BitmapIndexedM
         if ((updated !== n)) {
           anyChangesMadeSoFar = true;
         }
-        newContent.set((((-1) + ((newContentSize - compressedNodeIdx) | 0)) | 0), updated);
+        newContent.set(((((newContentSize - compressedNodeIdx) | 0) - 1) | 0), updated);
         compressedNodeIdx = ((1 + compressedNodeIdx) | 0);
         rightNodeIdx = ((1 + rightNodeIdx) | 0);
         leftDataIdx = ((1 + leftDataIdx) | 0);
@@ -15227,7 +15200,7 @@ $c_sci_BitmapIndexedMapNode.prototype.concat__sci_MapNode__I__sci_BitmapIndexedM
         anyChangesMadeSoFar = true;
         var rightOriginalHash = $n(x2).getHash__I__I(rightDataIdx);
         var newNode$3 = $n(this.getNode__I__sci_MapNode(leftNodeIdx)).updated__O__O__I__I__I__Z__sci_MapNode($n(x2).getKey__I__O(rightDataIdx), $n(x2).getValue__I__O(rightDataIdx), $n(x2).getHash__I__I(rightDataIdx), $m_sc_Hashing$().improve__I__I(rightOriginalHash), nextShift, true);
-        newContent.set((((-1) + ((newContentSize - compressedNodeIdx) | 0)) | 0), newNode$3);
+        newContent.set(((((newContentSize - compressedNodeIdx) | 0) - 1) | 0), newNode$3);
         compressedNodeIdx = ((1 + compressedNodeIdx) | 0);
         leftNodeIdx = ((1 + leftNodeIdx) | 0);
         rightDataIdx = ((1 + rightDataIdx) | 0);
@@ -15255,14 +15228,14 @@ $c_sci_BitmapIndexedMapNode.prototype.concat__sci_MapNode__I__sci_BitmapIndexedM
       } else if (((bitpos$2 & leftNodeOnly) !== 0)) {
         anyChangesMadeSoFar = true;
         var newNode$4 = this.getNode__I__sci_MapNode(leftNodeIdx);
-        newContent.set((((-1) + ((newContentSize - compressedNodeIdx) | 0)) | 0), newNode$4);
+        newContent.set(((((newContentSize - compressedNodeIdx) | 0) - 1) | 0), newNode$4);
         compressedNodeIdx = ((1 + compressedNodeIdx) | 0);
         leftNodeIdx = ((1 + leftNodeIdx) | 0);
         newSize = ((newSize + $n(newNode$4).size__I()) | 0);
         newCachedHashCode = ((newCachedHashCode + $n(newNode$4).cachedJavaKeySetHashCode__I()) | 0);
       } else if (((bitpos$2 & rightNodeOnly) !== 0)) {
         var newNode$5 = $n(x2).getNode__I__sci_MapNode(rightNodeIdx);
-        newContent.set((((-1) + ((newContentSize - compressedNodeIdx) | 0)) | 0), newNode$5);
+        newContent.set(((((newContentSize - compressedNodeIdx) | 0) - 1) | 0), newNode$5);
         compressedNodeIdx = ((1 + compressedNodeIdx) | 0);
         rightNodeIdx = ((1 + rightNodeIdx) | 0);
         newSize = ((newSize + $n(newNode$5).size__I()) | 0);
@@ -15272,7 +15245,7 @@ $c_sci_BitmapIndexedMapNode.prototype.concat__sci_MapNode__I__sci_BitmapIndexedM
         var leftOriginalHash$3 = this.getHash__I__I(leftDataIdx);
         var rightOriginalHash$2 = $n(x2).getHash__I__I(rightDataIdx);
         var newNode$6 = $n(x2).mergeTwoKeyValPairs__O__O__I__I__O__O__I__I__I__sci_MapNode(this.getKey__I__O(leftDataIdx), this.getValue__I__O(leftDataIdx), leftOriginalHash$3, $m_sc_Hashing$().improve__I__I(leftOriginalHash$3), $n(x2).getKey__I__O(rightDataIdx), $n(x2).getValue__I__O(rightDataIdx), rightOriginalHash$2, $m_sc_Hashing$().improve__I__I(rightOriginalHash$2), nextShift);
-        newContent.set((((-1) + ((newContentSize - compressedNodeIdx) | 0)) | 0), newNode$6);
+        newContent.set(((((newContentSize - compressedNodeIdx) | 0) - 1) | 0), newNode$6);
         compressedNodeIdx = ((1 + compressedNodeIdx) | 0);
         leftDataIdx = ((1 + leftDataIdx) | 0);
         rightDataIdx = ((1 + rightDataIdx) | 0);
@@ -15375,7 +15348,7 @@ $c_sci_BitmapIndexedSetNode.prototype.getHash__I__I = (function(index) {
   return $n(this.sci_BitmapIndexedSetNode__f_originalHashes).get(index);
 });
 $c_sci_BitmapIndexedSetNode.prototype.getNode__I__sci_SetNode = (function(index) {
-  return $as_sci_SetNode($n(this.sci_BitmapIndexedSetNode__f_content).get((((((-1) + $n(this.sci_BitmapIndexedSetNode__f_content).u.length) | 0) - index) | 0)));
+  return $as_sci_SetNode($n(this.sci_BitmapIndexedSetNode__f_content).get((((($n(this.sci_BitmapIndexedSetNode__f_content).u.length - 1) | 0) - index) | 0)));
 });
 $c_sci_BitmapIndexedSetNode.prototype.contains__O__I__I__I__Z = (function(element, originalHash, elementHash, shift) {
   var mask = $m_sci_Node$().maskFrom__I__I__I(elementHash, shift);
@@ -15456,15 +15429,15 @@ $c_sci_BitmapIndexedSetNode.prototype.nodeArity__I = (function() {
   return $m_jl_Integer$().bitCount__I__I(i);
 });
 $c_sci_BitmapIndexedSetNode.prototype.dataIndex__I__I = (function(bitpos) {
-  var i = (this.sci_BitmapIndexedSetNode__f_dataMap & (((-1) + bitpos) | 0));
+  var i = (this.sci_BitmapIndexedSetNode__f_dataMap & ((bitpos - 1) | 0));
   return $m_jl_Integer$().bitCount__I__I(i);
 });
 $c_sci_BitmapIndexedSetNode.prototype.nodeIndex__I__I = (function(bitpos) {
-  var i = (this.sci_BitmapIndexedSetNode__f_nodeMap & (((-1) + bitpos) | 0));
+  var i = (this.sci_BitmapIndexedSetNode__f_nodeMap & ((bitpos - 1) | 0));
   return $m_jl_Integer$().bitCount__I__I(i);
 });
 $c_sci_BitmapIndexedSetNode.prototype.copyAndSetNode__I__sci_SetNode__sci_SetNode__sci_BitmapIndexedSetNode = (function(bitpos, oldNode, newNode) {
-  var idx = (((((-1) + $n(this.sci_BitmapIndexedSetNode__f_content).u.length) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
+  var idx = (((($n(this.sci_BitmapIndexedSetNode__f_content).u.length - 1) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
   var src = this.sci_BitmapIndexedSetNode__f_content;
   var dst = new $ac_O($n(src).u.length);
   var length = $n(src).u.length;
@@ -15486,7 +15459,7 @@ $c_sci_BitmapIndexedSetNode.prototype.copyAndInsertValue__I__O__I__I__sci_Bitmap
 });
 $c_sci_BitmapIndexedSetNode.prototype.copyAndMigrateFromInlineToNode__I__I__sci_SetNode__sci_BitmapIndexedSetNode = (function(bitpos, elementHash, node) {
   var dataIx = this.dataIndex__I__I(bitpos);
-  var idxNew = (((((-1) + $n(this.sci_BitmapIndexedSetNode__f_content).u.length) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
+  var idxNew = (((($n(this.sci_BitmapIndexedSetNode__f_content).u.length - 1) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
   var src = this.sci_BitmapIndexedSetNode__f_content;
   var dst = new $ac_O($n(src).u.length);
   $systemArraycopyRefs($n(src), 0, dst, 0, dataIx);
@@ -15496,14 +15469,14 @@ $c_sci_BitmapIndexedSetNode.prototype.copyAndMigrateFromInlineToNode__I__I__sci_
   dst.set(idxNew, node);
   var srcPos$1 = ((1 + idxNew) | 0);
   var destPos = ((1 + idxNew) | 0);
-  var length$1 = (((-1) + (($n(src).u.length - idxNew) | 0)) | 0);
+  var length$1 = (((($n(src).u.length - idxNew) | 0) - 1) | 0);
   $systemArraycopyRefs($n(src), srcPos$1, dst, destPos, length$1);
   var dstHashes = this.removeElement__AI__I__AI(this.sci_BitmapIndexedSetNode__f_originalHashes, dataIx);
-  return new $c_sci_BitmapIndexedSetNode((this.sci_BitmapIndexedSetNode__f_dataMap ^ bitpos), (this.sci_BitmapIndexedSetNode__f_nodeMap | bitpos), dst, dstHashes, (((((-1) + this.sci_BitmapIndexedSetNode__f_size) | 0) + $n(node).size__I()) | 0), ((((this.sci_BitmapIndexedSetNode__f_cachedJavaKeySetHashCode - elementHash) | 0) + $n(node).cachedJavaKeySetHashCode__I()) | 0));
+  return new $c_sci_BitmapIndexedSetNode((this.sci_BitmapIndexedSetNode__f_dataMap ^ bitpos), (this.sci_BitmapIndexedSetNode__f_nodeMap | bitpos), dst, dstHashes, ((((this.sci_BitmapIndexedSetNode__f_size - 1) | 0) + $n(node).size__I()) | 0), ((((this.sci_BitmapIndexedSetNode__f_cachedJavaKeySetHashCode - elementHash) | 0) + $n(node).cachedJavaKeySetHashCode__I()) | 0));
 });
 $c_sci_BitmapIndexedSetNode.prototype.migrateFromInlineToNodeInPlace__I__I__sci_SetNode__sci_BitmapIndexedSetNode = (function(bitpos, keyHash, node) {
   var dataIx = this.dataIndex__I__I(bitpos);
-  var idxNew = (((((-1) + $n(this.sci_BitmapIndexedSetNode__f_content).u.length) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
+  var idxNew = (((($n(this.sci_BitmapIndexedSetNode__f_content).u.length - 1) | 0) - this.nodeIndex__I__I(bitpos)) | 0);
   var src = this.sci_BitmapIndexedSetNode__f_content;
   var srcPos = ((1 + dataIx) | 0);
   var dest = this.sci_BitmapIndexedSetNode__f_content;
@@ -15513,7 +15486,7 @@ $c_sci_BitmapIndexedSetNode.prototype.migrateFromInlineToNodeInPlace__I__I__sci_
   this.sci_BitmapIndexedSetNode__f_dataMap = (this.sci_BitmapIndexedSetNode__f_dataMap ^ bitpos);
   this.sci_BitmapIndexedSetNode__f_nodeMap = (this.sci_BitmapIndexedSetNode__f_nodeMap | bitpos);
   this.sci_BitmapIndexedSetNode__f_originalHashes = this.removeElement__AI__I__AI(this.sci_BitmapIndexedSetNode__f_originalHashes, dataIx);
-  this.sci_BitmapIndexedSetNode__f_size = (((((-1) + this.sci_BitmapIndexedSetNode__f_size) | 0) + $n(node).size__I()) | 0);
+  this.sci_BitmapIndexedSetNode__f_size = ((((this.sci_BitmapIndexedSetNode__f_size - 1) | 0) + $n(node).size__I()) | 0);
   this.sci_BitmapIndexedSetNode__f_cachedJavaKeySetHashCode = ((((this.sci_BitmapIndexedSetNode__f_cachedJavaKeySetHashCode - keyHash) | 0) + $n(node).cachedJavaKeySetHashCode__I()) | 0);
   return this;
 });
@@ -15537,49 +15510,48 @@ $c_sci_BitmapIndexedSetNode.prototype.subsetOf__sci_SetNode__I__Z = (function(th
   if ((this === that)) {
     return true;
   } else if ((!(that instanceof $c_sci_HashCollisionSetNode))) {
-    if ((that instanceof $c_sci_BitmapIndexedSetNode)) {
-      var x3 = $as_sci_BitmapIndexedSetNode(that);
-      var thisBitmap = (this.sci_BitmapIndexedSetNode__f_dataMap | this.sci_BitmapIndexedSetNode__f_nodeMap);
-      var nodeBitmap = ($n(x3).sci_BitmapIndexedSetNode__f_dataMap | $n(x3).sci_BitmapIndexedSetNode__f_nodeMap);
-      if (((thisBitmap | nodeBitmap) !== nodeBitmap)) {
-        return false;
-      }
-      var bitmap = (thisBitmap & nodeBitmap);
-      var i = bitmap;
-      var i$1 = ((~i) & (((-1) + i) | 0));
-      var bitsToSkip = ((32 - Math.clz32(i$1)) | 0);
-      var isValidSubset = true;
-      while ((isValidSubset && (bitsToSkip < 32))) {
-        var bitpos = $m_sci_Node$().bitposFrom__I__I(bitsToSkip);
-        if (((this.sci_BitmapIndexedSetNode__f_dataMap & bitpos) !== 0)) {
-          if ((($n(x3).sci_BitmapIndexedSetNode__f_dataMap & bitpos) !== 0)) {
-            var payload0 = this.getPayload__I__O($m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_dataMap, bitpos));
-            var payload1 = $n(x3).getPayload__I__O($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_dataMap, bitpos));
-            isValidSubset = $m_sr_BoxesRunTime$().equals__O__O__Z(payload0, payload1);
-          } else {
-            var thisDataIndex = $m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_dataMap, bitpos);
-            var payload = this.getPayload__I__O(thisDataIndex);
-            var subNode = $n(that).getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
-            var elementUnimprovedHash = this.getHash__I__I(thisDataIndex);
-            var elementHash = $m_sc_Hashing$().improve__I__I(elementUnimprovedHash);
-            isValidSubset = $n(subNode).contains__O__I__I__I__Z(payload, elementUnimprovedHash, elementHash, ((5 + shift) | 0));
-          }
-        } else if ((($n(x3).sci_BitmapIndexedSetNode__f_dataMap & bitpos) === 0)) {
-          var subNode0 = this.getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
-          var subNode1 = $n(x3).getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
-          isValidSubset = $n(subNode0).subsetOf__sci_SetNode__I__Z(subNode1, ((5 + shift) | 0));
-        } else {
-          isValidSubset = false;
-        }
-        var newBitmap = (bitmap ^ bitpos);
-        bitmap = newBitmap;
-        var i$2 = ((~newBitmap) & (((-1) + newBitmap) | 0));
-        bitsToSkip = ((32 - Math.clz32(i$2)) | 0);
-      }
-      return isValidSubset;
-    } else {
+    if ((!(that instanceof $c_sci_BitmapIndexedSetNode))) {
       throw new $c_s_MatchError(that);
     }
+    var x3 = $as_sci_BitmapIndexedSetNode(that);
+    var thisBitmap = (this.sci_BitmapIndexedSetNode__f_dataMap | this.sci_BitmapIndexedSetNode__f_nodeMap);
+    var nodeBitmap = ($n(x3).sci_BitmapIndexedSetNode__f_dataMap | $n(x3).sci_BitmapIndexedSetNode__f_nodeMap);
+    if (((thisBitmap | nodeBitmap) !== nodeBitmap)) {
+      return false;
+    }
+    var bitmap = (thisBitmap & nodeBitmap);
+    var i = bitmap;
+    var i$1 = ((~i) & ((i - 1) | 0));
+    var bitsToSkip = ((32 - Math.clz32(i$1)) | 0);
+    var isValidSubset = true;
+    while ((isValidSubset && (bitsToSkip < 32))) {
+      var bitpos = $m_sci_Node$().bitposFrom__I__I(bitsToSkip);
+      if (((this.sci_BitmapIndexedSetNode__f_dataMap & bitpos) !== 0)) {
+        if ((($n(x3).sci_BitmapIndexedSetNode__f_dataMap & bitpos) !== 0)) {
+          var payload0 = this.getPayload__I__O($m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_dataMap, bitpos));
+          var payload1 = $n(x3).getPayload__I__O($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_dataMap, bitpos));
+          isValidSubset = $m_sr_BoxesRunTime$().equals__O__O__Z(payload0, payload1);
+        } else {
+          var thisDataIndex = $m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_dataMap, bitpos);
+          var payload = this.getPayload__I__O(thisDataIndex);
+          var subNode = $n(that).getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
+          var elementUnimprovedHash = this.getHash__I__I(thisDataIndex);
+          var elementHash = $m_sc_Hashing$().improve__I__I(elementUnimprovedHash);
+          isValidSubset = $n(subNode).contains__O__I__I__I__Z(payload, elementUnimprovedHash, elementHash, ((5 + shift) | 0));
+        }
+      } else if ((($n(x3).sci_BitmapIndexedSetNode__f_dataMap & bitpos) === 0)) {
+        var subNode0 = this.getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I(this.sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
+        var subNode1 = $n(x3).getNode__I__sci_SetNode($m_sci_Node$().indexFrom__I__I__I($n(x3).sci_BitmapIndexedSetNode__f_nodeMap, bitpos));
+        isValidSubset = $n(subNode0).subsetOf__sci_SetNode__I__Z(subNode1, ((5 + shift) | 0));
+      } else {
+        isValidSubset = false;
+      }
+      var newBitmap = (bitmap ^ bitpos);
+      bitmap = newBitmap;
+      var i$2 = ((~newBitmap) & ((newBitmap - 1) | 0));
+      bitsToSkip = ((32 - Math.clz32(i$2)) | 0);
+    }
+    return isValidSubset;
   } else {
     return false;
   }
@@ -17630,7 +17602,7 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
     }
     fmtIndex = $uI(re.lastIndex);
     var this$6 = $n(format);
-    var index = (((-1) + fmtIndex) | 0);
+    var index = ((fmtIndex - 1) | 0);
     var conversion$2 = $charAt(this$6, index);
     var flags = $p_ju_Formatter__parseFlags__T__C__I($thiz, $as_T(execResult[2]), conversion$2);
     var width = $p_ju_Formatter__parsePositiveInt__O__I($thiz, execResult[3]);
@@ -17668,7 +17640,7 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
       $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, "%");
     } else {
       var conversionLower = (((256 & flags) !== 0) ? (65535 & ((32 + conversion$2) | 0)) : conversion$2);
-      var illegalFlags = $n($m_ju_Formatter$().ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags).get((((-97) + conversionLower) | 0));
+      var illegalFlags = $n($m_ju_Formatter$().ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags).get(((conversionLower - 97) | 0));
       if (((illegalFlags === (-1)) || (((256 & flags) & illegalFlags) !== 0))) {
         $p_ju_Formatter__throwUnknownFormatConversionException__C__E($thiz, conversion$2);
       }
@@ -17702,7 +17674,7 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
         $p_ju_Formatter__throwMissingFormatArgumentException__T__E($thiz, $ps_ju_Formatter__fullFormatSpecifier$1__O__T(execResult));
       }
       lastArgIndex = argIndex;
-      var arg = $n(args).get((((-1) + argIndex) | 0));
+      var arg = $n(args).get(((argIndex - 1) | 0));
       if ((((arg === null) && (conversionLower !== 98)) && (conversionLower !== 115))) {
         $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, $m_ju_Formatter$RootLocaleInfo$(), flags, width, precision, "null");
       } else {
@@ -17713,7 +17685,7 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
   return $thiz;
 }
 function $p_ju_Formatter__parseFlags__T__C__I($thiz, flags, conversion) {
-  var bits = (((conversion >= 65) && (conversion <= 90)) ? 256 : 0);
+  var bits = (((((conversion - 65) | 0) >>> 0) <= 25) ? 256 : 0);
   var this$1 = $n(flags);
   var len = this$1.length;
   var i = 0;
@@ -17812,10 +17784,10 @@ function $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($
           $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg);
         }
         var x3 = $uI(arg);
-        if ((!((x3 >= 0) && (x3 <= 1114111)))) {
+        if (((x3 >>> 0) > 1114111)) {
           $p_ju_Formatter__throwIllegalFormatCodePointException__I__E($thiz, x3);
         }
-        var str$4 = ((x3 < 65536) ? $as_T(String.fromCharCode(x3)) : $as_T(String.fromCharCode((55296 | (((-64) + (x3 >> 10)) | 0)), (56320 | (1023 & x3)))));
+        var str$4 = ((x3 < 65536) ? $as_T(String.fromCharCode(x3)) : $as_T(String.fromCharCode((55296 | (((x3 >> 10) - 64) | 0)), (56320 | (1023 & x3)))));
       }
       $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo, flags, width, (-1), str$4);
       break;
@@ -17824,12 +17796,11 @@ function $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($
       if ($isInt(arg)) {
         var x2$3 = $uI(arg);
         var str$5 = ("" + x2$3);
-      } else if ((arg instanceof $c_RTLong)) {
-        var t = $uJ(arg);
-        var lo = t.RTLong__f_lo;
-        var hi = t.RTLong__f_hi;
-        var this$12 = $m_RTLong$();
-        var str$5 = this$12.org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T(lo, hi);
+      } else if ((arg instanceof $Long)) {
+        var $x_1 = $uJ(arg);
+        var x3$2_$_lo = $x_1.l;
+        var x3$2_$_hi = $x_1.h;
+        var str$5 = $m_RTLong$().toString__I__I__T(x3$2_$_lo, x3$2_$_hi);
       } else {
         if ((!false)) {
           $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg);
@@ -17853,18 +17824,18 @@ function $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($
           var x2$5 = $uI(arg);
           var str$6 = (isOctal ? $as_T((x2$5 >>> 0.0).toString(8)) : $as_T((x2$5 >>> 0.0).toString(16)));
         } else {
-          if ((!(arg instanceof $c_RTLong))) {
+          if ((!(arg instanceof $Long))) {
             $thiz.java$util$Formatter$$throwIllegalFormatConversionException__C__O__E(conversionLower, arg);
           }
-          var t$1 = $uJ(arg);
-          var lo$1 = t$1.RTLong__f_lo;
-          var hi$1 = t$1.RTLong__f_hi;
+          var $x_2 = $uJ(arg);
+          var x3$3_$_lo = $x_2.l;
+          var x3$3_$_hi = $x_2.h;
           if (isOctal) {
-            var this$21 = $m_jl_Long$();
-            var str$6 = this$21.java$lang$Long$$toOctalString__I__I__T(lo$1, hi$1);
+            var this$20 = $m_jl_Long$();
+            var str$6 = this$20.java$lang$Long$$toOctalString__I__I__T(x3$3_$_lo, x3$3_$_hi);
           } else {
-            var this$25 = $m_jl_Long$();
-            var str$6 = this$25.java$lang$Long$$toHexString__I__I__T(lo$1, hi$1);
+            var this$24 = $m_jl_Long$();
+            var str$6 = this$24.java$lang$Long$$toHexString__I__I__T(x3$3_$_lo, x3$3_$_hi);
           }
         }
         if (((76 & flags) !== 0)) {
@@ -17914,7 +17885,7 @@ function $p_ju_Formatter__computerizedScientificNotation__ju_Formatter$Decimal__
   var signStr = ($n(rounded).ju_Formatter$Decimal__f_negative ? "-" : "");
   var intStr = $n(rounded).ju_Formatter$Decimal__f_unscaledValue;
   var this$1 = $n(intStr);
-  var fractionalDigitCount = (((-1) + this$1.length) | 0);
+  var fractionalDigitCount = ((this$1.length - 1) | 0);
   var missingZeros = ((digitsAfterDot - fractionalDigitCount) | 0);
   var this$2 = $n(intStr);
   if ((this$2.length < 1)) {
@@ -17968,12 +17939,12 @@ function $p_ju_Formatter__generalScientificNotation__ju_Formatter$Decimal__I__Z_
   var rounded = $n(x).round__I__ju_Formatter$Decimal(p);
   var this$1 = $n(rounded);
   var this$2 = $n(this$1.ju_Formatter$Decimal__f_unscaledValue);
-  var orderOfMagnitude = (((((-1) + this$2.length) | 0) - $n(rounded).ju_Formatter$Decimal__f_scale) | 0);
+  var orderOfMagnitude = ((((this$2.length - 1) | 0) - $n(rounded).ju_Formatter$Decimal__f_scale) | 0);
   if (((orderOfMagnitude >= (-4)) && (orderOfMagnitude < p))) {
-    var b = (((-1) + ((p - orderOfMagnitude) | 0)) | 0);
+    var b = ((((p - orderOfMagnitude) | 0) - 1) | 0);
     return $p_ju_Formatter__decimalNotation__ju_Formatter$Decimal__I__Z__T($thiz, rounded, ((b < 0) ? 0 : b), forceDecimalSep);
   } else {
-    return $p_ju_Formatter__computerizedScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, rounded, (((-1) + p) | 0), forceDecimalSep);
+    return $p_ju_Formatter__computerizedScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, rounded, ((p - 1) | 0), forceDecimalSep);
   }
 }
 function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, width, precision, arg) {
@@ -17991,81 +17962,80 @@ function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, wi
     var actualPrecision = ((precision === 0) ? 1 : ((precision > 12) ? (-1) : precision));
     var signStr = (negative ? "-" : (((4 & flags) !== 0) ? "+" : (((8 & flags) !== 0) ? " " : "")));
     if ((biasedExponent === 0)) {
-      if (((lo === 0) && (hi$1 === 0))) {
+      if (((lo | hi$1) === 0)) {
         var x1___1 = "0";
-        var x1___2 = $L0;
+        var x1___2 = $bL(0, 0);
         var x1___3 = 0;
       } else if ((actualPrecision === (-1))) {
         var x1___1 = "0";
-        var x1___2 = new $c_RTLong(lo, hi$1);
+        var x1___2 = $bL(lo, hi$1);
         var x1___3 = (-1022);
       } else {
         var leadingZeros = ((hi$1 !== 0) ? Math.clz32(hi$1) : ((32 + Math.clz32(lo)) | 0));
-        var shift = (((-11) + leadingZeros) | 0);
+        var shift = ((leadingZeros - 11) | 0);
         var lo$2 = (((32 & shift) === 0) ? (lo << shift) : 0);
         var hi$2 = (((32 & shift) === 0) ? (((((lo >>> 1) | 0) >>> ((31 - shift) | 0)) | 0) | (hi$1 << shift)) : (lo << shift));
         var hi$3 = (1048575 & hi$2);
         var normalizedExponent = (((-1022) - shift) | 0);
         var x1___1 = "1";
-        var x1___2 = new $c_RTLong(lo$2, hi$3);
+        var x1___2 = $bL(lo$2, hi$3);
         var x1___3 = normalizedExponent;
       }
     } else {
-      var _3 = (((-1023) + biasedExponent) | 0);
+      var _3 = ((biasedExponent - 1023) | 0);
       var x1___1 = "1";
-      var x1___2 = new $c_RTLong(lo, hi$1);
+      var x1___2 = $bL(lo, hi$1);
       var x1___3 = _3;
     }
     var implicitBitStr = $as_T(x1___1);
-    var t = $uJ(x1___2);
-    var lo$3 = t.RTLong__f_lo;
-    var hi$4 = t.RTLong__f_hi;
+    var $x_1 = $uJ(x1___2);
+    var mantissa_$_lo = $x_1.l;
+    var mantissa_$_hi = $x_1.h;
     var exponent = $uI(x1___3);
     if ((actualPrecision === (-1))) {
-      var roundedMantissa__lo = lo$3;
-      var roundedMantissa__hi = hi$4;
+      var roundedMantissa_$_lo = mantissa_$_lo;
+      var roundedMantissa_$_hi = mantissa_$_hi;
     } else {
       var n = ((52 - (actualPrecision << 2)) | 0);
-      var lo$4 = (((32 & n) === 0) ? (1 << n) : 0);
-      var hi$5 = (((32 & n) === 0) ? 0 : (1 << n));
-      var lo$5 = (((-1) + lo$4) | 0);
-      var hi$6 = (((((-1) + hi$5) | 0) + (((lo$4 | (~lo$5)) >>> 31) | 0)) | 0);
-      var lo$6 = (((lo$4 >>> 1) | 0) | (hi$5 << 31));
-      var hi$7 = (hi$5 >> 1);
-      var lo$7 = (~lo$5);
-      var hi$8 = (~hi$6);
-      var lo$8 = (lo$3 & lo$7);
-      var hi$9 = (hi$4 & hi$8);
-      var lo$9 = (lo$3 & lo$5);
-      var hi$10 = (hi$4 & hi$6);
-      if (((hi$10 === hi$7) ? ((lo$9 >>> 0) < (lo$6 >>> 0)) : (hi$10 < hi$7))) {
-        var roundedMantissa__lo = lo$8;
-        var roundedMantissa__hi = hi$9;
-      } else if (((hi$10 === hi$7) ? ((lo$9 >>> 0) > (lo$6 >>> 0)) : (hi$10 > hi$7))) {
-        var lo$10 = ((lo$8 + lo$4) | 0);
-        var hi$11 = ((((hi$9 + hi$5) | 0) + ((((lo$8 & lo$4) | ((lo$8 | lo$4) & (~lo$10))) >>> 31) | 0)) | 0);
-        var roundedMantissa__lo = lo$10;
-        var roundedMantissa__hi = hi$11;
+      var lo$3 = (((32 & n) === 0) ? (1 << n) : 0);
+      var hi$4 = (((32 & n) === 0) ? 0 : (1 << n));
+      var lo$4 = ((lo$3 - 1) | 0);
+      var hi$5 = ((((hi$4 - 1) | 0) + (((lo$3 | (~lo$4)) >>> 31) | 0)) | 0);
+      var lo$5 = (((lo$3 >>> 1) | 0) | (hi$4 << 31));
+      var hi$6 = (hi$4 >> 1);
+      var lo$6 = (~lo$4);
+      var hi$7 = (~hi$5);
+      var lo$7 = (mantissa_$_lo & lo$6);
+      var hi$8 = (mantissa_$_hi & hi$7);
+      var lo$8 = (mantissa_$_lo & lo$4);
+      var hi$9 = (mantissa_$_hi & hi$5);
+      if (((hi$9 === hi$6) ? ((lo$8 >>> 0) < (lo$5 >>> 0)) : (hi$9 < hi$6))) {
+        var roundedMantissa_$_lo = lo$7;
+        var roundedMantissa_$_hi = hi$8;
+      } else if (((hi$9 === hi$6) ? ((lo$8 >>> 0) > (lo$5 >>> 0)) : (hi$9 > hi$6))) {
+        var lo$9 = ((lo$7 + lo$3) | 0);
+        var hi$10 = ((((hi$8 + hi$4) | 0) + ((((lo$7 & lo$3) | ((lo$7 | lo$3) & (~lo$9))) >>> 31) | 0)) | 0);
+        var roundedMantissa_$_lo = lo$9;
+        var roundedMantissa_$_hi = hi$10;
       } else {
-        var lo$11 = (lo$8 & lo$4);
-        var hi$12 = (hi$9 & hi$5);
-        if (((lo$11 === 0) && (hi$12 === 0))) {
-          var roundedMantissa__lo = lo$8;
-          var roundedMantissa__hi = hi$9;
+        var lo$10 = (lo$7 & lo$3);
+        var hi$11 = (hi$8 & hi$4);
+        if (((lo$10 | hi$11) === 0)) {
+          var roundedMantissa_$_lo = lo$7;
+          var roundedMantissa_$_hi = hi$8;
         } else {
-          var lo$12 = ((lo$8 + lo$4) | 0);
-          var hi$13 = ((((hi$9 + hi$5) | 0) + ((((lo$8 & lo$4) | ((lo$8 | lo$4) & (~lo$12))) >>> 31) | 0)) | 0);
-          var roundedMantissa__lo = lo$12;
-          var roundedMantissa__hi = hi$13;
+          var lo$11 = ((lo$7 + lo$3) | 0);
+          var hi$12 = ((((hi$8 + hi$4) | 0) + ((((lo$7 & lo$3) | ((lo$7 | lo$3) & (~lo$11))) >>> 31) | 0)) | 0);
+          var roundedMantissa_$_lo = lo$11;
+          var roundedMantissa_$_hi = hi$12;
         }
       }
     }
     var this$30 = $m_jl_Long$();
-    var hi$14 = roundedMantissa__hi;
-    var baseStr = this$30.java$lang$Long$$toHexString__I__I__T(roundedMantissa__lo, hi$14);
+    var baseStr = this$30.java$lang$Long$$toHexString__I__I__T(roundedMantissa_$_lo, roundedMantissa_$_hi);
     var this$34 = $n(baseStr);
     var beginIndex = this$34.length;
-    if (((beginIndex < 0) || (beginIndex > 13))) {
+    if (((beginIndex >>> 0) > 13)) {
       $charAt("0000000000000", beginIndex);
     }
     var padded = (("" + $as_T("0000000000000".substring(beginIndex))) + baseStr);
@@ -18078,13 +18048,13 @@ function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, wi
     var len = padded.length;
     while (true) {
       if ((len > minLength)) {
-        var index = (((-1) + len) | 0);
-        var $x_1 = ($charAt(padded, index) === 48);
+        var index = ((len - 1) | 0);
+        var $x_2 = ($charAt(padded, index) === 48);
       } else {
-        var $x_1 = false;
+        var $x_2 = false;
       }
-      if ($x_1) {
-        len = (((-1) + len) | 0);
+      if ($x_2) {
+        len = ((len - 1) | 0);
       } else {
         break;
       }
@@ -18186,7 +18156,7 @@ function $p_ju_Formatter__insertGroupingCommas__ju_Formatter$LocaleInfo__T__T($t
       var this$2 = $n(s);
       var index$1 = index;
       var c = $charAt(this$2, index$1);
-      var $x_1 = ((c >= 48) && (c <= 57));
+      var $x_1 = ((((c - 48) | 0) >>> 0) <= 9);
     } else {
       var $x_1 = false;
     }
@@ -18620,22 +18590,22 @@ $c_Lpprint_Truncated.prototype.knownSize__I = (function() {
 });
 $c_Lpprint_Truncated.prototype.completedLineCount__I = (function() {
   $m_s_Predef$().assert__Z__V((!this.hasNext__Z()));
-  return (((-1) + $n(this.Lpprint_Truncated__f_lineLengths).length__I()) | 0);
+  return (($n(this.Lpprint_Truncated__f_lineLengths).length__I() - 1) | 0);
 });
 $c_Lpprint_Truncated.prototype.lastLineLength__I = (function() {
   $m_s_Predef$().assert__Z__V((!this.hasNext__Z()));
-  return $uI($n(this.Lpprint_Truncated__f_lineLengths).apply__I__O((((-1) + $n(this.Lpprint_Truncated__f_lineLengths).length__I()) | 0)));
+  return $uI($n(this.Lpprint_Truncated__f_lineLengths).apply__I__O((($n(this.Lpprint_Truncated__f_lineLengths).length__I() - 1) | 0)));
 });
 $c_Lpprint_Truncated.prototype.toResult__Lpprint_Result = (function() {
   return new $c_Lpprint_Result(this, new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => this.completedLineCount__I())), new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => this.lastLineLength__I())));
 });
 $c_Lpprint_Truncated.prototype.hasNext__Z = (function() {
-  return (($n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_chunks).hasNext__Z() && ($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).completedLines__I() < (((-1) + this.Lpprint_Truncated__f_height) | 0))) || (!$n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_lastLineFinished));
+  return (($n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_chunks).hasNext__Z() && ($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).completedLines__I() < ((this.Lpprint_Truncated__f_height - 1) | 0))) || (!$n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_lastLineFinished));
 });
 $c_Lpprint_Truncated.prototype.next__Lfansi_Str = (function() {
-  if (($n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_chunks).hasNext__Z() && ($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).completedLines__I() < (((-1) + this.Lpprint_Truncated__f_height) | 0)))) {
+  if (($n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_chunks).hasNext__Z() && ($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).completedLines__I() < ((this.Lpprint_Truncated__f_height - 1) | 0)))) {
     var chunk = $as_Lfansi_Str($n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_chunks).next__O());
-    var x1 = $n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).consumeChunkUntilLine__Lfansi_Str__I__s_Option(chunk, (((-1) + this.Lpprint_Truncated__f_height) | 0));
+    var x1 = $n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).consumeChunkUntilLine__Lfansi_Str__I__s_Option(chunk, ((this.Lpprint_Truncated__f_height - 1) | 0));
     var x = $m_s_None$();
     if ((x === x1)) {
       if ((!$n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_chunks).hasNext__Z())) {
@@ -18645,7 +18615,7 @@ $c_Lpprint_Truncated.prototype.next__Lfansi_Str = (function() {
     } else if ((x1 instanceof $c_s_Some)) {
       var x3 = $as_s_Some(x1);
       var i = $uI($n(x3).s_Some__f_value);
-      var splitPoint = (($uI($n(this.Lpprint_Truncated__f_lineLengths).last__O()) !== 0) ? (((-1) + i) | 0) : i);
+      var splitPoint = (($uI($n(this.Lpprint_Truncated__f_lineLengths).last__O()) !== 0) ? ((i - 1) | 0) : i);
       var $x_1 = $n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this));
       var this$1 = $n(chunk);
       $x_1.Lpprint_Truncated$Internal$__f_lastChunkLeftover = $n(chunk).substring__I__I__Lfansi_Str(splitPoint, $n(this$1.Lfansi_Str__f_chars).u.length);
@@ -18667,7 +18637,7 @@ $c_Lpprint_Truncated.prototype.next__Lfansi_Str = (function() {
       var i$2 = $uI($n(x3$2).s_Some__f_value);
       charsLeftOver = true;
       var this$3 = $n(buffer);
-      var elem$1 = $n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_lastChunkLeftover).substring__I__I__Lfansi_Str(0, (((-1) + i$2) | 0));
+      var elem$1 = $n($n($p_Lpprint_Truncated__Internal__Lpprint_Truncated$Internal$(this)).Lpprint_Truncated$Internal$__f_lastChunkLeftover).substring__I__I__Lfansi_Str(0, ((i$2 - 1) | 0));
       $as_scm_Buffer(this$3.addOne__O__scm_Growable(elem$1));
     } else {
       throw new $c_s_MatchError(x1$2);
@@ -18720,15 +18690,19 @@ function $p_Lpprint_Util$ConcatIterator__check__Z($thiz) {
   while (true) {
     if ((($thiz.Lpprint_Util$ConcatIterator__f_head !== null) && $n($thiz.Lpprint_Util$ConcatIterator__f_head).hasNext__Z())) {
       return true;
-    } else if ((!$n($thiz.Lpprint_Util$ConcatIterator__f_it0).hasNext__Z())) {
-      return false;
     } else {
-      if (((($thiz.Lpprint_Util$ConcatIterator__f_count % 2) | 0) === 0)) {
-        $thiz.Lpprint_Util$ConcatIterator__f_head = $as_sc_Iterator($n($thiz.Lpprint_Util$ConcatIterator__f_it0).next__O());
-      } else {
-        $thiz.Lpprint_Util$ConcatIterator__f_head = $as_sc_Iterator($n($thiz.Lpprint_Util$ConcatIterator__f_joiner).apply__O());
+      if ($n($thiz.Lpprint_Util$ConcatIterator__f_it0).hasNext__Z()) {
+        var num = $thiz.Lpprint_Util$ConcatIterator__f_count;
+        var t = ((num >>> 31) | 0);
+        if (((((1 & ((num + t) | 0)) - t) | 0) === 0)) {
+          $thiz.Lpprint_Util$ConcatIterator__f_head = $as_sc_Iterator($n($thiz.Lpprint_Util$ConcatIterator__f_it0).next__O());
+        } else {
+          $thiz.Lpprint_Util$ConcatIterator__f_head = $as_sc_Iterator($n($thiz.Lpprint_Util$ConcatIterator__f_joiner).apply__O());
+        }
+        $thiz.Lpprint_Util$ConcatIterator__f_count = ((1 + $thiz.Lpprint_Util$ConcatIterator__f_count) | 0);
+        continue;
       }
-      $thiz.Lpprint_Util$ConcatIterator__f_count = ((1 + $thiz.Lpprint_Util$ConcatIterator__f_count) | 0);
+      return false;
     }
   }
 }
@@ -19289,7 +19263,7 @@ $c_sci_LazyList$.prototype.scala$collection$immutable$LazyList$$dropImpl__sci_La
       if ($x_1) {
         rest = $n(rest).tail__sci_LazyList();
         restRef.sr_ObjectRef__f_elem = rest;
-        i = (((-1) + i) | 0);
+        i = ((i - 1) | 0);
         iRef.sr_IntRef__f_elem = i;
       } else {
         break;
@@ -21836,19 +21810,17 @@ var $d_Lpprint_Tree$Lazy = new $TypeData().initClass($c_Lpprint_Tree$Lazy, "ppri
 function $c_Lpprint_Tree$Literal(body) {
   this.Lpprint_Tree$Literal__f_body = null;
   this.Lpprint_Tree$Literal__f_body = body;
-  _return: {
-    var this$4 = $n(body);
-    var len = this$4.length;
-    var i = 0;
-    while ((i < len)) {
-      var this$5 = $n(body);
-      var index = i;
-      var x0 = $charAt(this$5, index);
-      if (((x0 === 10) || (x0 === 13))) {
-        break _return;
-      }
-      i = ((1 + i) | 0);
+  var this$4 = $n(body);
+  var len = this$4.length;
+  var i = 0;
+  while ((i < len)) {
+    var this$5 = $n(body);
+    var index = i;
+    var x0 = $charAt(this$5, index);
+    if (((x0 === 10) || (x0 === 13))) {
+      break;
     }
+    i = ((1 + i) | 0);
   }
 }
 $c_Lpprint_Tree$Literal.prototype = new $h_O();
@@ -21929,7 +21901,20 @@ var $d_s_$less$colon$less$$anon$1 = new $TypeData().initClass($c_s_$less$colon$l
 }));
 function $p_s_MatchError__objString$lzycompute__T($thiz) {
   if ((!$thiz.s_MatchError__f_bitmap$0)) {
-    $thiz.s_MatchError__f_objString = (($thiz.s_MatchError__f_obj === null) ? "null" : $p_s_MatchError__liftedTree1$1__T($thiz));
+    if (($thiz.s_MatchError__f_obj === null)) {
+      var $x_1 = "null";
+    } else {
+      var this$1 = $n($thiz.s_MatchError__f_obj);
+      var cls = $objectGetClass(this$1);
+      if ((cls === null)) {
+        var ofClass = "of a JS class";
+      } else {
+        var this$2 = $n(cls);
+        var ofClass = ("of class " + this$2.data.name);
+      }
+      var $x_1 = $p_s_MatchError__liftedTree1$1__T__T($thiz, ofClass);
+    }
+    $thiz.s_MatchError__f_objString = $x_1;
     $thiz.s_MatchError__f_bitmap$0 = true;
   }
   return $thiz.s_MatchError__f_objString;
@@ -21937,15 +21922,11 @@ function $p_s_MatchError__objString$lzycompute__T($thiz) {
 function $p_s_MatchError__objString__T($thiz) {
   return ((!$thiz.s_MatchError__f_bitmap$0) ? $p_s_MatchError__objString$lzycompute__T($thiz) : $thiz.s_MatchError__f_objString);
 }
-function $p_s_MatchError__ofClass$1__T($thiz) {
-  var this$1 = $n($thiz.s_MatchError__f_obj);
-  return ("of class " + $objectClassName(this$1));
-}
-function $p_s_MatchError__liftedTree1$1__T($thiz) {
+function $p_s_MatchError__liftedTree1$1__T__T($thiz, ofClass$1) {
   try {
-    return ((($thiz.s_MatchError__f_obj + " (") + $p_s_MatchError__ofClass$1__T($thiz)) + ")");
+    return ((($thiz.s_MatchError__f_obj + " (") + ofClass$1) + ")");
   } catch (e) {
-    return ("an instance " + $p_s_MatchError__ofClass$1__T($thiz));
+    return ("an instance " + ofClass$1);
   }
 }
 class $c_s_MatchError extends $c_jl_RuntimeException {
@@ -22323,7 +22304,7 @@ function $f_sc_IndexedSeqOps__head__O($thiz) {
 }
 function $f_sc_IndexedSeqOps__last__O($thiz) {
   if ((!$thiz.isEmpty__Z())) {
-    return $thiz.apply__I__O((((-1) + $thiz.length__I()) | 0));
+    return $thiz.apply__I__O((($thiz.length__I() - 1) | 0));
   } else {
     if ($is_sc_IndexedSeq($thiz)) {
       var x2 = $as_sc_IndexedSeq($thiz);
@@ -22579,11 +22560,12 @@ $c_sc_Iterator$$anon$8.prototype.hasNext__Z = (function() {
       return true;
     } else if ($n(this.sc_Iterator$$anon$8__f_$outer).hasNext__Z()) {
       var a = $n(this.sc_Iterator$$anon$8__f_$outer).next__O();
-      if ($n(this.sc_Iterator$$anon$8__f_traversedValues).add__O__Z($n(this.sc_Iterator$$anon$8__f_f$1).apply__O__O(a))) {
-        this.sc_Iterator$$anon$8__f_nextElement = a;
-        this.sc_Iterator$$anon$8__f_nextElementDefined = true;
-        return true;
+      if ((!$n(this.sc_Iterator$$anon$8__f_traversedValues).add__O__Z($n(this.sc_Iterator$$anon$8__f_f$1).apply__O__O(a)))) {
+        continue;
       }
+      this.sc_Iterator$$anon$8__f_nextElement = a;
+      this.sc_Iterator$$anon$8__f_nextElementDefined = true;
+      return true;
     } else {
       return false;
     }
@@ -22667,7 +22649,10 @@ function $p_sc_Iterator$ConcatIterator__advance$1__Z($thiz) {
       $p_sc_Iterator$ConcatIterator__merge$1__V($thiz);
       if ($thiz.sc_Iterator$ConcatIterator__f_currentHasNextChecked) {
         return true;
-      } else if ((($thiz.sc_Iterator$ConcatIterator__f_current !== null) && $n($thiz.sc_Iterator$ConcatIterator__f_current).hasNext__Z())) {
+      } else {
+        if ((!(($thiz.sc_Iterator$ConcatIterator__f_current !== null) && $n($thiz.sc_Iterator$ConcatIterator__f_current).hasNext__Z()))) {
+          continue;
+        }
         $thiz.sc_Iterator$ConcatIterator__f_currentHasNextChecked = true;
         return true;
       }
@@ -22747,7 +22732,7 @@ function $p_sc_Iterator$SliceIterator__skip__V($thiz) {
   while (($thiz.sc_Iterator$SliceIterator__f_dropping > 0)) {
     if ($n($thiz.sc_Iterator$SliceIterator__f_underlying).hasNext__Z()) {
       $n($thiz.sc_Iterator$SliceIterator__f_underlying).next__O();
-      $thiz.sc_Iterator$SliceIterator__f_dropping = (((-1) + $thiz.sc_Iterator$SliceIterator__f_dropping) | 0);
+      $thiz.sc_Iterator$SliceIterator__f_dropping = (($thiz.sc_Iterator$SliceIterator__f_dropping - 1) | 0);
     } else {
       $thiz.sc_Iterator$SliceIterator__f_dropping = 0;
     }
@@ -22798,7 +22783,7 @@ $c_sc_Iterator$SliceIterator.prototype.hasNext__Z = (function() {
 $c_sc_Iterator$SliceIterator.prototype.next__O = (function() {
   $p_sc_Iterator$SliceIterator__skip__V(this);
   if ((this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining > 0)) {
-    this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining = (((-1) + this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining) | 0);
+    this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining = ((this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining - 1) | 0);
     return $n(this.sc_Iterator$SliceIterator__f_underlying).next__O();
   } else {
     return ((this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining < 0) ? $n(this.sc_Iterator$SliceIterator__f_underlying).next__O() : $n($m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty).next__O());
@@ -22823,7 +22808,7 @@ $c_sc_Iterator$SliceIterator.prototype.sliceIterator__I__I__sc_Iterator = (funct
   } else if ((sum < 0)) {
     this.sc_Iterator$SliceIterator__f_dropping = 2147483647;
     this.sc_Iterator$SliceIterator__f_scala$collection$Iterator$SliceIterator$$remaining = 0;
-    var xs = new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => new $c_sc_Iterator$SliceIterator(this.sc_Iterator$SliceIterator__f_underlying, (((-2147483647) + sum) | 0), rest)));
+    var xs = new $c_sr_AbstractFunction0_$$Lambda$a02b774b97db8234e08c6a02dd06557c99779855((() => new $c_sc_Iterator$SliceIterator(this.sc_Iterator$SliceIterator__f_underlying, ((sum - 2147483647) | 0), rest)));
     return $f_sc_Iterator__concat__F0__sc_Iterator(this, xs);
   } else {
     this.sc_Iterator$SliceIterator__f_dropping = sum;
@@ -22943,9 +22928,9 @@ function $p_sc_LinearSeqOps__linearSeqEq$1__sc_LinearSeq__sc_LinearSeq__Z($thiz,
         var temp$b = $as_sc_LinearSeq($n(b).tail__O());
         a = temp$a;
         b = temp$b;
-      } else {
-        return ($n(a).isEmpty__Z() && $n(b).isEmpty__Z());
+        continue;
       }
+      return ($n(a).isEmpty__Z() && $n(b).isEmpty__Z());
     }
   }
 }
@@ -23015,7 +23000,7 @@ function $p_sc_StringOps$$anon$1__advance__T($thiz) {
       var i = $thiz.sc_StringOps$$anon$1__f_scala$collection$StringOps$$anon$$index;
       var this$2 = $n(this$);
       var c = $charAt(this$2, i);
-      var $x_1 = (!((c === 13) || (c === 10)));
+      var $x_1 = (!((c === 10) || (c === 13)));
     } else {
       var $x_1 = false;
     }
@@ -23037,7 +23022,7 @@ function $p_sc_StringOps$$anon$1__advance__T($thiz) {
       var i$2 = $thiz.sc_StringOps$$anon$1__f_scala$collection$StringOps$$anon$$index;
       var this$7 = $n(this$$3);
       var c$2 = $charAt(this$7, i$2);
-      var $x_2 = ((c$1 === 13) && (c$2 === 10));
+      var $x_2 = (((13 ^ c$1) | (10 ^ c$2)) === 0);
     } else {
       var $x_2 = false;
     }
@@ -23116,7 +23101,7 @@ function $p_sci_ChampBaseIterator__pushNode__sci_Node__V($thiz, node) {
   $n($thiz.sci_ChampBaseIterator__f_nodeCursorsAndLengths).set(lengthIndex, $n(node).nodeArity__I());
 }
 function $p_sci_ChampBaseIterator__popNode__V($thiz) {
-  $thiz.sci_ChampBaseIterator__f_currentStackLevel = (((-1) + $thiz.sci_ChampBaseIterator__f_currentStackLevel) | 0);
+  $thiz.sci_ChampBaseIterator__f_currentStackLevel = (($thiz.sci_ChampBaseIterator__f_currentStackLevel - 1) | 0);
 }
 function $p_sci_ChampBaseIterator__searchNextValueNode__Z($thiz) {
   while (($thiz.sci_ChampBaseIterator__f_currentStackLevel >= 0)) {
@@ -23177,20 +23162,20 @@ $c_sci_ChampBaseIterator.prototype.hasNext__Z = (function() {
 });
 function $p_sci_ChampBaseReverseIterator__setupPayloadNode__sci_Node__V($thiz, node) {
   $thiz.sci_ChampBaseReverseIterator__f_currentValueNode = node;
-  $thiz.sci_ChampBaseReverseIterator__f_currentValueCursor = (((-1) + $n(node).payloadArity__I()) | 0);
+  $thiz.sci_ChampBaseReverseIterator__f_currentValueCursor = (($n(node).payloadArity__I() - 1) | 0);
 }
 function $p_sci_ChampBaseReverseIterator__pushNode__sci_Node__V($thiz, node) {
   $thiz.sci_ChampBaseReverseIterator__f_currentStackLevel = ((1 + $thiz.sci_ChampBaseReverseIterator__f_currentStackLevel) | 0);
   $n($thiz.sci_ChampBaseReverseIterator__f_nodeStack).set($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel, node);
-  $n($thiz.sci_ChampBaseReverseIterator__f_nodeIndex).set($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel, (((-1) + $n(node).nodeArity__I()) | 0));
+  $n($thiz.sci_ChampBaseReverseIterator__f_nodeIndex).set($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel, (($n(node).nodeArity__I() - 1) | 0));
 }
 function $p_sci_ChampBaseReverseIterator__popNode__V($thiz) {
-  $thiz.sci_ChampBaseReverseIterator__f_currentStackLevel = (((-1) + $thiz.sci_ChampBaseReverseIterator__f_currentStackLevel) | 0);
+  $thiz.sci_ChampBaseReverseIterator__f_currentStackLevel = (($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel - 1) | 0);
 }
 function $p_sci_ChampBaseReverseIterator__searchNextValueNode__Z($thiz) {
   while (($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel >= 0)) {
     var nodeCursor = $n($thiz.sci_ChampBaseReverseIterator__f_nodeIndex).get($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel);
-    $n($thiz.sci_ChampBaseReverseIterator__f_nodeIndex).set($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel, (((-1) + nodeCursor) | 0));
+    $n($thiz.sci_ChampBaseReverseIterator__f_nodeIndex).set($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel, ((nodeCursor - 1) | 0));
     if ((nodeCursor >= 0)) {
       var nextNode = $n($n($thiz.sci_ChampBaseReverseIterator__f_nodeStack).get($thiz.sci_ChampBaseReverseIterator__f_currentStackLevel)).getNode__I__sci_Node(nodeCursor);
       $p_sci_ChampBaseReverseIterator__pushNode__sci_Node__V($thiz, nextNode);
@@ -24074,7 +24059,7 @@ $c_sci_Vector$.prototype.from__sc_IterableOnce__sci_Vector = (function(it) {
     var knownSize = $n(it).knownSize__I();
     if ((knownSize === 0)) {
       return $m_sci_Vector0$();
-    } else if (((knownSize > 0) && (knownSize <= 32))) {
+    } else if (((((knownSize - 1) | 0) >>> 0) <= 31)) {
       matchEnd5: {
         var a1$3;
         if ((it instanceof $c_sci_ArraySeq$ofRef)) {
@@ -24147,7 +24132,9 @@ function $p_sci_VectorBuilder__leftAlignPrefix__V($thiz) {
       var length = ((64 - i) | 0);
       $systemArraycopyRefs($n(src), i, $n(dest), 0, length);
     }
-    var newOffset = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset % 33554432) | 0);
+    var num = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset;
+    var t = (((num >> 24) >>> 7) | 0);
+    var newOffset = (((33554431 & ((num + t) | 0)) - t) | 0);
     $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest - (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset - newOffset) | 0)) | 0);
     $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset = newOffset;
     if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest >>> 25) | 0) === 0)) {
@@ -24169,7 +24156,9 @@ function $p_sci_VectorBuilder__leftAlignPrefix__V($thiz) {
         $systemArraycopyRefs($n(src$1), i$2, $n(dest$1), 0, length$1);
       }
       $thiz.sci_VectorBuilder__f_a5 = $asArrayOf_O(a, 5);
-      var newOffset$1 = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset % 1048576) | 0);
+      var num$1 = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset;
+      var t$1 = (((num$1 >> 19) >>> 12) | 0);
+      var newOffset$1 = (((1048575 & ((num$1 + t$1) | 0)) - t$1) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest - (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset - newOffset$1) | 0)) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset = newOffset$1;
       if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest >>> 20) | 0) === 0)) {
@@ -24198,7 +24187,9 @@ function $p_sci_VectorBuilder__leftAlignPrefix__V($thiz) {
         $systemArraycopyRefs($n(src$2), i$3, $n(dest$2), 0, length$2);
       }
       $thiz.sci_VectorBuilder__f_a4 = $asArrayOf_O(a, 4);
-      var newOffset$2 = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset % 32768) | 0);
+      var num$2 = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset;
+      var t$2 = (((num$2 >> 14) >>> 17) | 0);
+      var newOffset$2 = (((32767 & ((num$2 + t$2) | 0)) - t$2) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest - (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset - newOffset$2) | 0)) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset = newOffset$2;
       if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest >>> 15) | 0) === 0)) {
@@ -24227,7 +24218,9 @@ function $p_sci_VectorBuilder__leftAlignPrefix__V($thiz) {
         $systemArraycopyRefs($n(src$3), i$4, $n(dest$3), 0, length$3);
       }
       $thiz.sci_VectorBuilder__f_a3 = $asArrayOf_O(a, 3);
-      var newOffset$3 = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset % 1024) | 0);
+      var num$3 = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset;
+      var t$3 = (((num$3 >> 9) >>> 22) | 0);
+      var newOffset$3 = (((1023 & ((num$3 + t$3) | 0)) - t$3) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest - (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset - newOffset$3) | 0)) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset = newOffset$3;
       if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest >>> 10) | 0) === 0)) {
@@ -24256,7 +24249,9 @@ function $p_sci_VectorBuilder__leftAlignPrefix__V($thiz) {
         $systemArraycopyRefs($n(src$4), i$5, $n(dest$4), 0, length$4);
       }
       $thiz.sci_VectorBuilder__f_a2 = $asArrayOf_O(a, 2);
-      var newOffset$4 = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset % 32) | 0);
+      var num$4 = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset;
+      var t$4 = (((num$4 >> 4) >>> 27) | 0);
+      var newOffset$4 = (((31 & ((num$4 + t$4) | 0)) - t$4) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest = (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest - (($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset - newOffset$4) | 0)) | 0);
       $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset = newOffset$4;
       if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest >>> 5) | 0) === 0)) {
@@ -24343,7 +24338,9 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
       break;
     }
     case 3: {
-      if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest % 1024) | 0) !== 0)) {
+      var num = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest;
+      var t = (((num >> 9) >>> 22) | 0);
+      if (((((1023 & ((num + t) | 0)) - t) | 0) !== 0)) {
         var f = ((e$2$2) => {
           $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, $asArrayOf_O(e$2$2, 1), 2);
         });
@@ -24372,45 +24369,46 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
         } else if ((slice instanceof $ac_J)) {
           var x5 = $asArrayOf_J(slice, 1);
           while ((i < len)) {
-            var t = $n(x5).get(i);
-            var lo = t.RTLong__f_lo;
-            var hi = t.RTLong__f_hi;
-            f(new $c_RTLong(lo, hi));
+            var $x_1 = $n(x5).u;
+            var $x_2 = $aJCheckGet($x_1, i);
+            var x0$3_$_lo = $x_1[$x_2];
+            var x0$3_$_hi = $x_1[(($x_2 + 1) | 0)];
+            f($bL(x0$3_$_lo, x0$3_$_hi));
             i = ((1 + i) | 0);
           }
         } else if ((slice instanceof $ac_F)) {
           var x6 = $asArrayOf_F(slice, 1);
           while ((i < len)) {
-            var x0$3 = $n(x6).get(i);
-            f(x0$3);
+            var x0$4 = $n(x6).get(i);
+            f(x0$4);
             i = ((1 + i) | 0);
           }
         } else if ((slice instanceof $ac_C)) {
           var x7 = $asArrayOf_C(slice, 1);
           while ((i < len)) {
-            var x0$4 = $n(x7).get(i);
-            f($bC(x0$4));
+            var x0$5 = $n(x7).get(i);
+            f($bC(x0$5));
             i = ((1 + i) | 0);
           }
         } else if ((slice instanceof $ac_B)) {
           var x8 = $asArrayOf_B(slice, 1);
           while ((i < len)) {
-            var x0$5 = $n(x8).get(i);
-            f(x0$5);
+            var x0$6 = $n(x8).get(i);
+            f(x0$6);
             i = ((1 + i) | 0);
           }
         } else if ((slice instanceof $ac_S)) {
           var x9 = $asArrayOf_S(slice, 1);
           while ((i < len)) {
-            var x0$6 = $n(x9).get(i);
-            f(x0$6);
+            var x0$7 = $n(x9).get(i);
+            f(x0$7);
             i = ((1 + i) | 0);
           }
         } else if ((slice instanceof $ac_Z)) {
           var x10 = $asArrayOf_Z(slice, 1);
           while ((i < len)) {
-            var x0$7 = $n(x10).get(i);
-            f(x0$7);
+            var x0$8 = $n(x10).get(i);
+            f(x0$8);
             i = ((1 + i) | 0);
           }
         } else {
@@ -24433,7 +24431,9 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
       break;
     }
     case 4: {
-      if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest % 32768) | 0) !== 0)) {
+      var num$1 = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest;
+      var t$1 = (((num$1 >> 14) >>> 17) | 0);
+      if (((((32767 & ((num$1 + t$1) | 0)) - t$1) | 0) !== 0)) {
         var f$1 = ((e$2$2$1) => {
           $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, $asArrayOf_O(e$2$2$1, 1), 3);
         });
@@ -24441,66 +24441,67 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
         var i$1 = 0;
         if ((slice !== null)) {
           while ((i$1 < len$1)) {
-            var x0$8 = $n(slice).get(i$1);
-            f$1(x0$8);
+            var x0$9 = $n(slice).get(i$1);
+            f$1(x0$9);
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_I)) {
           var x3$1 = $asArrayOf_I(slice, 1);
           while ((i$1 < len$1)) {
-            var x0$9 = $n(x3$1).get(i$1);
-            f$1(x0$9);
+            var x0$10 = $n(x3$1).get(i$1);
+            f$1(x0$10);
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_D)) {
           var x4$1 = $asArrayOf_D(slice, 1);
           while ((i$1 < len$1)) {
-            var x0$10 = $n(x4$1).get(i$1);
-            f$1(x0$10);
+            var x0$11 = $n(x4$1).get(i$1);
+            f$1(x0$11);
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_J)) {
           var x5$1 = $asArrayOf_J(slice, 1);
           while ((i$1 < len$1)) {
-            var t$1 = $n(x5$1).get(i$1);
-            var lo$1 = t$1.RTLong__f_lo;
-            var hi$1 = t$1.RTLong__f_hi;
-            f$1(new $c_RTLong(lo$1, hi$1));
+            var $x_3 = $n(x5$1).u;
+            var $x_4 = $aJCheckGet($x_3, i$1);
+            var x0$12_$_lo = $x_3[$x_4];
+            var x0$12_$_hi = $x_3[(($x_4 + 1) | 0)];
+            f$1($bL(x0$12_$_lo, x0$12_$_hi));
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_F)) {
           var x6$1 = $asArrayOf_F(slice, 1);
           while ((i$1 < len$1)) {
-            var x0$11 = $n(x6$1).get(i$1);
-            f$1(x0$11);
+            var x0$13 = $n(x6$1).get(i$1);
+            f$1(x0$13);
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_C)) {
           var x7$1 = $asArrayOf_C(slice, 1);
           while ((i$1 < len$1)) {
-            var x0$12 = $n(x7$1).get(i$1);
-            f$1($bC(x0$12));
+            var x0$14 = $n(x7$1).get(i$1);
+            f$1($bC(x0$14));
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_B)) {
           var x8$1 = $asArrayOf_B(slice, 1);
           while ((i$1 < len$1)) {
-            var x0$13 = $n(x8$1).get(i$1);
-            f$1(x0$13);
+            var x0$15 = $n(x8$1).get(i$1);
+            f$1(x0$15);
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_S)) {
           var x9$1 = $asArrayOf_S(slice, 1);
           while ((i$1 < len$1)) {
-            var x0$14 = $n(x9$1).get(i$1);
-            f$1(x0$14);
+            var x0$16 = $n(x9$1).get(i$1);
+            f$1(x0$16);
             i$1 = ((1 + i$1) | 0);
           }
         } else if ((slice instanceof $ac_Z)) {
           var x10$1 = $asArrayOf_Z(slice, 1);
           while ((i$1 < len$1)) {
-            var x0$15 = $n(x10$1).get(i$1);
-            f$1(x0$15);
+            var x0$17 = $n(x10$1).get(i$1);
+            f$1(x0$17);
             i$1 = ((1 + i$1) | 0);
           }
         } else {
@@ -24523,7 +24524,9 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
       break;
     }
     case 5: {
-      if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest % 1048576) | 0) !== 0)) {
+      var num$2 = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest;
+      var t$2 = (((num$2 >> 19) >>> 12) | 0);
+      if (((((1048575 & ((num$2 + t$2) | 0)) - t$2) | 0) !== 0)) {
         var f$2 = ((e$2$2$2) => {
           $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, $asArrayOf_O(e$2$2$2, 1), 4);
         });
@@ -24531,66 +24534,67 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
         var i$2 = 0;
         if ((slice !== null)) {
           while ((i$2 < len$2)) {
-            var x0$16 = $n(slice).get(i$2);
-            f$2(x0$16);
+            var x0$18 = $n(slice).get(i$2);
+            f$2(x0$18);
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_I)) {
           var x3$2 = $asArrayOf_I(slice, 1);
           while ((i$2 < len$2)) {
-            var x0$17 = $n(x3$2).get(i$2);
-            f$2(x0$17);
+            var x0$19 = $n(x3$2).get(i$2);
+            f$2(x0$19);
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_D)) {
           var x4$2 = $asArrayOf_D(slice, 1);
           while ((i$2 < len$2)) {
-            var x0$18 = $n(x4$2).get(i$2);
-            f$2(x0$18);
+            var x0$20 = $n(x4$2).get(i$2);
+            f$2(x0$20);
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_J)) {
           var x5$2 = $asArrayOf_J(slice, 1);
           while ((i$2 < len$2)) {
-            var t$2 = $n(x5$2).get(i$2);
-            var lo$2 = t$2.RTLong__f_lo;
-            var hi$2 = t$2.RTLong__f_hi;
-            f$2(new $c_RTLong(lo$2, hi$2));
+            var $x_5 = $n(x5$2).u;
+            var $x_6 = $aJCheckGet($x_5, i$2);
+            var x0$21_$_lo = $x_5[$x_6];
+            var x0$21_$_hi = $x_5[(($x_6 + 1) | 0)];
+            f$2($bL(x0$21_$_lo, x0$21_$_hi));
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_F)) {
           var x6$2 = $asArrayOf_F(slice, 1);
           while ((i$2 < len$2)) {
-            var x0$19 = $n(x6$2).get(i$2);
-            f$2(x0$19);
+            var x0$22 = $n(x6$2).get(i$2);
+            f$2(x0$22);
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_C)) {
           var x7$2 = $asArrayOf_C(slice, 1);
           while ((i$2 < len$2)) {
-            var x0$20 = $n(x7$2).get(i$2);
-            f$2($bC(x0$20));
+            var x0$23 = $n(x7$2).get(i$2);
+            f$2($bC(x0$23));
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_B)) {
           var x8$2 = $asArrayOf_B(slice, 1);
           while ((i$2 < len$2)) {
-            var x0$21 = $n(x8$2).get(i$2);
-            f$2(x0$21);
+            var x0$24 = $n(x8$2).get(i$2);
+            f$2(x0$24);
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_S)) {
           var x9$2 = $asArrayOf_S(slice, 1);
           while ((i$2 < len$2)) {
-            var x0$22 = $n(x9$2).get(i$2);
-            f$2(x0$22);
+            var x0$25 = $n(x9$2).get(i$2);
+            f$2(x0$25);
             i$2 = ((1 + i$2) | 0);
           }
         } else if ((slice instanceof $ac_Z)) {
           var x10$2 = $asArrayOf_Z(slice, 1);
           while ((i$2 < len$2)) {
-            var x0$23 = $n(x10$2).get(i$2);
-            f$2(x0$23);
+            var x0$26 = $n(x10$2).get(i$2);
+            f$2(x0$26);
             i$2 = ((1 + i$2) | 0);
           }
         } else {
@@ -24613,7 +24617,9 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
       break;
     }
     case 6: {
-      if (((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest % 33554432) | 0) !== 0)) {
+      var num$3 = $thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest;
+      var t$3 = (((num$3 >> 24) >>> 7) | 0);
+      if (((((33554431 & ((num$3 + t$3) | 0)) - t$3) | 0) !== 0)) {
         var f$3 = ((e$2$2$3) => {
           $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, $asArrayOf_O(e$2$2$3, 1), 5);
         });
@@ -24621,66 +24627,67 @@ function $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, dim) {
         var i$3 = 0;
         if ((slice !== null)) {
           while ((i$3 < len$3)) {
-            var x0$24 = $n(slice).get(i$3);
-            f$3(x0$24);
+            var x0$27 = $n(slice).get(i$3);
+            f$3(x0$27);
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_I)) {
           var x3$3 = $asArrayOf_I(slice, 1);
           while ((i$3 < len$3)) {
-            var x0$25 = $n(x3$3).get(i$3);
-            f$3(x0$25);
+            var x0$28 = $n(x3$3).get(i$3);
+            f$3(x0$28);
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_D)) {
           var x4$3 = $asArrayOf_D(slice, 1);
           while ((i$3 < len$3)) {
-            var x0$26 = $n(x4$3).get(i$3);
-            f$3(x0$26);
+            var x0$29 = $n(x4$3).get(i$3);
+            f$3(x0$29);
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_J)) {
           var x5$3 = $asArrayOf_J(slice, 1);
           while ((i$3 < len$3)) {
-            var t$3 = $n(x5$3).get(i$3);
-            var lo$3 = t$3.RTLong__f_lo;
-            var hi$3 = t$3.RTLong__f_hi;
-            f$3(new $c_RTLong(lo$3, hi$3));
+            var $x_7 = $n(x5$3).u;
+            var $x_8 = $aJCheckGet($x_7, i$3);
+            var x0$30_$_lo = $x_7[$x_8];
+            var x0$30_$_hi = $x_7[(($x_8 + 1) | 0)];
+            f$3($bL(x0$30_$_lo, x0$30_$_hi));
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_F)) {
           var x6$3 = $asArrayOf_F(slice, 1);
           while ((i$3 < len$3)) {
-            var x0$27 = $n(x6$3).get(i$3);
-            f$3(x0$27);
+            var x0$31 = $n(x6$3).get(i$3);
+            f$3(x0$31);
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_C)) {
           var x7$3 = $asArrayOf_C(slice, 1);
           while ((i$3 < len$3)) {
-            var x0$28 = $n(x7$3).get(i$3);
-            f$3($bC(x0$28));
+            var x0$32 = $n(x7$3).get(i$3);
+            f$3($bC(x0$32));
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_B)) {
           var x8$3 = $asArrayOf_B(slice, 1);
           while ((i$3 < len$3)) {
-            var x0$29 = $n(x8$3).get(i$3);
-            f$3(x0$29);
+            var x0$33 = $n(x8$3).get(i$3);
+            f$3(x0$33);
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_S)) {
           var x9$3 = $asArrayOf_S(slice, 1);
           while ((i$3 < len$3)) {
-            var x0$30 = $n(x9$3).get(i$3);
-            f$3(x0$30);
+            var x0$34 = $n(x9$3).get(i$3);
+            f$3(x0$34);
             i$3 = ((1 + i$3) | 0);
           }
         } else if ((slice instanceof $ac_Z)) {
           var x10$3 = $asArrayOf_Z(slice, 1);
           while ((i$3 < len$3)) {
-            var x0$31 = $n(x10$3).get(i$3);
-            f$3(x0$31);
+            var x0$35 = $n(x10$3).get(i$3);
+            f$3(x0$35);
             i$3 = ((1 + i$3) | 0);
           }
         } else {
@@ -24708,7 +24715,7 @@ function $p_sci_VectorBuilder__addVector__sci_Vector__sci_VectorBuilder($thiz, x
   while ((sliceIdx < sliceCount)) {
     var slice = $n(xs).vectorSlice__I__AO(sliceIdx);
     var idx = sliceIdx;
-    var c = ((sliceCount / 2) | 0);
+    var c = (((sliceCount + ((sliceCount >>> 31) | 0)) | 0) >> 1);
     var a = ((idx - c) | 0);
     var sign = (a >> 31);
     var x1 = ((((1 + c) | 0) - (((a ^ sign) - sign) | 0)) | 0);
@@ -24717,7 +24724,7 @@ function $p_sci_VectorBuilder__addVector__sci_Vector__sci_VectorBuilder($thiz, x
     } else if ((($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$len1 === 32) || ($thiz.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$len1 === 0))) {
       $p_sci_VectorBuilder__addArrN__AO__I__V($thiz, slice, x1);
     } else {
-      $m_sci_VectorStatics$().foreachRec__I__AO__F1__V((((-2) + x1) | 0), slice, new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((data$2$2) => {
+      $m_sci_VectorStatics$().foreachRec__I__AO__F1__V(((x1 - 2) | 0), slice, new $c_sr_AbstractFunction1_$$Lambda$70e1780b84463d18653aacefee3ab989ac625f28(((data$2$2) => {
         var data$2 = $asArrayOf_O(data$2$2, 1);
         $p_sci_VectorBuilder__addArr1__AO__V($thiz, data$2);
       })));
@@ -24977,7 +24984,7 @@ $c_sci_VectorBuilder.prototype.initFrom__sci_Vector__sci_VectorBuilder = (functi
   }
   if (((this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$len1 === 0) && (this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest > 0))) {
     this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$len1 = 32;
-    this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest = (((-32) + this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest) | 0);
+    this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest = ((this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$lenRest - 32) | 0);
   }
   return this;
 });
@@ -25078,8 +25085,8 @@ $c_sci_VectorBuilder.prototype.result__sci_Vector = (function() {
     var a = this.sci_VectorBuilder__f_a1;
     return new $c_sci_Vector1((($n(a).u.length === realLen) ? a : $m_ju_Arrays$().copyOf__AO__I__AO(a, realLen)));
   } else if ((len <= 1024)) {
-    var i1 = (31 & (((-1) + len) | 0));
-    var i2 = (((((-1) + len) | 0) >>> 5) | 0);
+    var i1 = (31 & ((len - 1) | 0));
+    var i2 = ((((len - 1) | 0) >>> 5) | 0);
     var original = this.sci_VectorBuilder__f_a2;
     var data = $asArrayOf_O($m_ju_Arrays$().copyOfRange__AO__I__I__AO(original, 1, i2), 2);
     var prefix1 = $n(this.sci_VectorBuilder__f_a2).get(0);
@@ -25088,9 +25095,9 @@ $c_sci_VectorBuilder.prototype.result__sci_Vector = (function() {
     var suffix1 = (($n(a$1).u.length === len$1) ? a$1 : $m_ju_Arrays$().copyOf__AO__I__AO(a$1, len$1));
     return new $c_sci_Vector2(prefix1, ((32 - this.sci_VectorBuilder__f_scala$collection$immutable$VectorBuilder$$offset) | 0), data, suffix1, realLen);
   } else if ((len <= 32768)) {
-    var i1$2 = (31 & (((-1) + len) | 0));
-    var i2$2 = (31 & (((((-1) + len) | 0) >>> 5) | 0));
-    var i3 = (((((-1) + len) | 0) >>> 10) | 0);
+    var i1$2 = (31 & ((len - 1) | 0));
+    var i2$2 = (31 & ((((len - 1) | 0) >>> 5) | 0));
+    var i3 = ((((len - 1) | 0) >>> 10) | 0);
     var original$1 = this.sci_VectorBuilder__f_a3;
     var data$2 = $asArrayOf_O($m_ju_Arrays$().copyOfRange__AO__I__I__AO(original$1, 1, i3), 3);
     var a$2 = $n(this.sci_VectorBuilder__f_a3).get(0);
@@ -25106,10 +25113,10 @@ $c_sci_VectorBuilder.prototype.result__sci_Vector = (function() {
     var len12 = ((len1 + ($n(prefix2).u.length << 5)) | 0);
     return new $c_sci_Vector3(prefix1$2, len1, prefix2, len12, data$2, suffix2, suffix1$2, realLen);
   } else if ((len <= 1048576)) {
-    var i1$3 = (31 & (((-1) + len) | 0));
-    var i2$3 = (31 & (((((-1) + len) | 0) >>> 5) | 0));
-    var i3$2 = (31 & (((((-1) + len) | 0) >>> 10) | 0));
-    var i4 = (((((-1) + len) | 0) >>> 15) | 0);
+    var i1$3 = (31 & ((len - 1) | 0));
+    var i2$3 = (31 & ((((len - 1) | 0) >>> 5) | 0));
+    var i3$2 = (31 & ((((len - 1) | 0) >>> 10) | 0));
+    var i4 = ((((len - 1) | 0) >>> 15) | 0);
     var original$3 = this.sci_VectorBuilder__f_a4;
     var data$3 = $asArrayOf_O($m_ju_Arrays$().copyOfRange__AO__I__I__AO(original$3, 1, i4), 4);
     var a$4 = $n(this.sci_VectorBuilder__f_a4).get(0);
@@ -25131,11 +25138,11 @@ $c_sci_VectorBuilder.prototype.result__sci_Vector = (function() {
     var len123 = ((len12$2 + ($n(prefix3).u.length << 10)) | 0);
     return new $c_sci_Vector4(prefix1$3, len1$2, prefix2$2, len12$2, prefix3, len123, data$3, suffix3, suffix2$2, suffix1$3, realLen);
   } else if ((len <= 33554432)) {
-    var i1$4 = (31 & (((-1) + len) | 0));
-    var i2$4 = (31 & (((((-1) + len) | 0) >>> 5) | 0));
-    var i3$3 = (31 & (((((-1) + len) | 0) >>> 10) | 0));
-    var i4$2 = (31 & (((((-1) + len) | 0) >>> 15) | 0));
-    var i5 = (((((-1) + len) | 0) >>> 20) | 0);
+    var i1$4 = (31 & ((len - 1) | 0));
+    var i2$4 = (31 & ((((len - 1) | 0) >>> 5) | 0));
+    var i3$3 = (31 & ((((len - 1) | 0) >>> 10) | 0));
+    var i4$2 = (31 & ((((len - 1) | 0) >>> 15) | 0));
+    var i5 = ((((len - 1) | 0) >>> 20) | 0);
     var original$6 = this.sci_VectorBuilder__f_a5;
     var data$4 = $asArrayOf_O($m_ju_Arrays$().copyOfRange__AO__I__I__AO(original$6, 1, i5), 5);
     var a$7 = $n(this.sci_VectorBuilder__f_a5).get(0);
@@ -25163,12 +25170,12 @@ $c_sci_VectorBuilder.prototype.result__sci_Vector = (function() {
     var len1234 = ((len123$2 + ($n(prefix4).u.length << 15)) | 0);
     return new $c_sci_Vector5(prefix1$4, len1$3, prefix2$3, len12$3, prefix3$2, len123$2, prefix4, len1234, data$4, suffix4, suffix3$2, suffix2$3, suffix1$4, realLen);
   } else {
-    var i1$5 = (31 & (((-1) + len) | 0));
-    var i2$5 = (31 & (((((-1) + len) | 0) >>> 5) | 0));
-    var i3$4 = (31 & (((((-1) + len) | 0) >>> 10) | 0));
-    var i4$3 = (31 & (((((-1) + len) | 0) >>> 15) | 0));
-    var i5$2 = (31 & (((((-1) + len) | 0) >>> 20) | 0));
-    var i6 = (((((-1) + len) | 0) >>> 25) | 0);
+    var i1$5 = (31 & ((len - 1) | 0));
+    var i2$5 = (31 & ((((len - 1) | 0) >>> 5) | 0));
+    var i3$4 = (31 & ((((len - 1) | 0) >>> 10) | 0));
+    var i4$3 = (31 & ((((len - 1) | 0) >>> 15) | 0));
+    var i5$2 = (31 & ((((len - 1) | 0) >>> 20) | 0));
+    var i6 = ((((len - 1) | 0) >>> 25) | 0);
     var original$10 = this.sci_VectorBuilder__f_a6;
     var data$5 = $asArrayOf_O($m_ju_Arrays$().copyOfRange__AO__I__I__AO(original$10, 1, i6), 6);
     var a$11 = $n(this.sci_VectorBuilder__f_a6).get(0);
@@ -26208,12 +26215,12 @@ function $p_s_util_parsing_input_OffsetPosition__genIndex__AI($thiz) {
   lineStarts.addOne__O__scm_ArrayBuffer(0);
   var end = $dp_length__I($n($thiz.s_util_parsing_input_OffsetPosition__f_source));
   var isEmpty = (end <= 0);
-  var scala$collection$immutable$Range$$lastElement = (((-1) + end) | 0);
+  var scala$collection$immutable$Range$$lastElement = ((end - 1) | 0);
   if ((!isEmpty)) {
     var i = 0;
     while (true) {
       var x0 = i;
-      if ((($dp_charAt__I__C($n($thiz.s_util_parsing_input_OffsetPosition__f_source), x0) === 10) || (($dp_charAt__I__C($n($thiz.s_util_parsing_input_OffsetPosition__f_source), x0) === 13) && ((x0 === (((-1) + $dp_length__I($n($thiz.s_util_parsing_input_OffsetPosition__f_source))) | 0)) || ($dp_charAt__I__C($n($thiz.s_util_parsing_input_OffsetPosition__f_source), ((1 + x0) | 0)) !== 10))))) {
+      if ((($dp_charAt__I__C($n($thiz.s_util_parsing_input_OffsetPosition__f_source), x0) === 10) || (($dp_charAt__I__C($n($thiz.s_util_parsing_input_OffsetPosition__f_source), x0) === 13) && ((x0 === (($dp_length__I($n($thiz.s_util_parsing_input_OffsetPosition__f_source)) - 1) | 0)) || ($dp_charAt__I__C($n($thiz.s_util_parsing_input_OffsetPosition__f_source), ((1 + x0) | 0)) !== 10))))) {
         var elem = ((1 + x0) | 0);
         lineStarts.addOne__O__scm_ArrayBuffer(elem);
       }
@@ -26266,9 +26273,11 @@ $c_s_util_parsing_input_OffsetPosition.prototype.equals__O__Z = (function(other)
 });
 $c_s_util_parsing_input_OffsetPosition.prototype.line__I = (function() {
   var lo = 0;
-  var hi = (((-1) + $n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).u.length) | 0);
+  var hi = (($n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).u.length - 1) | 0);
   while ((((1 + lo) | 0) < hi)) {
-    var mid = ((lo + ((((hi - lo) | 0) / 2) | 0)) | 0);
+    var $x_1 = lo;
+    var num = ((hi - lo) | 0);
+    var mid = (($x_1 + (((num + ((num >>> 31) | 0)) | 0) >> 1)) | 0);
     if ((this.s_util_parsing_input_OffsetPosition__f_offset < $n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).get(mid))) {
       hi = mid;
     } else {
@@ -26278,12 +26287,12 @@ $c_s_util_parsing_input_OffsetPosition.prototype.line__I = (function() {
   return ((1 + lo) | 0);
 });
 $c_s_util_parsing_input_OffsetPosition.prototype.column__I = (function() {
-  return ((1 + ((this.s_util_parsing_input_OffsetPosition__f_offset - $n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).get((((-1) + this.line__I()) | 0))) | 0)) | 0);
+  return ((1 + ((this.s_util_parsing_input_OffsetPosition__f_offset - $n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).get(((this.line__I() - 1) | 0))) | 0)) | 0);
 });
 $c_s_util_parsing_input_OffsetPosition.prototype.lineContents__T = (function() {
-  var lineStart = $n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).get((((-1) + this.line__I()) | 0));
+  var lineStart = $n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).get(((this.line__I() - 1) | 0));
   var lineEnd = $n($p_s_util_parsing_input_OffsetPosition__index__AI(this)).get(this.line__I());
-  var endIndex = ((((lineStart < (((-1) + lineEnd) | 0)) && ($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), (((-2) + lineEnd) | 0)) === 13)) && ($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), (((-1) + lineEnd) | 0)) === 10)) ? (((-2) + lineEnd) | 0) : (((lineStart < lineEnd) && (($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), (((-1) + lineEnd) | 0)) === 13) || ($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), (((-1) + lineEnd) | 0)) === 10))) ? (((-1) + lineEnd) | 0) : lineEnd));
+  var endIndex = ((((lineStart < ((lineEnd - 1) | 0)) && ($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), ((lineEnd - 2) | 0)) === 13)) && ($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), ((lineEnd - 1) | 0)) === 10)) ? ((lineEnd - 2) | 0) : (((lineStart < lineEnd) && (($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), ((lineEnd - 1) | 0)) === 13) || ($dp_charAt__I__C($n(this.s_util_parsing_input_OffsetPosition__f_source), ((lineEnd - 1) | 0)) === 10))) ? ((lineEnd - 1) | 0) : lineEnd));
   return $dp_toString__T($n($dp_subSequence__I__I__jl_CharSequence($n(this.s_util_parsing_input_OffsetPosition__f_source), lineStart, endIndex)));
 });
 $c_s_util_parsing_input_OffsetPosition.prototype.toString__T = (function() {
@@ -26468,15 +26477,19 @@ var $d_Lsourcecode_Name = new $TypeData().initClass($c_Lsourcecode_Name, "source
   Ljava_io_Serializable: 1
 }));
 /** @constructor */
-function $c_Lfansi_EscapeAttr(escape, resetMask, applyMask, sourceName) {
+function $c_Lfansi_EscapeAttr(escape, resetMask_$_lo, resetMask_$_hi, applyMask_$_lo, applyMask_$_hi, sourceName) {
   this.Lfansi_EscapeAttr__f_escape = null;
-  this.Lfansi_EscapeAttr__f_resetMask = $L0;
-  this.Lfansi_EscapeAttr__f_applyMask = $L0;
+  this.Lfansi_EscapeAttr__f_resetMask_$lo = 0;
+  this.Lfansi_EscapeAttr__f_resetMask_$hi = 0;
+  this.Lfansi_EscapeAttr__f_applyMask_$lo = 0;
+  this.Lfansi_EscapeAttr__f_applyMask_$hi = 0;
   this.Lfansi_EscapeAttr__f_escapeOpt = null;
   this.Lfansi_EscapeAttr__f_name = null;
   this.Lfansi_EscapeAttr__f_escape = escape;
-  this.Lfansi_EscapeAttr__f_resetMask = resetMask;
-  this.Lfansi_EscapeAttr__f_applyMask = applyMask;
+  this.Lfansi_EscapeAttr__f_resetMask_$lo = resetMask_$_lo;
+  this.Lfansi_EscapeAttr__f_resetMask_$hi = resetMask_$_hi;
+  this.Lfansi_EscapeAttr__f_applyMask_$lo = applyMask_$_lo;
+  this.Lfansi_EscapeAttr__f_applyMask_$hi = applyMask_$_hi;
   this.Lfansi_EscapeAttr__f_escapeOpt = new $c_s_Some(escape);
   this.Lfansi_EscapeAttr__f_name = $n(sourceName).Lsourcecode_Name__f_value;
 }
@@ -26487,10 +26500,10 @@ function $h_Lfansi_EscapeAttr() {
 }
 $h_Lfansi_EscapeAttr.prototype = $c_Lfansi_EscapeAttr.prototype;
 $c_Lfansi_EscapeAttr.prototype.resetMask__J = (function() {
-  return this.Lfansi_EscapeAttr__f_resetMask;
+  return $bL(this.Lfansi_EscapeAttr__f_resetMask_$lo, this.Lfansi_EscapeAttr__f_resetMask_$hi);
 });
 $c_Lfansi_EscapeAttr.prototype.applyMask__J = (function() {
-  return this.Lfansi_EscapeAttr__f_applyMask;
+  return $bL(this.Lfansi_EscapeAttr__f_applyMask_$lo, this.Lfansi_EscapeAttr__f_applyMask_$hi);
 });
 $c_Lfansi_EscapeAttr.prototype.toString__T = (function() {
   return ((("" + this.Lfansi_EscapeAttr__f_escape) + this.Lfansi_EscapeAttr__f_name) + "\u001b[0m");
@@ -26508,11 +26521,11 @@ $c_Lfansi_EscapeAttr.prototype.productElement__I__O = (function(x$1) {
       break;
     }
     case 1: {
-      return this.Lfansi_EscapeAttr__f_resetMask;
+      return $bL(this.Lfansi_EscapeAttr__f_resetMask_$lo, this.Lfansi_EscapeAttr__f_resetMask_$hi);
       break;
     }
     case 2: {
-      return this.Lfansi_EscapeAttr__f_applyMask;
+      return $bL(this.Lfansi_EscapeAttr__f_applyMask_$lo, this.Lfansi_EscapeAttr__f_applyMask_$hi);
       break;
     }
     default: {
@@ -26552,16 +26565,14 @@ $c_Lfansi_EscapeAttr.prototype.hashCode__I = (function() {
   var data$1 = $m_sr_Statics$().anyHash__O__I(x);
   acc = $m_sr_Statics$().mix__I__I__I(hash$1, data$1);
   var hash$2 = acc;
-  var t = this.Lfansi_EscapeAttr__f_resetMask;
-  var lo = t.RTLong__f_lo;
-  var hi = t.RTLong__f_hi;
-  var data$2 = $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo, hi));
+  var lv_$_lo = this.Lfansi_EscapeAttr__f_resetMask_$lo;
+  var lv_$_hi = this.Lfansi_EscapeAttr__f_resetMask_$hi;
+  var data$2 = $m_sr_Statics$().longHash__J__I(lv_$_lo, lv_$_hi);
   acc = $m_sr_Statics$().mix__I__I__I(hash$2, data$2);
   var hash$3 = acc;
-  var t$1 = this.Lfansi_EscapeAttr__f_applyMask;
-  var lo$1 = t$1.RTLong__f_lo;
-  var hi$1 = t$1.RTLong__f_hi;
-  var data$3 = $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo$1, hi$1));
+  var lv$1_$_lo = this.Lfansi_EscapeAttr__f_applyMask_$lo;
+  var lv$1_$_hi = this.Lfansi_EscapeAttr__f_applyMask_$hi;
+  var data$3 = $m_sr_Statics$().longHash__J__I(lv$1_$_lo, lv$1_$_hi);
   acc = $m_sr_Statics$().mix__I__I__I(hash$3, data$3);
   var hash$4 = acc;
   return $m_sr_Statics$().finalizeHash__I__I__I(hash$4, 3);
@@ -26571,12 +26582,16 @@ $c_Lfansi_EscapeAttr.prototype.equals__O__Z = (function(x$1) {
     return true;
   } else if ((x$1 instanceof $c_Lfansi_EscapeAttr)) {
     var EscapeAttr$1 = $as_Lfansi_EscapeAttr(x$1);
-    var a = this.Lfansi_EscapeAttr__f_resetMask;
-    var b = $n(EscapeAttr$1).Lfansi_EscapeAttr__f_resetMask;
-    if (((a.RTLong__f_lo === b.RTLong__f_lo) && (a.RTLong__f_hi === b.RTLong__f_hi))) {
-      var a$1 = this.Lfansi_EscapeAttr__f_applyMask;
-      var b$1 = $n(EscapeAttr$1).Lfansi_EscapeAttr__f_applyMask;
-      var $x_1 = ((a$1.RTLong__f_lo === b$1.RTLong__f_lo) && (a$1.RTLong__f_hi === b$1.RTLong__f_hi));
+    var x_$_lo = this.Lfansi_EscapeAttr__f_resetMask_$lo;
+    var x_$_hi = this.Lfansi_EscapeAttr__f_resetMask_$hi;
+    var x$2_$_lo = $n(EscapeAttr$1).Lfansi_EscapeAttr__f_resetMask_$lo;
+    var x$2_$_hi = $n(EscapeAttr$1).Lfansi_EscapeAttr__f_resetMask_$hi;
+    if ((((x_$_lo ^ x$2_$_lo) | (x_$_hi ^ x$2_$_hi)) === 0)) {
+      var x$3_$_lo = this.Lfansi_EscapeAttr__f_applyMask_$lo;
+      var x$3_$_hi = this.Lfansi_EscapeAttr__f_applyMask_$hi;
+      var x$4_$_lo = $n(EscapeAttr$1).Lfansi_EscapeAttr__f_applyMask_$lo;
+      var x$4_$_hi = $n(EscapeAttr$1).Lfansi_EscapeAttr__f_applyMask_$hi;
+      var $x_1 = (((x$3_$_lo ^ x$4_$_lo) | (x$3_$_hi ^ x$4_$_hi)) === 0);
     } else {
       var $x_1 = false;
     }
@@ -26610,13 +26625,17 @@ var $d_Lfansi_EscapeAttr = new $TypeData().initClass($c_Lfansi_EscapeAttr, "fans
   Ljava_io_Serializable: 1
 }));
 /** @constructor */
-function $c_Lfansi_ResetAttr(resetMask, applyMask, sourceName) {
-  this.Lfansi_ResetAttr__f_resetMask = $L0;
-  this.Lfansi_ResetAttr__f_applyMask = $L0;
+function $c_Lfansi_ResetAttr(resetMask_$_lo, resetMask_$_hi, applyMask_$_lo, applyMask_$_hi, sourceName) {
+  this.Lfansi_ResetAttr__f_resetMask_$lo = 0;
+  this.Lfansi_ResetAttr__f_resetMask_$hi = 0;
+  this.Lfansi_ResetAttr__f_applyMask_$lo = 0;
+  this.Lfansi_ResetAttr__f_applyMask_$hi = 0;
   this.Lfansi_ResetAttr__f_escapeOpt = null;
   this.Lfansi_ResetAttr__f_name = null;
-  this.Lfansi_ResetAttr__f_resetMask = resetMask;
-  this.Lfansi_ResetAttr__f_applyMask = applyMask;
+  this.Lfansi_ResetAttr__f_resetMask_$lo = resetMask_$_lo;
+  this.Lfansi_ResetAttr__f_resetMask_$hi = resetMask_$_hi;
+  this.Lfansi_ResetAttr__f_applyMask_$lo = applyMask_$_lo;
+  this.Lfansi_ResetAttr__f_applyMask_$hi = applyMask_$_hi;
   this.Lfansi_ResetAttr__f_escapeOpt = $m_s_None$();
   this.Lfansi_ResetAttr__f_name = $n(sourceName).Lsourcecode_Name__f_value;
 }
@@ -26627,10 +26646,10 @@ function $h_Lfansi_ResetAttr() {
 }
 $h_Lfansi_ResetAttr.prototype = $c_Lfansi_ResetAttr.prototype;
 $c_Lfansi_ResetAttr.prototype.resetMask__J = (function() {
-  return this.Lfansi_ResetAttr__f_resetMask;
+  return $bL(this.Lfansi_ResetAttr__f_resetMask_$lo, this.Lfansi_ResetAttr__f_resetMask_$hi);
 });
 $c_Lfansi_ResetAttr.prototype.applyMask__J = (function() {
-  return this.Lfansi_ResetAttr__f_applyMask;
+  return $bL(this.Lfansi_ResetAttr__f_applyMask_$lo, this.Lfansi_ResetAttr__f_applyMask_$hi);
 });
 $c_Lfansi_ResetAttr.prototype.toString__T = (function() {
   return this.Lfansi_ResetAttr__f_name;
@@ -26644,11 +26663,11 @@ $c_Lfansi_ResetAttr.prototype.productArity__I = (function() {
 $c_Lfansi_ResetAttr.prototype.productElement__I__O = (function(x$1) {
   switch (x$1) {
     case 0: {
-      return this.Lfansi_ResetAttr__f_resetMask;
+      return $bL(this.Lfansi_ResetAttr__f_resetMask_$lo, this.Lfansi_ResetAttr__f_resetMask_$hi);
       break;
     }
     case 1: {
-      return this.Lfansi_ResetAttr__f_applyMask;
+      return $bL(this.Lfansi_ResetAttr__f_applyMask_$lo, this.Lfansi_ResetAttr__f_applyMask_$hi);
       break;
     }
     default: {
@@ -26680,16 +26699,14 @@ $c_Lfansi_ResetAttr.prototype.hashCode__I = (function() {
   var data = $f_T__hashCode__I("ResetAttr");
   acc = $m_sr_Statics$().mix__I__I__I(hash, data);
   var hash$1 = acc;
-  var t = this.Lfansi_ResetAttr__f_resetMask;
-  var lo = t.RTLong__f_lo;
-  var hi = t.RTLong__f_hi;
-  var data$1 = $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo, hi));
+  var lv_$_lo = this.Lfansi_ResetAttr__f_resetMask_$lo;
+  var lv_$_hi = this.Lfansi_ResetAttr__f_resetMask_$hi;
+  var data$1 = $m_sr_Statics$().longHash__J__I(lv_$_lo, lv_$_hi);
   acc = $m_sr_Statics$().mix__I__I__I(hash$1, data$1);
   var hash$2 = acc;
-  var t$1 = this.Lfansi_ResetAttr__f_applyMask;
-  var lo$1 = t$1.RTLong__f_lo;
-  var hi$1 = t$1.RTLong__f_hi;
-  var data$2 = $m_sr_Statics$().longHash__J__I(new $c_RTLong(lo$1, hi$1));
+  var lv$1_$_lo = this.Lfansi_ResetAttr__f_applyMask_$lo;
+  var lv$1_$_hi = this.Lfansi_ResetAttr__f_applyMask_$hi;
+  var data$2 = $m_sr_Statics$().longHash__J__I(lv$1_$_lo, lv$1_$_hi);
   acc = $m_sr_Statics$().mix__I__I__I(hash$2, data$2);
   var hash$3 = acc;
   return $m_sr_Statics$().finalizeHash__I__I__I(hash$3, 2);
@@ -26699,12 +26716,16 @@ $c_Lfansi_ResetAttr.prototype.equals__O__Z = (function(x$1) {
     return true;
   } else if ((x$1 instanceof $c_Lfansi_ResetAttr)) {
     var ResetAttr$1 = $as_Lfansi_ResetAttr(x$1);
-    var a = this.Lfansi_ResetAttr__f_resetMask;
-    var b = $n(ResetAttr$1).Lfansi_ResetAttr__f_resetMask;
-    if (((a.RTLong__f_lo === b.RTLong__f_lo) && (a.RTLong__f_hi === b.RTLong__f_hi))) {
-      var a$1 = this.Lfansi_ResetAttr__f_applyMask;
-      var b$1 = $n(ResetAttr$1).Lfansi_ResetAttr__f_applyMask;
-      if (((a$1.RTLong__f_lo === b$1.RTLong__f_lo) && (a$1.RTLong__f_hi === b$1.RTLong__f_hi))) {
+    var x_$_lo = this.Lfansi_ResetAttr__f_resetMask_$lo;
+    var x_$_hi = this.Lfansi_ResetAttr__f_resetMask_$hi;
+    var x$2_$_lo = $n(ResetAttr$1).Lfansi_ResetAttr__f_resetMask_$lo;
+    var x$2_$_hi = $n(ResetAttr$1).Lfansi_ResetAttr__f_resetMask_$hi;
+    if ((((x_$_lo ^ x$2_$_lo) | (x_$_hi ^ x$2_$_hi)) === 0)) {
+      var x$3_$_lo = this.Lfansi_ResetAttr__f_applyMask_$lo;
+      var x$3_$_hi = this.Lfansi_ResetAttr__f_applyMask_$hi;
+      var x$4_$_lo = $n(ResetAttr$1).Lfansi_ResetAttr__f_applyMask_$lo;
+      var x$4_$_hi = $n(ResetAttr$1).Lfansi_ResetAttr__f_applyMask_$hi;
+      if ((((x$3_$_lo ^ x$4_$_lo) | (x$3_$_hi ^ x$4_$_hi)) === 0)) {
         $n(ResetAttr$1);
         return true;
       } else {
@@ -28537,27 +28558,25 @@ var $d_jl_Integer = new $TypeData().initClass(0, "java.lang.Integer", ({
   jl_constant_Constable: 1,
   jl_constant_ConstantDesc: 1
 }), ((x) => $isInt(x)));
-function $f_jl_Long__equals__O__Z($thiz, that) {
-  if ((that instanceof $c_RTLong)) {
+function $f_jl_Long__equals__O__Z($thiz, $thizhi, that) {
+  if ((that instanceof $Long)) {
     var x2 = $as_jl_Long(that);
-    var this$1 = $n(x2);
-    var b = $uJ(this$1);
-    return (($thiz.RTLong__f_lo === b.RTLong__f_lo) && ($thiz.RTLong__f_hi === b.RTLong__f_hi));
+    var $x_1 = $n(x2);
+    var this$1_$_lo = $x_1.l;
+    var this$1_$_hi = $x_1.h;
+    return ((($thiz ^ this$1_$_lo) | ($thizhi ^ this$1_$_hi)) === 0);
   } else {
     return false;
   }
 }
-function $f_jl_Long__hashCode__I($thiz) {
-  var $x_1 = $thiz.RTLong__f_lo;
-  var hi = $thiz.RTLong__f_hi;
-  return ($x_1 ^ hi);
+function $f_jl_Long__hashCode__I($thiz, $thizhi) {
+  return ($thiz ^ $thizhi);
 }
-function $f_jl_Long__toString__T($thiz) {
-  var this$1 = $m_RTLong$();
-  return this$1.org$scalajs$linker$runtime$RuntimeLong$$toString__I__I__T($thiz.RTLong__f_lo, $thiz.RTLong__f_hi);
+function $f_jl_Long__toString__T($thiz, $thizhi) {
+  return $m_RTLong$().toString__I__I__T($thiz, $thizhi);
 }
 function $as_jl_Long(obj) {
-  return (((obj instanceof $c_RTLong) || (obj === null)) ? obj : $throwClassCastException(obj, "java.lang.Long"));
+  return (((obj instanceof $Long) || (obj === null)) ? obj : $throwClassCastException(obj, "java.lang.Long"));
 }
 function $isArrayOf_jl_Long(obj, depth) {
   return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.jl_Long)));
@@ -28572,7 +28591,7 @@ var $d_jl_Long = new $TypeData().initClass(0, "java.lang.Long", ({
   jl_Comparable: 1,
   jl_constant_Constable: 1,
   jl_constant_ConstantDesc: 1
-}), ((x) => (x instanceof $c_RTLong)));
+}), ((x) => (x instanceof $Long)));
 class $c_jl_NumberFormatException extends $c_jl_IllegalArgumentException {
   constructor(s) {
     super();
@@ -29067,7 +29086,7 @@ $c_sc_IndexedSeqView$IndexedSeqViewIterator.prototype.next__O = (function() {
   if ((this.sc_IndexedSeqView$IndexedSeqViewIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewIterator$$remainder > 0)) {
     var r = $n(this.sc_IndexedSeqView$IndexedSeqViewIterator__f_self).apply__I__O(this.sc_IndexedSeqView$IndexedSeqViewIterator__f_current);
     this.sc_IndexedSeqView$IndexedSeqViewIterator__f_current = ((1 + this.sc_IndexedSeqView$IndexedSeqViewIterator__f_current) | 0);
-    this.sc_IndexedSeqView$IndexedSeqViewIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewIterator$$remainder = (((-1) + this.sc_IndexedSeqView$IndexedSeqViewIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewIterator$$remainder) | 0);
+    this.sc_IndexedSeqView$IndexedSeqViewIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewIterator$$remainder = ((this.sc_IndexedSeqView$IndexedSeqViewIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewIterator$$remainder - 1) | 0);
     return r;
   } else {
     return $n($m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty).next__O();
@@ -29104,7 +29123,7 @@ function $c_sc_IndexedSeqView$IndexedSeqViewReverseIterator(self) {
   this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos = 0;
   this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_self = self;
   this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder = $n(self).length__I();
-  this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos = (((-1) + this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder) | 0);
+  this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos = ((this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder - 1) | 0);
 }
 $c_sc_IndexedSeqView$IndexedSeqViewReverseIterator.prototype = new $h_sc_AbstractIterator();
 $c_sc_IndexedSeqView$IndexedSeqViewReverseIterator.prototype.constructor = $c_sc_IndexedSeqView$IndexedSeqViewReverseIterator;
@@ -29118,8 +29137,8 @@ $c_sc_IndexedSeqView$IndexedSeqViewReverseIterator.prototype.hasNext__Z = (funct
 $c_sc_IndexedSeqView$IndexedSeqViewReverseIterator.prototype.next__O = (function() {
   if ((this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder > 0)) {
     var r = $n(this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_self).apply__I__O(this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos);
-    this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos = (((-1) + this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos) | 0);
-    this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder = (((-1) + this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder) | 0);
+    this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos = ((this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_pos - 1) | 0);
+    this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder = ((this.sc_IndexedSeqView$IndexedSeqViewReverseIterator__f_scala$collection$IndexedSeqView$IndexedSeqViewReverseIterator$$remainder - 1) | 0);
     return r;
   } else {
     return $n($m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty).next__O();
@@ -29734,7 +29753,7 @@ $c_sci_MapKeyValueTupleHashIterator.prototype.next__sci_MapKeyValueTupleHashIter
   }
   this.sci_MapKeyValueTupleHashIterator__f_hash = $n(this.sci_ChampBaseReverseIterator__f_currentValueNode).getHash__I__I(this.sci_ChampBaseReverseIterator__f_currentValueCursor);
   this.sci_MapKeyValueTupleHashIterator__f_value = $n($as_sci_MapNode(this.sci_ChampBaseReverseIterator__f_currentValueNode)).getValue__I__O(this.sci_ChampBaseReverseIterator__f_currentValueCursor);
-  this.sci_ChampBaseReverseIterator__f_currentValueCursor = (((-1) + this.sci_ChampBaseReverseIterator__f_currentValueCursor) | 0);
+  this.sci_ChampBaseReverseIterator__f_currentValueCursor = ((this.sci_ChampBaseReverseIterator__f_currentValueCursor - 1) | 0);
   return this;
 });
 $c_sci_MapKeyValueTupleHashIterator.prototype.next__O = (function() {
@@ -29828,7 +29847,7 @@ function $p_sci_NewVectorIterator__advanceSlice__V($thiz) {
   $thiz.sci_NewVectorIterator__f_sliceStart = $thiz.sci_NewVectorIterator__f_sliceEnd;
   var count = $thiz.sci_NewVectorIterator__f_sliceCount;
   var idx = $thiz.sci_NewVectorIterator__f_sliceIdx;
-  var c = ((count / 2) | 0);
+  var c = (((count + ((count >>> 31) | 0)) | 0) >> 1);
   var a = ((idx - c) | 0);
   var sign = (a >> 31);
   $thiz.sci_NewVectorIterator__f_sliceDim = ((((1 + c) | 0) - (((a ^ sign) - sign) | 0)) | 0);
@@ -29862,12 +29881,12 @@ function $p_sci_NewVectorIterator__advanceSlice__V($thiz) {
       throw new $c_s_MatchError(x1);
     }
   }
-  $thiz.sci_NewVectorIterator__f_sliceEnd = (($thiz.sci_NewVectorIterator__f_sliceStart + Math.imul($n(slice).u.length, (1 << Math.imul(5, (((-1) + $thiz.sci_NewVectorIterator__f_sliceDim) | 0))))) | 0);
+  $thiz.sci_NewVectorIterator__f_sliceEnd = (($thiz.sci_NewVectorIterator__f_sliceStart + Math.imul($n(slice).u.length, (1 << Math.imul(5, (($thiz.sci_NewVectorIterator__f_sliceDim - 1) | 0))))) | 0);
   if (($thiz.sci_NewVectorIterator__f_sliceEnd > $thiz.sci_NewVectorIterator__f_totalLength)) {
     $thiz.sci_NewVectorIterator__f_sliceEnd = $thiz.sci_NewVectorIterator__f_totalLength;
   }
   if (($thiz.sci_NewVectorIterator__f_sliceDim > 1)) {
-    $thiz.sci_NewVectorIterator__f_oldPos = (((-1) + (1 << Math.imul(5, $thiz.sci_NewVectorIterator__f_sliceDim))) | 0);
+    $thiz.sci_NewVectorIterator__f_oldPos = (((1 << Math.imul(5, $thiz.sci_NewVectorIterator__f_sliceDim)) - 1) | 0);
   }
 }
 function $p_sci_NewVectorIterator__advance__V($thiz) {
@@ -30096,13 +30115,13 @@ $c_sci_RangeIterator.prototype.drop__I__sc_Iterator = (function(n) {
       var value$2 = this.sci_RangeIterator__f_lastElement;
       var hi$3 = (value$2 >> 31);
       if (((hi$3 === hi$2) ? ((value$2 >>> 0) < (lo >>> 0)) : (hi$3 < hi$2))) {
-        var a__lo = value$2;
-        var a__hi = hi$3;
+        var x_$_lo = value$2;
+        var x_$_hi = hi$3;
       } else {
-        var a__lo = lo;
-        var a__hi = hi$2;
+        var x_$_lo = lo;
+        var x_$_hi = hi$2;
       }
-      this.sci_RangeIterator__f__next = a__lo;
+      this.sci_RangeIterator__f__next = x_$_lo;
       var value$3 = this.sci_RangeIterator__f_lastElement;
       var hi$4 = (value$3 >> 31);
       this.sci_RangeIterator__f__hasNext = ((hi$2 === hi$4) ? ((lo >>> 0) <= (value$3 >>> 0)) : (hi$2 < hi$4));
@@ -30110,13 +30129,13 @@ $c_sci_RangeIterator.prototype.drop__I__sc_Iterator = (function(n) {
       var value$4 = this.sci_RangeIterator__f_lastElement;
       var hi$5 = (value$4 >> 31);
       if (((hi$5 === hi$2) ? ((value$4 >>> 0) > (lo >>> 0)) : (hi$5 > hi$2))) {
-        var a$1__lo = value$4;
-        var a$1__hi = hi$5;
+        var x$1_$_lo = value$4;
+        var x$1_$_hi = hi$5;
       } else {
-        var a$1__lo = lo;
-        var a$1__hi = hi$2;
+        var x$1_$_lo = lo;
+        var x$1_$_hi = hi$2;
       }
-      this.sci_RangeIterator__f__next = a$1__lo;
+      this.sci_RangeIterator__f__next = x$1_$_lo;
       var value$5 = this.sci_RangeIterator__f_lastElement;
       var hi$6 = (value$5 >> 31);
       this.sci_RangeIterator__f__hasNext = ((hi$2 === hi$6) ? ((lo >>> 0) >= (value$5 >>> 0)) : (hi$2 > hi$6));
@@ -30161,7 +30180,7 @@ $c_sci_Set$SetNIterator.prototype.next__O = (function() {
   if (this.hasNext__Z()) {
     var r = this.apply__I__O(this.sci_Set$SetNIterator__f_current);
     this.sci_Set$SetNIterator__f_current = ((1 + this.sci_Set$SetNIterator__f_current) | 0);
-    this.sci_Set$SetNIterator__f_remainder = (((-1) + this.sci_Set$SetNIterator__f_remainder) | 0);
+    this.sci_Set$SetNIterator__f_remainder = ((this.sci_Set$SetNIterator__f_remainder - 1) | 0);
     return r;
   } else {
     return $n($m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty).next__O();
@@ -31916,14 +31935,15 @@ function $h_sc_ArrayOps$ArrayIterator$mcJ$sp() {
 }
 $h_sc_ArrayOps$ArrayIterator$mcJ$sp.prototype = $c_sc_ArrayOps$ArrayIterator$mcJ$sp.prototype;
 $c_sc_ArrayOps$ArrayIterator$mcJ$sp.prototype.next$mcJ$sp__J = (function() {
-  if ((this.sc_ArrayOps$ArrayIterator__f_scala$collection$ArrayOps$ArrayIterator$$pos >= $n(this.sc_ArrayOps$ArrayIterator$mcJ$sp__f_xs$mcJ$sp).u.length)) {
+  if ((this.sc_ArrayOps$ArrayIterator__f_scala$collection$ArrayOps$ArrayIterator$$pos >= (($n(this.sc_ArrayOps$ArrayIterator$mcJ$sp__f_xs$mcJ$sp).u.length >>> 1) | 0))) {
     $n($m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty).next__O();
   }
-  var t = $n(this.sc_ArrayOps$ArrayIterator$mcJ$sp__f_xs$mcJ$sp).get(this.sc_ArrayOps$ArrayIterator__f_scala$collection$ArrayOps$ArrayIterator$$pos);
-  var lo = t.RTLong__f_lo;
-  var hi = t.RTLong__f_hi;
+  var $x_1 = $n(this.sc_ArrayOps$ArrayIterator$mcJ$sp__f_xs$mcJ$sp).u;
+  var $x_2 = $aJCheckGet($x_1, this.sc_ArrayOps$ArrayIterator__f_scala$collection$ArrayOps$ArrayIterator$$pos);
+  var r_$_lo = $x_1[$x_2];
+  var r_$_hi = $x_1[(($x_2 + 1) | 0)];
   this.sc_ArrayOps$ArrayIterator__f_scala$collection$ArrayOps$ArrayIterator$$pos = ((1 + this.sc_ArrayOps$ArrayIterator__f_scala$collection$ArrayOps$ArrayIterator$$pos) | 0);
-  return new $c_RTLong(lo, hi);
+  return $bL(r_$_lo, r_$_hi);
 });
 $c_sc_ArrayOps$ArrayIterator$mcJ$sp.prototype.next__O = (function() {
   return this.next$mcJ$sp__J();
@@ -32339,8 +32359,7 @@ class $c_sjs_js_JavaScriptException extends $c_jl_RuntimeException {
     return ((x$1 === 0) ? "exception" : $as_T($m_sr_Statics$().ioobe__I__O(x$1)));
   }
   hashCode__I() {
-    var this$2 = $m_s_util_hashing_MurmurHash3$();
-    return this$2.caseClassHash__s_Product__I__T__I(this, (-889275714), null);
+    return $m_s_util_hashing_MurmurHash3$().productHash__s_Product__I__Z__I(this, 1744042595, true);
   }
   equals__O__Z(x$1) {
     if ((this === x$1)) {
@@ -32443,7 +32462,7 @@ function $p_sc_StrictOptimizedLinearSeqOps__loop$2__I__sc_LinearSeq__sc_LinearSe
     if (((n <= 0) || $n(s).isEmpty__Z())) {
       return s;
     } else {
-      var temp$n = (((-1) + n) | 0);
+      var temp$n = ((n - 1) | 0);
       var temp$s = $as_sc_LinearSeq($n(s).tail__O());
       n = temp$n;
       s = temp$s;
@@ -33867,7 +33886,7 @@ $c_sc_SeqView$Prepended.prototype.isEmpty__Z = (function() {
   return $f_sc_SeqOps__isEmpty__Z(this);
 });
 $c_sc_SeqView$Prepended.prototype.apply__I__O = (function(idx) {
-  return ((idx === 0) ? this.sc_SeqView$Prepended__f_elem : $n(this.sc_SeqView$Prepended__f_underlying).apply__I__O((((-1) + idx) | 0)));
+  return ((idx === 0) ? this.sc_SeqView$Prepended__f_elem : $n(this.sc_SeqView$Prepended__f_underlying).apply__I__O(((idx - 1) | 0)));
 });
 $c_sc_SeqView$Prepended.prototype.length__I = (function() {
   return ((1 + $n(this.sc_SeqView$Prepended__f_underlying).length__I()) | 0);
@@ -33905,7 +33924,7 @@ function $h_sc_SeqView$Reverse() {
 }
 $h_sc_SeqView$Reverse.prototype = $c_sc_SeqView$Reverse.prototype;
 $c_sc_SeqView$Reverse.prototype.apply__I__O = (function(i) {
-  return $n(this.sc_SeqView$Reverse__f_underlying).apply__I__O((((((-1) + this.length__I()) | 0) - i) | 0));
+  return $n(this.sc_SeqView$Reverse__f_underlying).apply__I__O(((((this.length__I() - 1) | 0) - i) | 0));
 });
 $c_sc_SeqView$Reverse.prototype.length__I = (function() {
   var this$1 = $n(this.sc_SeqView$Reverse__f_underlying);
@@ -36461,8 +36480,8 @@ $c_sjsr_WrappedVarArgs.prototype.foldLeft__O__F2__O = (function(z, op) {
 $c_sjsr_WrappedVarArgs.prototype.reduceLeft__F2__O = (function(op) {
   return $f_sc_IterableOnceOps__reduceLeft__F2__O(this, op);
 });
-$c_sjsr_WrappedVarArgs.prototype.copyToArray__O__I__I__I = (function(xs, start, len) {
-  return $f_sc_IterableOnceOps__copyToArray__O__I__I__I(this, xs, start, len);
+$c_sjsr_WrappedVarArgs.prototype.copyToArray__O__I__I__I = (function(dest, start, n) {
+  return $f_sc_IterableOnceOps__copyToArray__O__I__I__I(this, dest, start, n);
 });
 $c_sjsr_WrappedVarArgs.prototype.min__s_math_Ordering__O = (function(ord) {
   return $f_sc_IterableOnceOps__min__s_math_Ordering__O(this, ord);
@@ -36807,7 +36826,7 @@ $c_scm_AbstractMap.prototype.result__O = (function() {
   return this;
 });
 function $p_scm_HashSet__addElem__O__I__Z($thiz, elem, hash) {
-  var idx = (hash & (((-1) + $n($thiz.scm_HashSet__f_scala$collection$mutable$HashSet$$table).u.length) | 0));
+  var idx = (hash & (($n($thiz.scm_HashSet__f_scala$collection$mutable$HashSet$$table).u.length - 1) | 0));
   var x1 = $n($thiz.scm_HashSet__f_scala$collection$mutable$HashSet$$table).get(idx);
   if ((x1 === null)) {
     $n($thiz.scm_HashSet__f_scala$collection$mutable$HashSet$$table).set(idx, new $c_scm_HashSet$Node(elem, hash, null));
@@ -36877,7 +36896,7 @@ function $p_scm_HashSet__growTable__I__V($thiz, newlen) {
   }
 }
 function $p_scm_HashSet__tableSizeFor__I__I($thiz, capacity) {
-  var x = (((-1) + capacity) | 0);
+  var x = ((capacity - 1) | 0);
   var i = ((x > 4) ? x : 4);
   var x$1 = ((((-2147483648) >> Math.clz32(i)) & i) << 1);
   return ((x$1 < 1073741824) ? x$1 : 1073741824);
@@ -36917,7 +36936,7 @@ $c_scm_HashSet.prototype.scala$collection$mutable$HashSet$$improveHash__I__I = (
 });
 $c_scm_HashSet.prototype.contains__O__Z = (function(elem) {
   var hash = this.scala$collection$mutable$HashSet$$improveHash__I__I($m_sr_Statics$().anyHash__O__I(elem));
-  var x1 = $n(this.scm_HashSet__f_scala$collection$mutable$HashSet$$table).get((hash & (((-1) + $n(this.scm_HashSet__f_scala$collection$mutable$HashSet$$table).u.length) | 0)));
+  var x1 = $n(this.scm_HashSet__f_scala$collection$mutable$HashSet$$table).get((hash & (($n(this.scm_HashSet__f_scala$collection$mutable$HashSet$$table).u.length - 1) | 0)));
   return (((x1 === null) ? null : $n(x1).findNode__O__I__scm_HashSet$Node(elem, hash)) !== null);
 });
 $c_scm_HashSet.prototype.sizeHint__I__V = (function(size) {
@@ -37260,7 +37279,7 @@ $c_sci_Vector.prototype.appendedAll0__sc_IterableOnce__I__sci_Vector = (function
       v$2 = $n(v$2).prepended__O__sci_Vector(ri.next__O());
     }
     return v$2;
-  } else if (((this.length__I() < (((-64) + k) | 0)) && (suffix instanceof $c_sci_Vector))) {
+  } else if (((this.length__I() < ((k - 64) | 0)) && (suffix instanceof $c_sci_Vector))) {
     var v$3 = $as_sci_Vector(suffix);
     return $n($n($n(new $c_sci_VectorBuilder().alignTo__I__sci_Vector__sci_VectorBuilder(this.length__I(), v$3)).addAll__sc_IterableOnce__sci_VectorBuilder(this)).addAll__sc_IterableOnce__sci_VectorBuilder(v$3)).result__sci_Vector();
   } else {
@@ -37277,7 +37296,7 @@ $c_sci_Vector.prototype.applyPreferredMaxLength__I = (function() {
   return $m_sci_Vector$().sci_Vector$__f_scala$collection$immutable$Vector$$defaultApplyPreferredMaxLength;
 });
 $c_sci_Vector.prototype.ioob__I__jl_IndexOutOfBoundsException = (function(index) {
-  return $m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(index, (((-1) + this.length__I()) | 0));
+  return $m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(index, ((this.length__I() - 1) | 0));
 });
 $c_sci_Vector.prototype.head__O = (function() {
   if (($n(this.sci_Vector__f_prefix1).u.length === 0)) {
@@ -37292,10 +37311,10 @@ $c_sci_Vector.prototype.foreach__F1__V = (function(f) {
   while ((i < c)) {
     var $x_1 = $m_sci_VectorStatics$();
     var idx = i;
-    var c$1 = ((c / 2) | 0);
+    var c$1 = (((c + ((c >>> 31) | 0)) | 0) >> 1);
     var a = ((idx - c$1) | 0);
     var sign = (a >> 31);
-    $x_1.foreachRec__I__AO__F1__V((((-1) + ((((1 + c$1) | 0) - (((a ^ sign) - sign) | 0)) | 0)) | 0), this.vectorSlice__I__AO(i), f);
+    $x_1.foreachRec__I__AO__F1__V(((((((1 + c$1) | 0) - (((a ^ sign) - sign) | 0)) | 0) - 1) | 0), this.vectorSlice__I__AO(i), f);
     i = ((1 + i) | 0);
   }
 });
@@ -38056,7 +38075,7 @@ function $h_sci_ArraySeq$ofLong() {
 }
 $h_sci_ArraySeq$ofLong.prototype = $c_sci_ArraySeq$ofLong.prototype;
 $c_sci_ArraySeq$ofLong.prototype.length__I = (function() {
-  return $n(this.sci_ArraySeq$ofLong__f_unsafeArray).u.length;
+  return (($n(this.sci_ArraySeq$ofLong__f_unsafeArray).u.length >>> 1) | 0);
 });
 $c_sci_ArraySeq$ofLong.prototype.hashCode__I = (function() {
   var this$1 = $m_s_util_hashing_MurmurHash3$();
@@ -38077,22 +38096,24 @@ $c_sci_ArraySeq$ofLong.prototype.iterator__sc_Iterator = (function() {
   return new $c_sc_ArrayOps$ArrayIterator$mcJ$sp(this.sci_ArraySeq$ofLong__f_unsafeArray);
 });
 $c_sci_ArraySeq$ofLong.prototype.prepended__O__sci_ArraySeq = (function(elem) {
-  if ((elem instanceof $c_RTLong)) {
-    var t = $uJ(elem);
-    var lo = t.RTLong__f_lo;
-    var hi = t.RTLong__f_hi;
+  if ((elem instanceof $Long)) {
+    var $x_1 = $uJ(elem);
+    var x2_$_lo = $x_1.l;
+    var x2_$_hi = $x_1.h;
     var xs = this.sci_ArraySeq$ofLong__f_unsafeArray;
-    var len = ((1 + $n(xs).u.length) | 0);
+    var len = ((1 + (($n(xs).u.length >>> 1) | 0)) | 0);
     var dest = new $ac_J(len);
-    dest.set(0, new $c_RTLong(lo, hi));
-    $m_s_Array$().copy__O__I__O__I__I__V(xs, 0, dest, 1, $n(xs).u.length);
+    dest.set(0, x2_$_lo, x2_$_hi);
+    $m_s_Array$().copy__O__I__O__I__I__V(xs, 0, dest, 1, (($n(xs).u.length >>> 1) | 0));
     return new $c_sci_ArraySeq$ofLong(dest);
   } else {
     return $c_sci_ArraySeq.prototype.prepended__O__sci_ArraySeq.call(this, elem);
   }
 });
 $c_sci_ArraySeq$ofLong.prototype.apply$mcJI$sp__I__J = (function(i) {
-  return $n(this.sci_ArraySeq$ofLong__f_unsafeArray).get(i);
+  var $x_1 = $n(this.sci_ArraySeq$ofLong__f_unsafeArray).u;
+  var $x_2 = $aJCheckGet($x_1, i);
+  return $bL($x_1[$x_2], $x_1[(($x_2 + 1) | 0)]);
 });
 $c_sci_ArraySeq$ofLong.prototype.prepended__O__O = (function(elem) {
   return this.prepended__O__sci_ArraySeq(elem);
@@ -38442,9 +38463,9 @@ function $p_sci_List__listEq$1__sci_List__sci_List__Z($thiz, a, b) {
         var temp$b = $as_sci_List($n(b).tail__O());
         a = temp$a;
         b = temp$b;
-      } else {
-        return (aEmpty && bEmpty);
+        continue;
       }
+      return (aEmpty && bEmpty);
     }
   }
 }
@@ -39278,7 +39299,7 @@ function $h_scm_ArraySeq$ofLong() {
 }
 $h_scm_ArraySeq$ofLong.prototype = $c_scm_ArraySeq$ofLong.prototype;
 $c_scm_ArraySeq$ofLong.prototype.length__I = (function() {
-  return $n(this.scm_ArraySeq$ofLong__f_array).u.length;
+  return (($n(this.scm_ArraySeq$ofLong__f_array).u.length >>> 1) | 0);
 });
 $c_scm_ArraySeq$ofLong.prototype.hashCode__I = (function() {
   var this$1 = $m_s_util_hashing_MurmurHash3$();
@@ -39299,7 +39320,9 @@ $c_scm_ArraySeq$ofLong.prototype.iterator__sc_Iterator = (function() {
   return new $c_sc_ArrayOps$ArrayIterator$mcJ$sp(this.scm_ArraySeq$ofLong__f_array);
 });
 $c_scm_ArraySeq$ofLong.prototype.apply$mcJI$sp__I__J = (function(index) {
-  return $n(this.scm_ArraySeq$ofLong__f_array).get(index);
+  var $x_1 = $n(this.scm_ArraySeq$ofLong__f_array).u;
+  var $x_2 = $aJCheckGet($x_1, index);
+  return $bL($x_1[$x_2], $x_1[(($x_2 + 1) | 0)]);
 });
 $c_scm_ArraySeq$ofLong.prototype.apply__O__O = (function(v1) {
   var index = $uI(v1);
@@ -39608,7 +39631,7 @@ function $p_scm_HashMap__put0__O__O__I__Z__s_Some($thiz, key, value, hash, getOl
   if ((((1 + $thiz.scm_HashMap__f_contentSize) | 0) >= $thiz.scm_HashMap__f_threshold)) {
     $p_scm_HashMap__growTable__I__V($thiz, ($n($thiz.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length << 1));
   }
-  var idx = (hash & (((-1) + $n($thiz.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0));
+  var idx = (hash & (($n($thiz.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0));
   return $p_scm_HashMap__put0__O__O__Z__I__I__s_Some($thiz, key, value, getOld, hash, idx);
 }
 function $p_scm_HashMap__put0__O__O__Z__s_Some($thiz, key, value, getOld) {
@@ -39617,7 +39640,7 @@ function $p_scm_HashMap__put0__O__O__Z__s_Some($thiz, key, value, getOld) {
   }
   var originalHash = $m_sr_Statics$().anyHash__O__I(key);
   var hash = (originalHash ^ ((originalHash >>> 16) | 0));
-  var idx = (hash & (((-1) + $n($thiz.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0));
+  var idx = (hash & (($n($thiz.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0));
   return $p_scm_HashMap__put0__O__O__Z__I__I__s_Some($thiz, key, value, getOld, hash, idx);
 }
 function $p_scm_HashMap__put0__O__O__Z__I__I__s_Some($thiz, key, value, getOld, hash, idx) {
@@ -39695,7 +39718,7 @@ function $p_scm_HashMap__growTable__I__V($thiz, newlen) {
   }
 }
 function $p_scm_HashMap__tableSizeFor__I__I($thiz, capacity) {
-  var x = (((-1) + capacity) | 0);
+  var x = ((capacity - 1) | 0);
   var i = ((x > 4) ? x : 4);
   var x$1 = ((((-2147483648) >> Math.clz32(i)) & i) << 1);
   return ((x$1 < 1073741824) ? x$1 : 1073741824);
@@ -39736,7 +39759,7 @@ $c_scm_HashMap.prototype.size__I = (function() {
 $c_scm_HashMap.prototype.contains__O__Z = (function(key) {
   var originalHash = $m_sr_Statics$().anyHash__O__I(key);
   var hash = (originalHash ^ ((originalHash >>> 16) | 0));
-  var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (((-1) + $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0)));
+  var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (($n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0)));
   return (((x1 === null) ? null : $n(x1).findNode__O__I__scm_HashMap$Node(key, hash)) !== null);
 });
 $c_scm_HashMap.prototype.sizeHint__I__V = (function(size) {
@@ -39798,14 +39821,14 @@ $c_scm_HashMap.prototype.nodeIterator__sc_Iterator = (function() {
 $c_scm_HashMap.prototype.get__O__s_Option = (function(key) {
   var originalHash = $m_sr_Statics$().anyHash__O__I(key);
   var hash = (originalHash ^ ((originalHash >>> 16) | 0));
-  var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (((-1) + $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0)));
+  var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (($n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0)));
   var x1$1 = ((x1 === null) ? null : $n(x1).findNode__O__I__scm_HashMap$Node(key, hash));
   return ((x1$1 === null) ? $m_s_None$() : new $c_s_Some($n(x1$1).scm_HashMap$Node__f__value));
 });
 $c_scm_HashMap.prototype.apply__O__O = (function(key) {
   var originalHash = $m_sr_Statics$().anyHash__O__I(key);
   var hash = (originalHash ^ ((originalHash >>> 16) | 0));
-  var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (((-1) + $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0)));
+  var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (($n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0)));
   var x1$1 = ((x1 === null) ? null : $n(x1).findNode__O__I__scm_HashMap$Node(key, hash));
   return ((x1$1 === null) ? $f_sc_MapOps__default__O__O(this, key) : $n(x1$1).scm_HashMap$Node__f__value);
 });
@@ -39816,7 +39839,7 @@ $c_scm_HashMap.prototype.getOrElse__O__F0__O = (function(key, default$1) {
   } else {
     var originalHash = $m_sr_Statics$().anyHash__O__I(key);
     var hash = (originalHash ^ ((originalHash >>> 16) | 0));
-    var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (((-1) + $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length) | 0)));
+    var x1 = $n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).get((hash & (($n(this.scm_HashMap__f_scala$collection$mutable$HashMap$$table).u.length - 1) | 0)));
     var nd = ((x1 === null) ? null : $n(x1).findNode__O__I__scm_HashMap$Node(key, hash));
     return ((nd === null) ? $n(default$1).apply__O() : $n(nd).scm_HashMap$Node__f__value);
   }
@@ -43147,11 +43170,11 @@ function $p_scm_ListBuffer__predecessor__I__sci_$colon$colon($thiz, i) {
   } else if ((i === $thiz.scm_ListBuffer__f_len)) {
     return $thiz.scm_ListBuffer__f_last0;
   } else {
-    var j = (((-1) + i) | 0);
+    var j = ((i - 1) | 0);
     var p = $thiz.scm_ListBuffer__f_first;
     while ((j > 0)) {
       p = $as_sci_List($n(p).tail__O());
-      j = (((-1) + j) | 0);
+      j = ((j - 1) | 0);
     }
     return $as_sci_$colon$colon(p);
   }
@@ -43256,7 +43279,7 @@ $c_scm_ListBuffer.prototype.addAll__sc_IterableOnce__scm_ListBuffer = (function(
 $c_scm_ListBuffer.prototype.update__I__O__V = (function(idx, elem) {
   $p_scm_ListBuffer__ensureUnaliased__V(this);
   if (((idx < 0) || (idx >= this.scm_ListBuffer__f_len))) {
-    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(idx, (((-1) + this.scm_ListBuffer__f_len) | 0)));
+    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(idx, ((this.scm_ListBuffer__f_len - 1) | 0)));
   }
   if ((idx === 0)) {
     var newElem = new $c_sci_$colon$colon(elem, $as_sci_List($n(this.scm_ListBuffer__f_first).tail__O()));
@@ -43414,20 +43437,20 @@ $c_scm_ArrayBuffer.prototype.sizeHint__I__V = (function(size) {
 $c_scm_ArrayBuffer.prototype.apply__I__O = (function(n) {
   var hi = ((1 + n) | 0);
   if ((n < 0)) {
-    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(n, (((-1) + this.scm_ArrayBuffer__f_size0) | 0)));
+    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(n, ((this.scm_ArrayBuffer__f_size0 - 1) | 0)));
   }
   if ((hi > this.scm_ArrayBuffer__f_size0)) {
-    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException((((-1) + hi) | 0), (((-1) + this.scm_ArrayBuffer__f_size0) | 0)));
+    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(((hi - 1) | 0), ((this.scm_ArrayBuffer__f_size0 - 1) | 0)));
   }
   return $n(this.scm_ArrayBuffer__f_array).get(n);
 });
 $c_scm_ArrayBuffer.prototype.update__I__O__V = (function(index, elem) {
   var hi = ((1 + index) | 0);
   if ((index < 0)) {
-    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(index, (((-1) + this.scm_ArrayBuffer__f_size0) | 0)));
+    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(index, ((this.scm_ArrayBuffer__f_size0 - 1) | 0)));
   }
   if ((hi > this.scm_ArrayBuffer__f_size0)) {
-    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException((((-1) + hi) | 0), (((-1) + this.scm_ArrayBuffer__f_size0) | 0)));
+    throw $n($m_scg_CommonErrors$().indexOutOfBounds__I__I__jl_IndexOutOfBoundsException(((hi - 1) | 0), ((this.scm_ArrayBuffer__f_size0 - 1) | 0)));
   }
   this.scm_ArrayBuffer__f_mutationCount = ((1 + this.scm_ArrayBuffer__f_mutationCount) | 0);
   $n(this.scm_ArrayBuffer__f_array).set(index, elem);
@@ -43444,11 +43467,11 @@ $c_scm_ArrayBuffer.prototype.iterableFactory__sc_SeqFactory = (function() {
 $c_scm_ArrayBuffer.prototype.addOne__O__scm_ArrayBuffer = (function(elem) {
   this.scm_ArrayBuffer__f_mutationCount = ((1 + this.scm_ArrayBuffer__f_mutationCount) | 0);
   var newSize = ((1 + this.scm_ArrayBuffer__f_size0) | 0);
-  if (($n(this.scm_ArrayBuffer__f_array).u.length <= (((-1) + newSize) | 0))) {
+  if (($n(this.scm_ArrayBuffer__f_array).u.length <= ((newSize - 1) | 0))) {
     this.ensureSize__I__V(newSize);
   }
   this.scm_ArrayBuffer__f_size0 = newSize;
-  $n(this.scm_ArrayBuffer__f_array).set((((-1) + newSize) | 0), elem);
+  $n(this.scm_ArrayBuffer__f_array).set(((newSize - 1) | 0), elem);
   return this;
 });
 $c_scm_ArrayBuffer.prototype.addAll__sc_IterableOnce__scm_ArrayBuffer = (function(elems) {
@@ -43665,8 +43688,6 @@ var $d_sjs_js_WrappedArray = new $TypeData().initClass($c_sjs_js_WrappedArray, "
   scm_Builder: 1,
   Ljava_io_Serializable: 1
 }));
-$L0 = new $c_RTLong(0, 0);
-$d_J.zero = $L0;
 FeatherweightGoMain = $m_Lfeatherweightgo_Main$();
 }).call(this);
 //# sourceMappingURL=featherweightgo-fastopt.js.map
