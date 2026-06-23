@@ -1073,6 +1073,156 @@ var $d_I = new $TypeData().initPrim(0, "I", "int", $ac_I, Int32Array);
 var $d_J = new $TypeData().initPrim($bL0, "J", "long", $ac_J, Int32Array);
 var $d_F = new $TypeData().initPrim(0.0, "F", "float", $ac_F, Float32Array);
 var $d_D = new $TypeData().initPrim(0.0, "D", "double", $ac_D, Float64Array);
+var $typedArraysAreBigEndian = (new Int8Array(new Int32Array([1]).buffer)[0] === 0);
+function $constArrayBuffer_B(len, encoded) {
+  var buf = new ArrayBuffer(len);
+  var view = new DataView(buf);
+  var regularChunksEnd = ((encoded.length - 4) | 0);
+  var i = 0;
+  var j = 0;
+  var chunk = 0;
+  while (true) {
+    chunk = (((encoded.charCodeAt(i) | (encoded.charCodeAt(((i + 1) | 0)) << 8)) | (encoded.charCodeAt(((i + 2) | 0)) << 16)) | (encoded.charCodeAt(((i + 3) | 0)) << 24));
+    chunk = ((((chunk - 808464432) | 0) - ((chunk & 1616928864) >>> 3)) | 0);
+    chunk = (((chunk & 1056980736) >>> 2) | (chunk & 4128831));
+    chunk = (((chunk & 268369920) >>> 4) | (chunk & 4095));
+    if ((i === regularChunksEnd)) {
+      break;
+    }
+    view.setUint32(j, chunk, true);
+    i = ((i + 4) | 0);
+    j = ((j + 3) | 0);
+  }
+  var trailing = ((len - j) | 0);
+  view.setUint8(j, chunk);
+  if ((trailing !== 1)) {
+    view.setUint8(((j + 1) | 0), (chunk >>> 8));
+    if ((trailing === 3)) {
+      view.setUint8(((j + 2) | 0), (chunk >>> 16));
+    }
+  }
+  return buf;
+}
+function $constArrayBuffer_S(len, encoded) {
+  var buf = $constArrayBuffer_B((len << 1), encoded);
+  if ($typedArraysAreBigEndian) {
+    var view = new DataView(buf);
+    var i = 0;
+    while ((i !== len)) {
+      view.putInt16(i, view.getInt16(i, true), false);
+      i = ((i + 2) | 0);
+    }
+  }
+  return buf;
+}
+function $constArrayBuffer_I(len, encoded) {
+  var buf = $constArrayBuffer_B((len << 2), encoded);
+  if ($typedArraysAreBigEndian) {
+    var view = new DataView(buf);
+    var i = 0;
+    while ((i !== len)) {
+      view.putInt32(i, view.getInt32(i, true), false);
+      i = ((i + 4) | 0);
+    }
+  }
+  return buf;
+}
+function $constArrayBuffer_J(len, encoded) {
+  return $constArrayBuffer_I((len << 1), encoded);
+}
+function $constTypedArrayU_I(len, encoded, prevMask) {
+  var buf = new Int32Array(len);
+  var inLen = (encoded.length | 0);
+  var prev = 0;
+  var i = 0;
+  var j = 0;
+  var v = 0;
+  while ((i !== inLen)) {
+    var c = encoded.charCodeAt(i);
+    if ((c < 80)) {
+      v = ((v | (c - 48)) << 5);
+    } else {
+      v = (v | (c - 93));
+      prev = (((prev & prevMask) + v) | 0);
+      buf[j] = prev;
+      j = ((j + 1) | 0);
+      v = 0;
+    }
+    i = ((i + 1) | 0);
+  }
+  return buf;
+}
+function $constTypedArrayS_I(len, encoded, prevMask) {
+  var buf = new Int32Array(len);
+  var inLen = (encoded.length | 0);
+  var prev = 0;
+  var i = 0;
+  var j = 0;
+  var v = 0;
+  var first = true;
+  while ((i !== inLen)) {
+    var c = encoded.charCodeAt(i);
+    if ((c < 80)) {
+      if (first) {
+        v = (((c - 48) << 27) >> 22);
+        first = false;
+      } else {
+        v = ((v | (c - 48)) << 5);
+      }
+    } else {
+      if (first) {
+        v = (((c - 93) << 27) >> 27);
+      } else {
+        v = (v | (c - 93));
+        first = true;
+      }
+      prev = (((prev & prevMask) + v) | 0);
+      buf[j] = prev;
+      j = ((j + 1) | 0);
+    }
+    i = ((i + 1) | 0);
+  }
+  return buf;
+}
+function $constArrRaw_B(len, encoded) {
+  return new $ac_B(new Int8Array($constArrayBuffer_B(len, encoded)));
+}
+function $constArrRaw_S(len, encoded) {
+  return new $ac_S(new Int16Array($constArrayBuffer_S(len, encoded)));
+}
+function $constArrRaw_C(len, encoded) {
+  return new $ac_C(new Uint16Array($constArrayBuffer_S(len, encoded)));
+}
+function $constArrRaw_I(len, encoded) {
+  return new $ac_I(new Int32Array($constArrayBuffer_I(len, encoded)));
+}
+function $constArrRaw_J(len, encoded) {
+  return new $ac_J(new Int32Array($constArrayBuffer_J(len, encoded)));
+}
+function $constArrUVals_I(len, encoded) {
+  return new $ac_I($constTypedArrayU_I(len, encoded, 0));
+}
+function $constArrUDiffs_I(len, encoded) {
+  return new $ac_I($constTypedArrayU_I(len, encoded, (-1)));
+}
+function $constArrSVals_I(len, encoded) {
+  return new $ac_I($constTypedArrayS_I(len, encoded, 0));
+}
+function $constArrSDiffs_I(len, encoded) {
+  return new $ac_I($constTypedArrayS_I(len, encoded, (-1)));
+}
+function $constArrUVals_J(len, encoded) {
+  return new $ac_J($constTypedArrayU_I((len << 1), encoded, 0));
+}
+function $constArrUDiffs_J(len, encoded) {
+  return new $ac_J($constTypedArrayU_I((len << 1), encoded, (-1)));
+}
+function $constArrSVals_J(len, encoded) {
+  return new $ac_J($constTypedArrayS_I((len << 1), encoded, 0));
+}
+function $constArrSDiffs_J(len, encoded) {
+  return new $ac_J($constTypedArrayS_I((len << 1), encoded, (-1)));
+}
 /** @constructor */
 function $c_Lfansi_Attr$() {
   this.Lfansi_Attr$__f_Reset = null;
@@ -3231,7 +3381,7 @@ function $p_jl_System$SystemProperties$__loadSystemProperties__O($thiz) {
   result["java.vm.specification.vendor"] = "Oracle Corporation";
   result["java.vm.specification.name"] = "Java Virtual Machine Specification";
   result["java.vm.name"] = "Scala.js";
-  result["java.vm.version"] = "1.21.0";
+  result["java.vm.version"] = "1.22.0";
   result["java.specification.version"] = "1.8";
   result["java.specification.vendor"] = "Oracle Corporation";
   result["java.specification.name"] = "Java Platform API Specification";
@@ -3271,6 +3421,60 @@ function $m_jl_System$SystemProperties$() {
     $n_jl_System$SystemProperties$ = new $c_jl_System$SystemProperties$();
   }
   return $n_jl_System$SystemProperties$;
+}
+/** @constructor */
+function $c_jl_UnicodeData$() {
+  this.jl_UnicodeData$__f_java$lang$UnicodeData$$dataDirect = null;
+  this.jl_UnicodeData$__f_dataRanges = null;
+  $n_jl_UnicodeData$ = this;
+  this.jl_UnicodeData$__f_java$lang$UnicodeData$$dataDirect = $constArrSDiffs_I(161, "8l]]]]]]]]L]]]]]4]]]]]]]]]]]]]]L]]]]zLi]]_{]]z^_^|ya]n]]]]]]]]]l]^]]|]Of]]]]]]]]]]]]]]]]]]]]]]]]]0q`{byaOd]]]]]]]]]]]]]]]]]]]]]]]]]0paz`7s]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Gz");
+  this.jl_UnicodeData$__f_dataRanges = $constArrUDiffs_I(2891, "D4u4_@_4|7^80003f3H0004u3y3t4i3|4^3z3o8m3d4s100004]300004`3m80003w3H0004v3j<j3f2Lu3eL^30t3f10|70^23|60^G]7|9]@^:|8^7|A^7|;]8^;|9^7|L^?|@^:|9^?|7^4`4y7^8`?y4_4|7^4{7_4|23|2<^7^4{?]9]7;^G|9^7|8^>|=]13^8@`3z8003<_3H0014]8000L]3H0008t?f1@t8001Gf3H000DtKf4t3f4t23h8008D]3H0004]58x?`4t4c6|80008a3H0003{<s3f3|@x7c100004t300003f;|4^3|4^9^6|1O|4^14^4=]7|7]8^<|2O^@|7u4f;|8^6|68^60|47x3gD^8w6L^1G|<2|4^4G|8a4qGg54s3y3i8y7{3c4c3N]1Fk5o2o5k6o5k6o5k1w10b3;x@b@p7e1<mHf;|8_3{8a9g1:o3u4e;j3O|4^1:^1B]6]J`18l?j:^1|<<p3j6^Jg4i3g:]={:_6s3g>]1|8a17y<t7f4p1Ge4m3r6^1|3J^1N]1;w8b;6^19|3x1Hf17y44^13{8u3y;i3y8c4q7h2J^6]7{6_11{6_9{6_>]3w8u1Ke4b34^;w8u3e4b1;xDb30s3gGx4m7mHcO|53|4_1:]1>]8g5sJ]J]2<_1z6J^4_2{9_;{10_={6_6z7^>]9|1:^6o7n18l3i4^1N^4_5u4bOx8b7x8b2Gx4bKx4b3x<b?x9c9_;{=w:e5u:e6z6x12e1u@b7x4b>^5w8f17y8r7nHn3{3h4p3k3w:c8_1u4bGx@b7x8b2Gx4bKx4b7x4b7x4b7x8c3w6e;{5wBc5w:c6]3w>c1wLb?x4b3xLf19z5|>^2o3e1:c8_1u4b13x4b;x4b2Gx4bKx4b7x4bCx9c9_;{Aw6c8_1u6e5{3w8b3x1Lb:^5w8f18l4_3cLb6^:];w6c4_5u4bOx8b7x8b2Gx4bKx4b7x4bCx9c9_3{4_3{=w:e5u:e5{3wLc6]4_1u@b7x4b>^5w8f18p3f4cGr1:c1|3x4bGx<b;x4b?x<b7x4b3x4b7x<b7x<b;x<b1?xBe7{4_5u>e9u6e9{3w8b3xJe1u1Hf18_<nG{4_3aFc4_;{1|Ox4b;x4b2Kx4b1Ox9c9]<_=u6c9w6c:]3wNc5w4b;x8b3x8b:^5w8f17tLu3pLn3f6^4_6m3jOx4b;x4b2Kx4b17x4bCx9c9_3{4_Au6c4_5u6e7{2]3wNe5uHb7x4b:^5w8f17t4b:`1u1Bc8_5z13x4b;x4b54^7|6`;{=w6e9u6e:z7t3a@b>`2`Kw>^5w8f18_14n3fGx6c4_5u4b27x<b2Ox4b13x4b3x8bKx<c3wBe;{9w6c1w6eMuHf17t:e6m3e1@b62^1|:^Iw@w3hG|4_J]2]4o3n18l7e4Db7x4b3x4bCx4b2Ox4b3x4b1:^1|:^F]6]5|3x8bCx4a3y4cF]2]3w4f17t8b?x40b4t;y1La3y4a;g8sGj18_18n3g4s3g4s3g5l>p7zOx4b4?xBc1H_3{>]4o3k7|F^19w6c4=w4yOg4sGa4y7yDa?y7e4Db5>`7{@_3{B]6_1{:_7{5|4a18lGjJ`7{5|B^9|6`9z:`Iz>^=|1F^4_7{8_G{1|6`2^19|;{2s7b4G|4^3|D^3|8_5<s80003i3H0003{<`193x4b?x8bKx4b3x4b?x8b53x4b?x8b43x4b?x8bKx4b3x4b?x8b1Kx4b73x4b?x8b8;x8c<o100013p300014]1;r<b20t17aH^:G|8_G{8q3n2=@t3y3j24d3v39n6g<b9<p;o;xOxLb2:^6]4_3u14b2>^6_4m7e14b2:^5w1@b1Cx4b;x6c5w1@b6@^:_3{L_O{4_5{1<o;i4q<_4h6x8f17tHh17rHuGy4a?k<g3s4`17tHb4;|4^6CxLb20000F^200005|4:^1|3xDb8Gx18b3Kx6c<_?{8_9uBe7{4_E{;w@y3a<u7n17y3Gx8bCx1<b5?x@b37xHf100018_300003r<y47f2N^8_7{1w8u7j6F`3{4_3{Iw4c6_3{4_7{10_G{6]Ow8c4`17tHf17tHuKi4qGe8c1H^5|6]1>]9w66c@_1z5L^6_3{D_3{4_C{4_2]3zOx<f18lLa17g14s13y7e6c8_1z3J`3{@_7{6_3{6]5|8a17y5@^6_3{8_;{4_3{:_7u10u?j4B`O{10_7{2]3w<uCn17t<b<a17y3G|Hq7g13{L^5;|8^<tOe10c<o3k1D_3{K|A]7]E^6|4`3{7|3xD_8005@_3H007K{8001D_3H0003{80048_3H004D_4N]1F]1<xBG^10|<7^O|10^G{8^G|8_O|10^O|10^G{8^G|8_O{4^3|4^3|4^3|5_7]K|10^1G{8_10^O|10^O|10^O|C{4_7|@_4u3d4v;d;{4_7|@_4u;d?{8_7|?|4x;dO|Dw;b8_;{4_7|@_4u7b4i1<aDaHa9b6u4e8^3t4e3x10r7`Cy4i15c6w?|8^<^4z7_1<^3|3|4^17q4aCm4m17x80003v3H0003y8hHk<z80006k3H0004d18k<z6g80004a3H001Cy<w43c1Lc1D^?|4^;|1?w1Ly7b4x?b4x8c6|8^7|<^4w3b4x200007z200003eDxGb4x3b4x3b4x3b20000@x200004b7]<^4`?z4w7c7|8uDf7]<w3z4`7c4w3l@001O|3H0020]3H0020]<u7e@^4n7a@vD`Cz8`?z4`7z4`7z4`Kz4`3Kz8`7z4`3z4`3Kz11@`10v?d2?z8`Lw7c:3z4`3Gz34`4OzH`8Ca34y1;a2Dh7@n@0038]3H0038]3H0037l2HnFKz4`13z4`6Gz10`=Kz4`O0v1Fs3Hn5?zDz7`3Ly17a20`OOz@<z2G`7Ly?a40y7a108`5Oz2D`7zH`4Ka8y3Oa4y=3b60^60|;]8^9]J|=]<^;]8000D_3H0007z=]<;^4wHc?a<x6|Du?p4j7g4G{4_3{D_3{8b6OxLa4q3e1Ib7]2Gx14bKx4bKx4bKx4bKx4bKx4bKx4bKx4bKx6c3No9b>x=c6w5b6x13y4a7y4a5b6x9b7uO`Ci4q17y8a?y4a3z4`1Da7y<{N{3i48y37a4y;3a1@yJGa38y1?a@i4i<a3e4^4b5h17d8vN|5_7]4c3k13y@_8i3mDu7k;w4^4p4a7a4b:Gx8c200008r200007f8^4l3n;8p3i<^3xDb5;x4b;Gx4y7l@n17f40t4?a1@b20t3Ka4h18n3Gl10n3l1Ln3Ol18n4Kl1Ln17OfIH0t7Of2B2C|4^4>Kx<y6Ka14b4O|Hq7j11?|4q;j20a17y7x2A^5Ha7_<n5kN]8o3i4z8003?`3H000:_5|8Hb17y8oGe10x2Kf14t8c1G^8|8007G`3H0003{11]C|17`4t8d?`4y?^8|2C]A]7]A]1O]=^:{E^6|4_3{5^B|80030a3H000<{7`80003|3H0007{4`N^1|=^6|>^1|2N`7{8_2q?g3w<hHn7{4_3aHb6@p?e12e5z6:`1M{6]1w10u7n17tHc27|Hp;j4p3j:^2`17y3B^B]<o7j2N^1<_2]3u1<u3j3Cx>c<_1z5L^6_7{@_7{8_6]4m1Ce4a4b17t@u7jF^1{4^14a17yCx4b56^H_7{8_7{5w14b>^1|12^4_1u8f17t8u?j1O|4^Ht;f6`3{4_1z6:^1|6^9|:^5|F^2|>x30b7|4q7j1>`3{8_6m7j3|:a1{3w18bGx8bGx8bGx14bKx4bKx4_5<v80003f3H000?{80014_3H0004t7b@_:0`4>`7{4_7{4_6m3m3{3w8f17tHb1;D?x1@b2Kx@b63x@p7OO|HOOp1=Gx8b=7x4H_K{1@_C{Db6^1|18q3i1Cx4bCx4b3x4b7x4b7x4b=@s23b20b1==n7c1Of7Ox8b6GxLy3a40b1@r4_;g20oL{7_3eHc20o3y8`8|1O_8{7_?|<^;e4u?y5_G_<^3x4b;d4u4_3{7e@bCx4b@Kx8m3m4u<_3{<z7`4^3|3y4a7n18l8^;|7f38q4`3{4b3y4a3d38p4a3z4`4z7_4z7`7j17|4^5C|8^3Kx<bGx8bGx8bGx8b;x<w7|4_4^3{7c4y3z@`7a18m<i7a8b1?x4b37x4b2;x4b7x4b1Kx8b1Gx48b?;xDu;e@h5Cr<y13k6D^@n23l8n;a4y1Ca<y3a5Ly5Cg3w@8b3Cx<b63x1Lc4b3;r@b40c?r14b2@b3x10b3sDb4J^AwDb3Gx4u3j4?x@b10p3oCs58^50^50`9Gx8f17tH^4?|@_4?{@b4Ox10b6?x1<u3f1;|4^1K|4^K|4^7|4_1;{4_1K{4_K{4_7{8<b16Kx14b2Gx18bOx80030a3H0004]80008]3H000;y80004a3H0057y80004a3H0013y8DbGx8b3x4b5?x4b7x<b3x8b2Kx4u3pOw2Lt7lKw3Kx10h13r60b2;x4b7xDhCw2HcGr<u3j37xDu3e80b6Ox@h7w8c1Or8h5Gw6^9w6c5wFc=|?x4b;x4b3Cx8c;w@c4b13rLu13eLb3Dc8j3j3Dc;r40b10t3f3@^7w@hDjKe14b6Gx<uKj2Gx8hOw2;xDhOw27xLu?e1@hKr:0b93x6L^6;|1D_6;{LhGw4B^=w10f17t14Hh3Kr4b57x6c6k3i8b7x9<c;|3Dc17w3x10b2H^1<b@jCe2Hb28^@o?e4Hb2DcKr2@b2Kx16e3{4_1z6F^1F]4oKe@h2?{18z6|6^5|3x14c6]8_1z5F`;{@_5{8o7u4eAk1w18m3m8b33xLf17tJc9|4B^D_3{F]7w4f18l?j6`5z3x10b4<^4o7j3x16c8_1z62`;{14_2]3z@p?k@o5m3{2`17y4p3j4p;e4h2?r1<b27x4b36`;{<_7{2_3{6]2oIk1|:^1w7HbKx4b3x4b?x4b1Kx4b18p3eHb5N^4_;{F]7wDf17tJc8_5u4bOx8b7x8b2Gx4bKx4b7x4bCx4c7|6`7{4_=u:e5u:e6]3u8b3xJe1uDbF`5u8cKw<cCwA<b6F`;{10_5{6]8_2{6|<pCn18l7e4u4k6|7x3Hb62`;{H_3{4_?{8_1{7|8p3j3x10f17tDHb5N`;{=w:e?{8_1{8o2KjB^5w48b62`;{10_7{4_1{6]2o;j3x1<f17tHu1Ce2<b5>^4_3{4_7{F_4z7p3eHf17t6Hb3;x:c<_7{@_3{>]3w@f18_8j<a3fKxG4b5B`;{14_1{8o3e<@^40^40d18_13r1@bOx8b3x8bOx4b7x4b32`Eu6e5u:c6_4{9_1z6`1{4o;e14f17t8HbOx8b4N`;{=w:c8_>{7o3j6`1u3<b6^15|50^:]@_1z6^>oOk3w10b6^H_7{9|5J^1D_1{8o;j4pCe1Db93xLu17eNHb13x4b4F`3{Iw6cH_2z7pCe18f18_2;r<u7j3Gx:c2Ew6e3{L_3{8_3{5w94bKx4b7x4b4J^Ew>c1w6c5w6c:]6]2]7|6^1w10f17tHbGx4b7x4b42`Au6c5w6e7{4_2z6xLf17t16Hb2>^8_6m7eNc5|6`1z1Cx4b4:`7{Aw>e7{2_3{4o1Cn17t:Hb3x1Lh2DnO{@_23a1Du3j3C7x<Hg=Ks4uCe1<bH?x:9@b<4p7e1Db460h20s6|D^1Kw?E8b28Kx11G4b273xLb3Kx4f17t@u7j9Kx4f17tHb3Gx8cDo3e18b60^LoDa?e@q4a3a18f17t4hKr4b2CxDb2;x2F0^40^40f2Lj?e<Db9;xBc1|6`6IuNc={1Cy80a8q3i4_3w1>e5u1HbGNOx10b4JGx58b13x12LLa?y4aKy4a7y4b14;x1Lb3x3Db;x8b3x1Hb?x10b1A?x90@b=;xDb1Cx<b13xLb17x8y3g6]2o3u?mB;@c5Gw8c2Kw14y>?a7@yNGa18y4Ka8y7?i7{<s;iHeOs10s7gLs3Gg@s7Ca2Dy87g<s3a?8h2?r1@h2?r1@y:Ka14h33r@L^38^37|38^K{4_27|38^37|3|4^7|8^3|8^7|8^?|4^10^?{4_3{4_K{4_1;|38^37|7|4^?|8^O|4^K|4_37|7|4^?|4^C|4^3|<^K|4_37|38^37|38^37|38^37|38^37|38^37|38^3?{8^34u3f34t3fG|34u3f34t3fG|34u3f34t3fG|34u3f34t3fG|34u3f34t3fH|6|8f68p1OOg6Ls?g68sOg4s1Gg4s7yCe1LcCw4c1Kw4:0_18`3z2?{H_G{JFcIw6c21w:cIw6c5w6cAw8000Da3H007Gy46c1w>0b5Cx<cK{Ky8f17t@b4t3a180b3H^3w24b5@^@`17tDw3c1J0b3;|4_@`17t2LHbKx4b?x4b7x4b1Kx4bHCx8h13xKw54^48^48a>]2];{3y@f17t@u7e324h7<n3l<l3n?r9@h5Dn3l1KrH8b?x4b3;x4b7x4b3x8b3x4b17x4b?x4b3x4b3xHb3x@b3x4b3x4b3x4b;x4b7x4b3x8b3x4b3x4b3x4b3x4b3x4b7x4b3x8b?x4bKx4b?x4b?x4b3x4b17x4b23xDb;x4bCx4b23x6@v7d11Hy5?a@y<?a1@y1Ka8y1Ka4y1Ka4y4Ca18h1Dn@004<]3@0038]@000H]3@0038]@000H]3@0038]4?a70y3Ca1Dy5?a@y13aLy7a1HyGaC8yO;|D^2JOa@y23a<y1Ca<y>Ka@y;KaHy1?a@y3a1Ly1?a@y6Oa10y17aHy4Oa10y3Ga8y7a9Hy1:?a1@y1Ga8y1Ca<y13aLy5Ga4yKa10y1Ga@y13aLy13aLyB;a4y6Ka4Df17t40Hb56KOx40b@77xHbKGx8bF@7x1HbM63x<3Lb23Gx5L8bC9;xDb@;Ox2FL:4m3m3Hm;Om@0cMOw7N20o7OOGk8o7OOGk");
+}
+$c_jl_UnicodeData$.prototype = new $h_O();
+$c_jl_UnicodeData$.prototype.constructor = $c_jl_UnicodeData$;
+/** @constructor */
+function $h_jl_UnicodeData$() {
+}
+$h_jl_UnicodeData$.prototype = $c_jl_UnicodeData$.prototype;
+$c_jl_UnicodeData$.prototype.java$lang$UnicodeData$$getDataRanges__I__I = (function(cp) {
+  if (((cp >>> 0) > 1114111)) {
+    return 0;
+  } else {
+    var shiftedCP = (cp << 7);
+    var dataRanges = this.jl_UnicodeData$__f_dataRanges;
+    var low = 0;
+    var high = 2891;
+    while ((((1 + low) | 0) !== high)) {
+      var mid = ((((low + high) | 0) >>> 1) | 0);
+      var y = (268435328 & $n(dataRanges).get(mid));
+      if (((shiftedCP >>> 0) < (y >>> 0))) {
+        high = mid;
+      } else {
+        low = mid;
+      }
+    }
+    var data = $n(dataRanges).get(low);
+    var parityBit = ((1 & cp) & ((data >>> 5) | 0));
+    return ((((-268435329) & data) ^ parityBit) ^ (parityBit << 1));
+  }
+});
+$c_jl_UnicodeData$.prototype.isUnicodeIdentifierStart__I__Z = (function(cp) {
+  var data = (((cp >>> 0) < 161) ? $n(this.jl_UnicodeData$__f_java$lang$UnicodeData$$dataDirect).get(cp) : this.java$lang$UnicodeData$$getDataRanges__I__I(cp));
+  return (((1086 & (1 << data)) | ((-2147483648) & data)) !== 0);
+});
+$c_jl_UnicodeData$.prototype.isUnicodeIdentifierPart__I__Z = (function(cp) {
+  var data = (((cp >>> 0) < 161) ? $n(this.jl_UnicodeData$__f_java$lang$UnicodeData$$dataDirect).get(cp) : this.java$lang$UnicodeData$$getDataRanges__I__I(cp));
+  return (((8456062 & (1 << data)) | ((-1073741568) & data)) !== 0);
+});
+var $d_jl_UnicodeData$ = new $TypeData().initClass($c_jl_UnicodeData$, "java.lang.UnicodeData$", ({
+  jl_UnicodeData$: 1
+}));
+var $n_jl_UnicodeData$;
+function $m_jl_UnicodeData$() {
+  if ((!$n_jl_UnicodeData$)) {
+    $n_jl_UnicodeData$ = new $c_jl_UnicodeData$();
+  }
+  return $n_jl_UnicodeData$;
 }
 /** @constructor */
 function $c_jl_Utils$Cache$() {
@@ -3353,11 +3557,12 @@ $c_jl_reflect_Array$.prototype.getLength__O__I = (function(array) {
   } else if ((array instanceof $ac_F)) {
     var x9 = $asArrayOf_F(array, 1);
     return $n(x9).u.length;
-  } else if ((array instanceof $ac_D)) {
+  } else {
+    if ((!(array instanceof $ac_D))) {
+      $p_jl_reflect_Array$__mismatch__O__E(this, array);
+    }
     var x10 = $asArrayOf_D(array, 1);
     return $n(x10).u.length;
-  } else {
-    $p_jl_reflect_Array$__mismatch__O__E(this, array);
   }
 });
 var $d_jl_reflect_Array$ = new $TypeData().initClass($c_jl_reflect_Array$, "java.lang.reflect.Array$", ({
@@ -3391,11 +3596,13 @@ $c_ju_Arrays$.prototype.binarySearch__AI__I__I = (function(a, key) {
       var cmp = ((key === elem) ? 0 : ((key < elem) ? (-1) : 1));
       if ((cmp < 0)) {
         endIndex = mid;
-      } else if ((cmp === 0)) {
-        return mid;
-      } else {
-        startIndex = ((1 + mid) | 0);
+        continue;
       }
+      if ((cmp !== 0)) {
+        startIndex = ((1 + mid) | 0);
+        continue;
+      }
+      return mid;
     }
   }
 });
@@ -3770,7 +3977,7 @@ function $c_ju_Formatter$() {
   this.ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags = null;
   $n_ju_Formatter$ = this;
   this.ju_Formatter$__f_java$util$Formatter$$FormatSpecifier = new RegExp("(?:(\\d+)\\$)?([-#+ 0,\\(<]*)(\\d+)?(?:\\.(\\d+))?[%A-Za-z]", "g");
-  this.ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags = new $ac_I(new Int32Array([96, 126, 638, 770, 32, 256, 2, 126, (-1), (-1), (-1), (-1), (-1), (-1), 800, (-1), (-1), (-1), 124, (-1), (-1), (-1), (-1), 544, (-1), (-1)]));
+  this.ju_Formatter$__f_java$util$Formatter$$ConversionsIllegalFlags = $constArrSVals_I(26, "3]3{0C{0H_1]8]_3{||||||0I]|||3y||||0A]||");
 }
 $c_ju_Formatter$.prototype = new $h_O();
 $c_ju_Formatter$.prototype.constructor = $c_ju_Formatter$;
@@ -3780,11 +3987,11 @@ function $h_ju_Formatter$() {
 $h_ju_Formatter$.prototype = $c_ju_Formatter$.prototype;
 $c_ju_Formatter$.prototype.java$util$Formatter$$strOfZeros__I__T = (function(count) {
   if ((count <= 20)) {
-    if ((count > 20)) {
+    if ((((count | count) | ((20 - count) | 0)) < 0)) {
+      if ((count < 0)) {
+        $charAt("00000000000000000000", (-1));
+      }
       $charAt("00000000000000000000", count);
-    }
-    if ((count < 0)) {
-      $charAt("00000000000000000000", (-1));
     }
     return $as_T("00000000000000000000".substring(0, count));
   } else {
@@ -3796,11 +4003,11 @@ $c_ju_Formatter$.prototype.java$util$Formatter$$strOfZeros__I__T = (function(cou
     }
     var $x_1 = result;
     var endIndex = remaining;
-    if ((endIndex > 20)) {
+    if ((((endIndex | endIndex) | ((20 - endIndex) | 0)) < 0)) {
+      if ((endIndex < 0)) {
+        $charAt("00000000000000000000", (-1));
+      }
       $charAt("00000000000000000000", endIndex);
-    }
-    if ((endIndex < 0)) {
-      $charAt("00000000000000000000", (-1));
     }
     return (("" + $x_1) + $as_T("00000000000000000000".substring(0, endIndex)));
   }
@@ -3819,7 +4026,8 @@ $c_ju_Formatter$.prototype.java$util$Formatter$$numberToDecimal__D__ju_Formatter
     } else {
       var $x_2 = parseInt;
       var beginIndex = ((1 + ePos) | 0);
-      if (((beginIndex < 0) || (beginIndex > s.length))) {
+      var length = s.length;
+      if (((beginIndex >>> 0) > (length >>> 0))) {
         $charAt(s, beginIndex);
       }
       var $x_1 = $x_2($as_T(s.substring(beginIndex)));
@@ -3828,32 +4036,36 @@ $c_ju_Formatter$.prototype.java$util$Formatter$$numberToDecimal__D__ju_Formatter
     var significandEnd = ((ePos < 0) ? s.length : ePos);
     var dotPos = $f_T__indexOf__I__I(s, 46);
     if ((dotPos < 0)) {
-      if ((significandEnd > s.length)) {
+      var length$1 = s.length;
+      if ((((significandEnd | significandEnd) | ((length$1 - significandEnd) | 0)) < 0)) {
+        if ((significandEnd < 0)) {
+          $charAt(s, (-1));
+        }
         $charAt(s, significandEnd);
-      }
-      if ((significandEnd < 0)) {
-        $charAt(s, (-1));
       }
       var unscaledValue = $as_T(s.substring(0, significandEnd));
       var scale = ((-e) | 0);
       return new $c_ju_Formatter$Decimal(negative$2, unscaledValue, scale);
     } else {
-      if ((dotPos > s.length)) {
+      var length$2 = s.length;
+      if ((((dotPos | dotPos) | ((length$2 - dotPos) | 0)) < 0)) {
+        if ((dotPos < 0)) {
+          $charAt(s, (-1));
+        }
         $charAt(s, dotPos);
-      }
-      if ((dotPos < 0)) {
-        $charAt(s, (-1));
       }
       var $x_3 = $as_T(s.substring(0, dotPos));
       var beginIndex$1 = ((1 + dotPos) | 0);
-      if ((beginIndex$1 < 0)) {
-        $charAt(s, beginIndex$1);
-      }
-      if ((significandEnd > s.length)) {
+      var count = ((significandEnd - beginIndex$1) | 0);
+      var length$3 = s.length;
+      if (((((beginIndex$1 | count) | significandEnd) | ((length$3 - significandEnd) | 0)) < 0)) {
+        if ((beginIndex$1 < 0)) {
+          $charAt(s, beginIndex$1);
+        }
+        if ((significandEnd < beginIndex$1)) {
+          $charAt(s, (-1));
+        }
         $charAt(s, significandEnd);
-      }
-      if ((significandEnd < beginIndex$1)) {
-        $charAt(s, (-1));
       }
       var digits = (("" + $x_3) + $as_T(s.substring(beginIndex$1, significandEnd)));
       var digitsLen = digits.length;
@@ -3872,7 +4084,8 @@ $c_ju_Formatter$.prototype.java$util$Formatter$$numberToDecimal__D__ju_Formatter
         }
       }
       var beginIndex$2 = i;
-      if (((beginIndex$2 < 0) || (beginIndex$2 > digits.length))) {
+      var length$4 = digits.length;
+      if (((beginIndex$2 >>> 0) > (length$4 >>> 0))) {
         $charAt(digits, beginIndex$2);
       }
       var unscaledValue$2 = $as_T(digits.substring(beginIndex$2));
@@ -3890,7 +4103,8 @@ $c_ju_Formatter$.prototype.java$util$Formatter$$bigDecimalToDecimal__Ljava_math_
     var negative = ($charAt(this$2, 0) === 45);
     if (negative) {
       var this$3 = $n(unscaledValueWithSign);
-      if ((this$3.length < 1)) {
+      var length = this$3.length;
+      if ((length === 0)) {
         $charAt(this$3, 1);
       }
       var unscaledValue = $as_T(this$3.substring(1));
@@ -3929,11 +4143,12 @@ function $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal($thiz, rou
       } else {
         var $x_1 = $thiz.ju_Formatter$Decimal__f_negative;
         var this$5 = $n(digits);
-        if ((roundingPos > this$5.length)) {
+        var length = this$5.length;
+        if ((((roundingPos | roundingPos) | ((length - roundingPos) | 0)) < 0)) {
+          if ((roundingPos < 0)) {
+            $charAt(this$5, (-1));
+          }
           $charAt(this$5, roundingPos);
-        }
-        if ((roundingPos < 0)) {
-          $charAt(this$5, (-1));
         }
         return new $c_ju_Formatter$Decimal($x_1, $as_T(this$5.substring(0, roundingPos)), (($thiz.ju_Formatter$Decimal__f_scale - ((digitsLen - roundingPos) | 0)) | 0));
       }
@@ -3941,9 +4156,9 @@ function $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal($thiz, rou
       var lastNonNinePos = ((roundingPos - 1) | 0);
       while (true) {
         if ((lastNonNinePos >= 0)) {
-          var this$6 = $n(digits);
+          var this$7 = $n(digits);
           var index = lastNonNinePos;
-          var $x_2 = ($charAt(this$6, index) === 57);
+          var $x_2 = ($charAt(this$7, index) === 57);
         } else {
           var $x_2 = false;
         }
@@ -3956,18 +4171,19 @@ function $p_ju_Formatter$Decimal__roundAtPos__I__ju_Formatter$Decimal($thiz, rou
       if ((lastNonNinePos < 0)) {
         var newUnscaledValue = "1";
       } else {
-        var this$7 = $n(digits);
-        var endIndex = lastNonNinePos;
-        if ((endIndex > this$7.length)) {
-          $charAt(this$7, endIndex);
-        }
-        if ((endIndex < 0)) {
-          $charAt(this$7, (-1));
-        }
-        var $x_3 = $as_T(this$7.substring(0, endIndex));
         var this$8 = $n(digits);
+        var endIndex = lastNonNinePos;
+        var length$1 = this$8.length;
+        if ((((endIndex | endIndex) | ((length$1 - endIndex) | 0)) < 0)) {
+          if ((endIndex < 0)) {
+            $charAt(this$8, (-1));
+          }
+          $charAt(this$8, endIndex);
+        }
+        var $x_3 = $as_T(this$8.substring(0, endIndex));
+        var this$10 = $n(digits);
         var index$1 = lastNonNinePos;
-        var newUnscaledValue = ($x_3 + $cToS((65535 & ((1 + $charAt(this$8, index$1)) | 0))));
+        var newUnscaledValue = ($x_3 + $cToS((65535 & ((1 + $charAt(this$10, index$1)) | 0))));
       }
       var pos = ((1 + lastNonNinePos) | 0);
       var newScale = (($thiz.ju_Formatter$Decimal__f_scale - ((digitsLen - pos) | 0)) | 0);
@@ -5564,12 +5780,12 @@ function $s_RTLong__mul__I__I__I__I__J(alo, ahi, blo, bhi) {
 }
 function $s_RTLong__sub__I__I__I__I__J(alo, ahi, blo, bhi) {
   var lo = ((alo - blo) | 0);
-  var hi = ((((ahi - bhi) | 0) + ((((~alo) & blo) | ((~(alo ^ blo)) & lo)) >> 31)) | 0);
+  var hi = ((((ahi - bhi) | 0) - (((lo >>> 0) > (alo >>> 0)) | 0)) | 0);
   return $bL(lo, hi);
 }
 function $s_RTLong__add__I__I__I__I__J(alo, ahi, blo, bhi) {
   var lo = ((alo + blo) | 0);
-  var hi = ((((ahi + bhi) | 0) + ((((alo & blo) | ((alo | blo) & (~lo))) >>> 31) | 0)) | 0);
+  var hi = ((((ahi + bhi) | 0) + (((lo >>> 0) < (alo >>> 0)) | 0)) | 0);
   return $bL(lo, hi);
 }
 function $s_RTLong__sar__I__I__I__J(lo, hi, n) {
@@ -5651,21 +5867,18 @@ $c_RTLong$.prototype.toString__I__I__T = (function(lo, hi) {
     var sign = (hi >> 31);
     var xlo = (lo ^ sign);
     var rlo = ((xlo - sign) | 0);
-    var rhi = (((hi ^ sign) + (((xlo & (~rlo)) >>> 31) | 0)) | 0);
-    var approxNum = ((4.294967296E9 * (rhi >>> 0.0)) + (rlo >>> 0.0));
-    var approxQuot = $uD(Math.floor((1.0E-9 * approxNum)));
-    var x = approxQuot;
-    var approxRem = ((rlo - Math.imul(1000000000, (x | 0.0))) | 0);
-    if ((approxRem < 0)) {
-      approxQuot = (approxQuot - 1.0);
-      approxRem = ((1000000000 + approxRem) | 0);
-    } else if ((approxRem >= 1000000000)) {
-      approxQuot = (approxQuot + 1.0);
-      approxRem = ((approxRem - 1000000000) | 0);
+    var rhi = (((hi ^ sign) + (((rlo >>> 0) < (xlo >>> 0)) | 0)) | 0);
+    var aHat = ((4.294967296E9 * (rhi >>> 0.0)) + (rlo >>> 0.0));
+    var qHat = $uD(Math.floor((1.0000000000000265E-9 * aHat)));
+    var x = qHat;
+    var rHat = ((rlo - Math.imul(1000000000, (x | 0.0))) | 0);
+    if ((rHat < 0)) {
+      qHat = (qHat - 1.0);
+      rHat = ((1000000000 + rHat) | 0);
     }
-    var this$7 = approxRem;
+    var this$7 = rHat;
     var remStr = ("" + this$7);
-    var this$9 = approxQuot;
+    var this$9 = qHat;
     var start = remStr.length;
     var s = ((("" + this$9) + $as_T("000000000".substring(start))) + remStr);
     return ((hi < 0) ? ("-" + s) : s);
@@ -5688,11 +5901,11 @@ $c_RTLong$.prototype.divide__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
   var sign = (ahi >> 31);
   var xlo = (alo ^ sign);
   var rlo = ((xlo - sign) | 0);
-  var rhi = (((ahi ^ sign) + (((xlo & (~rlo)) >>> 31) | 0)) | 0);
+  var rhi = (((ahi ^ sign) + (((rlo >>> 0) < (xlo >>> 0)) | 0)) | 0);
   var sign$1 = (bhi >> 31);
   var xlo$1 = (blo ^ sign$1);
   var rlo$1 = ((xlo$1 - sign$1) | 0);
-  var rhi$1 = (((bhi ^ sign$1) + (((xlo$1 & (~rlo$1)) >>> 31) | 0)) | 0);
+  var rhi$1 = (((bhi ^ sign$1) + (((rlo$1 >>> 0) < (xlo$1 >>> 0)) | 0)) | 0);
   var b = ((-2097152) & rlo$1);
   if (((rhi$1 | b) === 0)) {
     var quotHi = (((rhi >>> 0) / ($checkIntDivisor(rlo$1) >>> 0)) | 0);
@@ -5701,10 +5914,10 @@ $c_RTLong$.prototype.divide__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
     var quotLo = (x | 0.0);
     var absR_$_lo = quotLo;
     var absR_$_hi = quotHi;
-  } else if ((((-1073741824) & rhi$1) === 0)) {
+  } else {
     var aHat = ((4.294967296E9 * (rhi >>> 0.0)) + (rlo >>> 0.0));
     var bHat = ((4.294967296E9 * (rhi$1 >>> 0.0)) + (rlo$1 >>> 0.0));
-    var x$1 = (aHat / bHat);
+    var x$1 = ((aHat / bHat) + 0.00390625);
     var lo = (x$1 | 0.0);
     var x$2 = (2.3283064365386963E-10 * x$1);
     var hi = (x$2 | 0.0);
@@ -5719,32 +5932,23 @@ $c_RTLong$.prototype.divide__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
     var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
     var hi$1 = ((((((((Math.imul(rlo$1, hi) + Math.imul(rhi$1, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
     var lo$2 = ((rlo - lo$1) | 0);
-    var hi$2 = ((((rhi - hi$1) | 0) + ((((~rlo) & lo$1) | ((~(rlo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    var hi$2 = ((((rhi - hi$1) | 0) - (((lo$2 >>> 0) > (rlo >>> 0)) | 0)) | 0);
     if ((hi$2 < 0)) {
       var lo$3 = ((lo - 1) | 0);
-      var hi$3 = ((((hi - 1) | 0) + (((lo | (~lo$3)) >>> 31) | 0)) | 0);
+      var hi$3 = ((((hi - 1) | 0) + ((lo$3 !== (-1)) | 0)) | 0);
       var absR_$_lo = lo$3;
       var absR_$_hi = hi$3;
-    } else if (((hi$2 === rhi$1) ? ((lo$2 >>> 0) >= (rlo$1 >>> 0)) : ((hi$2 >>> 0) > (rhi$1 >>> 0)))) {
-      var lo$4 = ((1 + lo) | 0);
-      var hi$4 = ((hi + (((lo & (~lo$4)) >>> 31) | 0)) | 0);
-      var absR_$_lo = lo$4;
-      var absR_$_hi = hi$4;
     } else {
       var absR_$_lo = lo;
       var absR_$_hi = hi;
     }
-  } else {
-    var $x_1 = this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(rlo, rhi, rlo$1, rhi$1, true);
-    var absR_$_lo = $x_1.l;
-    var absR_$_hi = $x_1.h;
   }
   if (((ahi ^ bhi) >= 0)) {
     return $bL(absR_$_lo, absR_$_hi);
   } else {
-    var lo$5 = ((-absR_$_lo) | 0);
-    var hi$5 = ((((-absR_$_hi) | 0) + ((absR_$_lo | lo$5) >> 31)) | 0);
-    return $bL(lo$5, hi$5);
+    var lo$4 = ((-absR_$_lo) | 0);
+    var hi$4 = ((((-absR_$_hi) | 0) - ((lo$4 !== 0) | 0)) | 0);
+    return $bL(lo$4, hi$4);
   }
 });
 $c_RTLong$.prototype.divideUnsignedImpl__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
@@ -5755,10 +5959,10 @@ $c_RTLong$.prototype.divideUnsignedImpl__I__I__I__I__J = (function(alo, ahi, blo
     var x = (((4.294967296E9 * k) + (alo >>> 0.0)) / blo);
     var quotLo = (x | 0.0);
     return $bL(quotLo, quotHi);
-  } else if ((((-1073741824) & bhi) === 0)) {
+  } else if ((bhi >= 0)) {
     var aHat = ((4.294967296E9 * (ahi >>> 0.0)) + (alo >>> 0.0));
     var bHat = ((4.294967296E9 * (bhi >>> 0.0)) + (blo >>> 0.0));
-    var x$1 = (aHat / bHat);
+    var x$1 = ((aHat / bHat) + 0.00390625);
     var lo = (x$1 | 0.0);
     var x$2 = (2.3283064365386963E-10 * x$1);
     var hi = (x$2 | 0.0);
@@ -5773,31 +5977,29 @@ $c_RTLong$.prototype.divideUnsignedImpl__I__I__I__I__J = (function(alo, ahi, blo
     var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
     var hi$1 = ((((((((Math.imul(blo, hi) + Math.imul(bhi, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
     var lo$2 = ((alo - lo$1) | 0);
-    var hi$2 = ((((ahi - hi$1) | 0) + ((((~alo) & lo$1) | ((~(alo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    var hi$2 = ((((ahi - hi$1) | 0) - (((lo$2 >>> 0) > (alo >>> 0)) | 0)) | 0);
     if ((hi$2 < 0)) {
       var lo$3 = ((lo - 1) | 0);
-      var hi$3 = ((((hi - 1) | 0) + (((lo | (~lo$3)) >>> 31) | 0)) | 0);
+      var hi$3 = ((((hi - 1) | 0) + ((lo$3 !== (-1)) | 0)) | 0);
       return $bL(lo$3, hi$3);
-    } else if (((hi$2 === bhi) ? ((lo$2 >>> 0) >= (blo >>> 0)) : ((hi$2 >>> 0) > (bhi >>> 0)))) {
-      var lo$4 = ((1 + lo) | 0);
-      var hi$4 = ((hi + (((lo & (~lo$4)) >>> 31) | 0)) | 0);
-      return $bL(lo$4, hi$4);
     } else {
       return $bL(lo, hi);
     }
+  } else if (((ahi === bhi) ? ((alo >>> 0) < (blo >>> 0)) : ((ahi >>> 0) < (bhi >>> 0)))) {
+    return $bL(0, 0);
   } else {
-    return this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(alo, ahi, blo, bhi, true);
+    return $bL(1, 0);
   }
 });
 $c_RTLong$.prototype.remainder__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
   var sign = (ahi >> 31);
   var xlo = (alo ^ sign);
   var rlo = ((xlo - sign) | 0);
-  var rhi = (((ahi ^ sign) + (((xlo & (~rlo)) >>> 31) | 0)) | 0);
+  var rhi = (((ahi ^ sign) + (((rlo >>> 0) < (xlo >>> 0)) | 0)) | 0);
   var sign$1 = (bhi >> 31);
   var xlo$1 = (blo ^ sign$1);
   var rlo$1 = ((xlo$1 - sign$1) | 0);
-  var rhi$1 = (((bhi ^ sign$1) + (((xlo$1 & (~rlo$1)) >>> 31) | 0)) | 0);
+  var rhi$1 = (((bhi ^ sign$1) + (((rlo$1 >>> 0) < (xlo$1 >>> 0)) | 0)) | 0);
   var b = ((-2097152) & rlo$1);
   if (((rhi$1 | b) === 0)) {
     var k$2 = (((rhi >>> 0) % ($checkIntDivisor(rlo$1) >>> 0)) | 0);
@@ -5806,10 +6008,10 @@ $c_RTLong$.prototype.remainder__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
     var remLo = ((rlo - Math.imul(rlo$1, quotLo$2)) | 0);
     var absR_$_lo = remLo;
     var absR_$_hi = 0;
-  } else if ((((-1073741824) & rhi$1) === 0)) {
+  } else {
     var aHat = ((4.294967296E9 * (rhi >>> 0.0)) + (rlo >>> 0.0));
     var bHat = ((4.294967296E9 * (rhi$1 >>> 0.0)) + (rlo$1 >>> 0.0));
-    var x$1 = (aHat / bHat);
+    var x$1 = ((aHat / bHat) + 0.00390625);
     var lo = (x$1 | 0.0);
     var x$2 = (2.3283064365386963E-10 * x$1);
     var hi = (x$2 | 0.0);
@@ -5824,30 +6026,21 @@ $c_RTLong$.prototype.remainder__I__I__I__I__J = (function(alo, ahi, blo, bhi) {
     var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
     var hi$1 = ((((((((Math.imul(rlo$1, hi) + Math.imul(rhi$1, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
     var lo$2 = ((rlo - lo$1) | 0);
-    var hi$2 = ((((rhi - hi$1) | 0) + ((((~rlo) & lo$1) | ((~(rlo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    var hi$2 = ((((rhi - hi$1) | 0) - (((lo$2 >>> 0) > (rlo >>> 0)) | 0)) | 0);
     if ((hi$2 < 0)) {
       var lo$3 = ((lo$2 + rlo$1) | 0);
-      var hi$3 = ((((hi$2 + rhi$1) | 0) + ((((lo$2 & rlo$1) | ((lo$2 | rlo$1) & (~lo$3))) >>> 31) | 0)) | 0);
+      var hi$3 = ((((hi$2 + rhi$1) | 0) + (((lo$3 >>> 0) < (lo$2 >>> 0)) | 0)) | 0);
       var absR_$_lo = lo$3;
       var absR_$_hi = hi$3;
-    } else if (((hi$2 === rhi$1) ? ((lo$2 >>> 0) >= (rlo$1 >>> 0)) : ((hi$2 >>> 0) > (rhi$1 >>> 0)))) {
-      var lo$4 = ((lo$2 - rlo$1) | 0);
-      var hi$4 = ((((hi$2 - rhi$1) | 0) + ((((~lo$2) & rlo$1) | ((~(lo$2 ^ rlo$1)) & lo$4)) >> 31)) | 0);
-      var absR_$_lo = lo$4;
-      var absR_$_hi = hi$4;
     } else {
       var absR_$_lo = lo$2;
       var absR_$_hi = hi$2;
     }
-  } else {
-    var $x_1 = this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(rlo, rhi, rlo$1, rhi$1, false);
-    var absR_$_lo = $x_1.l;
-    var absR_$_hi = $x_1.h;
   }
   if ((ahi < 0)) {
-    var lo$5 = ((-absR_$_lo) | 0);
-    var hi$5 = ((((-absR_$_hi) | 0) + ((absR_$_lo | lo$5) >> 31)) | 0);
-    return $bL(lo$5, hi$5);
+    var lo$4 = ((-absR_$_lo) | 0);
+    var hi$4 = ((((-absR_$_hi) | 0) - ((lo$4 !== 0) | 0)) | 0);
+    return $bL(lo$4, hi$4);
   } else {
     return $bL(absR_$_lo, absR_$_hi);
   }
@@ -5860,10 +6053,10 @@ $c_RTLong$.prototype.remainderUnsignedImpl__I__I__I__I__J = (function(alo, ahi, 
     var quotLo$2 = (x | 0.0);
     var remLo = ((alo - Math.imul(blo, quotLo$2)) | 0);
     return $bL(remLo, 0);
-  } else if ((((-1073741824) & bhi) === 0)) {
+  } else if ((bhi >= 0)) {
     var aHat = ((4.294967296E9 * (ahi >>> 0.0)) + (alo >>> 0.0));
     var bHat = ((4.294967296E9 * (bhi >>> 0.0)) + (blo >>> 0.0));
-    var x$1 = (aHat / bHat);
+    var x$1 = ((aHat / bHat) + 0.00390625);
     var lo = (x$1 | 0.0);
     var x$2 = (2.3283064365386963E-10 * x$1);
     var hi = (x$2 | 0.0);
@@ -5878,56 +6071,20 @@ $c_RTLong$.prototype.remainderUnsignedImpl__I__I__I__I__J = (function(alo, ahi, 
     var c1part = ((((a0b0 >>> 16) | 0) + a0b1) | 0);
     var hi$1 = ((((((((Math.imul(blo, hi) + Math.imul(bhi, lo)) | 0) + Math.imul(a1, b1)) | 0) + ((c1part >>> 16) | 0)) | 0) + (((((65535 & c1part) + a1b0) | 0) >>> 16) | 0)) | 0);
     var lo$2 = ((alo - lo$1) | 0);
-    var hi$2 = ((((ahi - hi$1) | 0) + ((((~alo) & lo$1) | ((~(alo ^ lo$1)) & lo$2)) >> 31)) | 0);
+    var hi$2 = ((((ahi - hi$1) | 0) - (((lo$2 >>> 0) > (alo >>> 0)) | 0)) | 0);
     if ((hi$2 < 0)) {
       var lo$3 = ((lo$2 + blo) | 0);
-      var hi$3 = ((((hi$2 + bhi) | 0) + ((((lo$2 & blo) | ((lo$2 | blo) & (~lo$3))) >>> 31) | 0)) | 0);
+      var hi$3 = ((((hi$2 + bhi) | 0) + (((lo$3 >>> 0) < (lo$2 >>> 0)) | 0)) | 0);
       return $bL(lo$3, hi$3);
-    } else if (((hi$2 === bhi) ? ((lo$2 >>> 0) >= (blo >>> 0)) : ((hi$2 >>> 0) > (bhi >>> 0)))) {
-      var lo$4 = ((lo$2 - blo) | 0);
-      var hi$4 = ((((hi$2 - bhi) | 0) + ((((~lo$2) & blo) | ((~(lo$2 ^ blo)) & lo$4)) >> 31)) | 0);
-      return $bL(lo$4, hi$4);
     } else {
       return $bL(lo$2, hi$2);
     }
+  } else if (((ahi === bhi) ? ((alo >>> 0) < (blo >>> 0)) : ((ahi >>> 0) < (bhi >>> 0)))) {
+    return $bL(alo, ahi);
   } else {
-    return this.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J(alo, ahi, blo, bhi, false);
-  }
-});
-$c_RTLong$.prototype.org$scalajs$linker$runtime$RuntimeLong$$unsignedDivModHugeDivisor__I__I__I__I__Z__J = (function(alo, ahi, blo, bhi, askQuotient) {
-  var quot1 = 0;
-  if ((bhi >= 0)) {
-    var lo = (blo << 1);
-    var hi = (((blo >>> 31) | 0) | (bhi << 1));
-    if (((ahi === hi) ? ((alo >>> 0) >= (lo >>> 0)) : ((ahi >>> 0) > (hi >>> 0)))) {
-      quot1 = 2;
-      var lo$1 = ((alo - lo) | 0);
-      var hi$1 = ((((ahi - hi) | 0) + ((((~alo) & lo) | ((~(alo ^ lo)) & lo$1)) >> 31)) | 0);
-      var rem1_$_lo = lo$1;
-      var rem1_$_hi = hi$1;
-    } else {
-      var rem1_$_lo = alo;
-      var rem1_$_hi = ahi;
-    }
-  } else {
-    var rem1_$_lo = alo;
-    var rem1_$_hi = ahi;
-  }
-  var rem1LTUb = ((rem1_$_hi === bhi) ? ((rem1_$_lo >>> 0) < (blo >>> 0)) : ((rem1_$_hi >>> 0) < (bhi >>> 0)));
-  if (askQuotient) {
-    if (rem1LTUb) {
-      var lo$2 = quot1;
-      return $bL(lo$2, 0);
-    } else {
-      var lo$3 = ((1 + quot1) | 0);
-      return $bL(lo$3, 0);
-    }
-  } else if (rem1LTUb) {
-    return $bL(rem1_$_lo, rem1_$_hi);
-  } else {
-    var lo$4 = ((rem1_$_lo - blo) | 0);
-    var hi$2 = ((((rem1_$_hi - bhi) | 0) + ((((~rem1_$_lo) & blo) | ((~(rem1_$_lo ^ blo)) & lo$4)) >> 31)) | 0);
-    return $bL(lo$4, hi$2);
+    var lo$4 = ((alo - blo) | 0);
+    var hi$4 = ((((ahi - bhi) | 0) - (((lo$4 >>> 0) > (alo >>> 0)) | 0)) | 0);
+    return $bL(lo$4, hi$4);
   }
 });
 var $d_RTLong$ = new $TypeData().initClass($c_RTLong$, "org.scalajs.linker.runtime.RuntimeLong$", ({
@@ -5967,16 +6124,16 @@ function $ps_Lpprint_ProductSupport$__isStart$1__C__Z(c) {
   if (((c === 36) || (c === 95))) {
     return true;
   } else {
-    var this$1 = $m_jl_Character$();
-    return this$1.isUnicodeIdentifierStart__I__Z(c);
+    var codePoint = c;
+    return $m_jl_UnicodeData$().isUnicodeIdentifierStart__I__Z(codePoint);
   }
 }
 function $ps_Lpprint_ProductSupport$__isPart$1__C__Z(c) {
   if ((c === 36)) {
     return true;
   } else {
-    var this$1 = $m_jl_Character$();
-    return this$1.isUnicodeIdentifierPart__I__Z(c);
+    var codePoint = c;
+    return $m_jl_UnicodeData$().isUnicodeIdentifierPart__I__Z(codePoint);
   }
 }
 /** @constructor */
@@ -6831,7 +6988,7 @@ $c_Lpprint_Walker.prototype.treeify__O__Z__Z__Lpprint_Tree = (function(x, escape
           var _2 = this$39.apply__O__s_Option(v1);
           matchEnd16: {
             var $x_1;
-            if (((_1 === true) && (_2 instanceof $c_s_Some))) {
+            if ((_1 && (_2 instanceof $c_s_Some))) {
               var x4$2 = $as_s_Some(_2);
               var p5 = $uC($n(x4$2).s_Some__f_value);
               if (((p5 === 50) || ((p5 === 51) || ((p5 === 52) || ((p5 === 53) || ((p5 === 54) || ((p5 === 55) || ((((p5 - 56) | 0) >>> 0) <= 1)))))))) {
@@ -7372,14 +7529,16 @@ $c_sc_StringOps$.prototype.slice$extension__T__I__I__T = (function(this$, from, 
     return "";
   } else {
     var this$10 = $n(this$);
-    if ((start < 0)) {
-      $charAt(this$10, start);
-    }
-    if ((end > this$10.length)) {
+    var count = ((end - start) | 0);
+    var length = this$10.length;
+    if (((((start | count) | end) | ((length - end) | 0)) < 0)) {
+      if ((start < 0)) {
+        $charAt(this$10, start);
+      }
+      if ((end < start)) {
+        $charAt(this$10, (-1));
+      }
       $charAt(this$10, end);
-    }
-    if ((end < start)) {
-      $charAt(this$10, (-1));
     }
     return $as_T(this$10.substring(start, end));
   }
@@ -7431,7 +7590,8 @@ $c_sc_StringOps$.prototype.stripMargin$extension__T__C__T = (function(this$, mar
     if ($x_2) {
       var this$8 = $n(x0);
       var beginIndex = ((1 + index) | 0);
-      if (((beginIndex < 0) || (beginIndex > this$8.length))) {
+      var length = this$8.length;
+      if (((beginIndex >>> 0) > (length >>> 0))) {
         $charAt(this$8, beginIndex);
       }
       var stripped = $as_T(this$8.substring(beginIndex));
@@ -11727,67 +11887,11 @@ var $d_Lfeatherweightgo_typer_TyperImpl = new $TypeData().initClass($c_Lfeatherw
   Lfeatherweightgo_typer_TyperImpl: 1,
   Lfeatherweightgo_typer_Typer: 1
 }));
-function $p_jl_Character$__getTypeGE256__I__I($thiz, codePoint) {
-  return $n($p_jl_Character$__charTypes__AI($thiz)).get($p_jl_Character$__findIndexOfRange__AI__I__Z__I($thiz, $p_jl_Character$__charTypeIndices__AI($thiz), codePoint, false));
-}
-function $p_jl_Character$__charTypeIndices$lzycompute__AI($thiz) {
-  if (((((1 & $thiz.jl_Character$__f_bitmap$0) << 24) >> 24) === 0)) {
-    var deltas = new $ac_I(new Int32Array([257, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 3, 2, 1, 1, 1, 2, 1, 3, 2, 4, 1, 2, 1, 3, 3, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 1, 2, 2, 1, 1, 3, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 2, 1, 2, 2, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 69, 1, 27, 18, 4, 12, 14, 5, 7, 1, 1, 1, 17, 112, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 4, 2, 1, 1, 3, 1, 1, 1, 2, 1, 17, 1, 9, 35, 1, 2, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 2, 2, 51, 48, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 38, 2, 1, 6, 41, 1, 1, 2, 2, 1, 1, 45, 1, 1, 1, 2, 1, 2, 1, 1, 8, 27, 4, 4, 2, 11, 6, 3, 2, 1, 2, 2, 11, 1, 1, 3, 32, 1, 10, 21, 10, 4, 2, 1, 99, 1, 1, 7, 1, 1, 6, 2, 2, 1, 4, 2, 10, 3, 2, 1, 14, 1, 1, 1, 1, 30, 27, 2, 89, 11, 1, 14, 10, 33, 9, 2, 1, 3, 1, 2, 1, 2, 22, 4, 1, 9, 1, 3, 1, 5, 2, 15, 1, 25, 3, 2, 1, 1, 11, 5, 24, 1, 6, 1, 2, 6, 8, 41, 1, 24, 1, 32, 1, 54, 1, 1, 1, 1, 3, 8, 4, 1, 2, 1, 7, 10, 2, 2, 10, 1, 1, 15, 1, 2, 1, 8, 2, 2, 2, 22, 1, 7, 1, 1, 3, 4, 2, 1, 1, 3, 4, 2, 2, 2, 2, 1, 1, 8, 1, 4, 2, 1, 3, 2, 2, 10, 2, 2, 6, 1, 1, 1, 1, 1, 2, 2, 1, 1, 6, 4, 2, 2, 22, 1, 7, 1, 2, 1, 2, 1, 2, 2, 1, 1, 3, 2, 4, 2, 2, 3, 3, 1, 7, 4, 1, 1, 7, 10, 2, 3, 1, 1, 10, 2, 1, 1, 9, 1, 3, 1, 22, 1, 7, 1, 2, 1, 5, 2, 1, 1, 3, 5, 1, 2, 1, 1, 2, 1, 2, 1, 15, 2, 2, 2, 10, 1, 1, 7, 1, 6, 1, 1, 2, 1, 8, 2, 2, 2, 22, 1, 7, 1, 2, 1, 5, 2, 1, 1, 1, 1, 1, 4, 2, 2, 2, 2, 1, 7, 2, 1, 4, 2, 1, 3, 2, 2, 10, 1, 1, 6, 10, 1, 1, 1, 6, 3, 3, 1, 4, 3, 2, 1, 1, 1, 2, 3, 2, 3, 3, 3, 12, 4, 2, 1, 2, 3, 3, 1, 3, 1, 2, 1, 6, 1, 14, 10, 3, 6, 1, 1, 5, 1, 3, 1, 8, 1, 3, 1, 23, 1, 16, 2, 1, 1, 3, 4, 1, 3, 1, 4, 7, 2, 1, 3, 2, 1, 2, 2, 2, 2, 10, 7, 1, 7, 1, 1, 1, 2, 1, 8, 1, 3, 1, 23, 1, 10, 1, 5, 2, 1, 1, 1, 1, 5, 1, 1, 2, 1, 2, 2, 7, 2, 6, 2, 1, 2, 2, 2, 10, 1, 2, 1, 12, 2, 2, 9, 1, 3, 1, 41, 2, 1, 3, 4, 1, 3, 1, 3, 1, 1, 1, 4, 3, 1, 7, 3, 2, 2, 10, 9, 1, 6, 1, 1, 2, 1, 18, 3, 24, 1, 9, 1, 1, 2, 7, 3, 1, 4, 3, 3, 1, 1, 1, 8, 6, 10, 2, 2, 1, 12, 48, 1, 2, 7, 4, 1, 6, 1, 8, 1, 10, 2, 37, 2, 1, 1, 1, 5, 1, 24, 1, 1, 1, 10, 1, 2, 9, 1, 2, 5, 1, 1, 1, 7, 1, 10, 2, 4, 32, 1, 3, 15, 1, 1, 3, 2, 6, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 8, 1, 36, 4, 14, 1, 5, 1, 2, 5, 11, 1, 36, 1, 8, 1, 6, 1, 2, 5, 4, 2, 37, 43, 2, 4, 1, 6, 1, 2, 2, 2, 1, 10, 6, 6, 2, 2, 4, 3, 1, 3, 2, 7, 3, 4, 13, 1, 2, 2, 6, 1, 1, 1, 10, 3, 1, 2, 38, 1, 1, 5, 1, 2, 43, 1, 1, 3, 329, 1, 4, 2, 7, 1, 1, 1, 4, 2, 41, 1, 4, 2, 33, 1, 4, 2, 7, 1, 1, 1, 4, 2, 15, 1, 57, 1, 4, 2, 67, 2, 3, 9, 20, 3, 16, 10, 6, 86, 2, 6, 2, 1, 620, 1, 1, 17, 1, 26, 1, 1, 3, 75, 3, 3, 8, 7, 18, 3, 1, 9, 19, 2, 1, 2, 9, 18, 2, 12, 13, 1, 3, 1, 2, 12, 52, 2, 1, 7, 8, 1, 2, 11, 3, 1, 3, 1, 1, 1, 2, 10, 6, 10, 6, 6, 1, 4, 3, 1, 1, 10, 6, 35, 1, 53, 7, 5, 2, 34, 1, 1, 5, 70, 10, 31, 1, 3, 4, 2, 3, 4, 2, 1, 6, 3, 4, 1, 3, 2, 10, 30, 2, 5, 11, 44, 4, 26, 6, 10, 1, 3, 34, 23, 2, 2, 1, 2, 2, 53, 1, 1, 1, 7, 1, 1, 1, 1, 2, 8, 6, 10, 2, 1, 10, 6, 10, 6, 7, 1, 6, 2, 14, 1, 16, 49, 4, 1, 47, 1, 1, 5, 1, 1, 5, 1, 2, 8, 3, 10, 7, 10, 9, 9, 2, 1, 2, 1, 30, 1, 4, 2, 2, 1, 3, 2, 10, 44, 1, 1, 2, 3, 1, 1, 3, 2, 8, 4, 36, 8, 8, 2, 2, 3, 5, 10, 3, 3, 10, 30, 6, 2, 9, 7, 43, 2, 3, 8, 8, 3, 1, 13, 1, 7, 4, 1, 6, 1, 2, 1, 2, 1, 5, 44, 63, 13, 1, 34, 37, 64, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 8, 6, 2, 6, 2, 8, 8, 8, 8, 6, 2, 6, 2, 8, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 14, 2, 8, 8, 8, 8, 8, 8, 5, 1, 2, 4, 1, 1, 1, 3, 3, 1, 2, 4, 1, 3, 4, 2, 2, 4, 1, 3, 8, 5, 3, 2, 3, 1, 2, 4, 1, 2, 1, 11, 5, 6, 2, 1, 1, 1, 2, 1, 1, 1, 8, 1, 1, 5, 1, 9, 1, 1, 4, 2, 3, 1, 1, 1, 11, 1, 1, 1, 10, 1, 5, 1, 10, 1, 1, 2, 6, 3, 1, 1, 1, 10, 3, 1, 1, 1, 13, 3, 33, 15, 13, 4, 1, 3, 12, 15, 2, 1, 4, 1, 2, 1, 3, 2, 3, 1, 1, 1, 2, 1, 5, 6, 1, 1, 1, 1, 1, 1, 4, 1, 1, 4, 1, 4, 1, 2, 2, 2, 5, 1, 4, 1, 1, 2, 1, 1, 16, 35, 1, 1, 4, 1, 2, 4, 5, 5, 2, 4, 1, 2, 1, 2, 1, 7, 1, 31, 2, 2, 1, 1, 1, 31, 268, 8, 1, 1, 1, 1, 20, 2, 7, 1, 1, 81, 1, 30, 25, 40, 6, 69, 25, 11, 21, 60, 78, 22, 183, 1, 9, 1, 54, 8, 111, 1, 248, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 30, 44, 5, 1, 1, 31, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 16, 256, 131, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 63, 1, 1, 1, 1, 32, 1, 1, 258, 48, 21, 2, 6, 39, 2, 32, 1, 105, 48, 48, 1, 1, 3, 2, 1, 1, 1, 1, 1, 1, 4, 1, 1, 2, 1, 6, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 6, 1, 1, 1, 1, 3, 1, 1, 5, 4, 1, 2, 38, 1, 1, 5, 1, 2, 56, 7, 1, 1, 14, 1, 23, 9, 7, 1, 7, 1, 7, 1, 7, 1, 7, 1, 7, 1, 7, 1, 7, 1, 32, 2, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 9, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 10, 2, 4, 1, 1, 1, 13, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 34, 26, 1, 89, 12, 214, 26, 12, 4, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 9, 4, 2, 1, 5, 2, 3, 1, 1, 1, 2, 1, 86, 2, 2, 2, 2, 1, 1, 90, 1, 3, 1, 5, 43, 1, 94, 1, 2, 4, 10, 32, 36, 12, 16, 31, 1, 10, 30, 8, 1, 15, 32, 10, 39, 15, 320, 6592, 64, 21013, 1, 1143, 3, 55, 9, 40, 6, 2, 268, 1, 3, 16, 10, 2, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 70, 10, 2, 6, 8, 23, 9, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 24, 3, 1, 1, 1, 2, 1, 7, 1, 3, 1, 4, 1, 23, 2, 2, 1, 4, 1, 3, 6, 2, 1, 1, 6, 52, 4, 8, 2, 50, 16, 2, 8, 2, 10, 6, 18, 6, 3, 1, 1, 2, 1, 10, 28, 8, 2, 23, 11, 2, 11, 1, 29, 3, 3, 1, 47, 1, 2, 4, 2, 2, 3, 13, 1, 1, 10, 4, 2, 5, 1, 1, 9, 10, 5, 1, 41, 6, 2, 2, 2, 2, 9, 3, 1, 8, 1, 1, 2, 10, 2, 4, 16, 1, 6, 3, 1, 1, 1, 1, 50, 1, 1, 3, 2, 2, 5, 2, 1, 1, 1, 24, 2, 1, 2, 11, 1, 2, 2, 2, 1, 2, 1, 1, 10, 6, 2, 6, 2, 6, 9, 7, 1, 7, 1, 43, 1, 4, 9, 1, 2, 4, 80, 35, 2, 1, 2, 1, 2, 1, 1, 1, 2, 10, 6, 11172, 12, 23, 4, 49, 4, 2048, 6400, 366, 2, 106, 38, 7, 12, 5, 5, 1, 1, 10, 1, 13, 1, 5, 1, 1, 1, 2, 1, 2, 1, 108, 17, 16, 363, 1, 1, 16, 64, 2, 54, 7, 1, 32, 12, 1, 3, 16, 7, 1, 1, 1, 6, 16, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 4, 3, 3, 1, 4, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 2, 4, 5, 1, 135, 2, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 2, 10, 2, 3, 2, 26, 1, 1, 1, 1, 1, 1, 26, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 10, 1, 45, 2, 31, 3, 6, 2, 6, 2, 6, 2, 3, 3, 2, 1, 1, 1, 2, 1, 1, 4, 2, 10, 3, 2, 2, 12, 1, 26, 1, 19, 1, 2, 1, 15, 2, 14, 34, 123, 5, 3, 4, 45, 3, 9, 53, 4, 17, 2, 3, 1, 13, 3, 1, 47, 45, 1, 130, 29, 3, 49, 15, 1, 27, 4, 32, 4, 9, 20, 1, 8, 1, 5, 38, 5, 5, 30, 1, 1, 36, 4, 8, 1, 5, 42, 40, 40, 78, 2, 10, 6, 36, 4, 36, 4, 40, 8, 52, 11, 1, 11, 1, 15, 1, 7, 1, 2, 1, 11, 1, 15, 1, 7, 1, 2, 67, 311, 9, 22, 10, 8, 24, 6, 1, 42, 1, 9, 69, 6, 2, 1, 1, 44, 1, 2, 3, 1, 2, 23, 1, 1, 8, 23, 2, 7, 31, 8, 9, 48, 19, 1, 2, 5, 5, 22, 6, 3, 1, 26, 5, 1, 64, 56, 4, 2, 2, 16, 2, 46, 1, 3, 1, 2, 5, 4, 4, 1, 3, 1, 29, 2, 3, 4, 1, 9, 7, 9, 7, 29, 2, 1, 29, 3, 32, 8, 1, 28, 2, 4, 5, 7, 9, 54, 3, 7, 22, 2, 8, 19, 5, 8, 18, 7, 4, 12, 7, 80, 73, 55, 51, 13, 51, 7, 6, 36, 4, 8, 10, 294, 31, 1, 42, 1, 2, 1, 2, 2, 75, 3, 29, 10, 1, 8, 22, 11, 4, 5, 22, 18, 4, 4, 38, 21, 7, 20, 23, 9, 1, 1, 1, 53, 15, 7, 4, 20, 10, 1, 2, 2, 1, 9, 3, 1, 45, 3, 4, 2, 2, 2, 1, 4, 1, 10, 1, 2, 25, 7, 10, 6, 3, 36, 5, 1, 8, 1, 10, 4, 1, 2, 1, 8, 35, 1, 2, 1, 9, 2, 1, 48, 3, 9, 2, 4, 4, 4, 1, 1, 1, 10, 1, 1, 1, 3, 1, 20, 11, 18, 1, 25, 3, 3, 2, 1, 1, 2, 6, 1, 2, 1, 62, 7, 1, 1, 1, 4, 1, 15, 1, 10, 1, 6, 47, 1, 3, 8, 5, 10, 6, 2, 2, 1, 8, 2, 2, 2, 22, 1, 7, 1, 2, 1, 5, 1, 2, 1, 2, 1, 4, 2, 2, 2, 3, 2, 1, 6, 1, 5, 5, 2, 2, 7, 3, 5, 139, 53, 3, 8, 2, 3, 1, 1, 4, 5, 10, 2, 1, 1, 1, 3, 30, 48, 3, 6, 1, 1, 4, 2, 1, 2, 2, 1, 1, 8, 10, 166, 47, 3, 4, 2, 4, 2, 1, 2, 23, 4, 2, 34, 48, 3, 8, 2, 1, 1, 2, 3, 1, 11, 10, 6, 13, 19, 43, 1, 1, 1, 2, 6, 1, 1, 1, 1, 6, 10, 54, 27, 2, 3, 2, 4, 1, 5, 4, 10, 2, 3, 1, 7, 185, 44, 3, 9, 1, 2, 1, 100, 32, 32, 10, 9, 12, 8, 2, 1, 2, 8, 1, 2, 1, 24, 6, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 3, 9, 10, 70, 8, 2, 39, 3, 4, 2, 2, 4, 1, 1, 1, 1, 1, 27, 1, 10, 40, 6, 1, 1, 4, 8, 1, 8, 1, 6, 2, 3, 46, 13, 1, 2, 3, 1, 5, 13, 73, 7, 10, 246, 9, 1, 37, 1, 7, 1, 6, 1, 1, 1, 5, 10, 10, 19, 3, 2, 30, 2, 22, 1, 1, 7, 1, 2, 1, 2, 73, 7, 1, 2, 1, 38, 6, 3, 1, 1, 2, 1, 7, 1, 1, 8, 10, 6, 6, 1, 2, 1, 32, 5, 1, 2, 1, 2, 1, 1, 1, 1, 7, 10, 310, 19, 2, 2, 2, 7, 2, 1, 1, 13, 1, 34, 2, 5, 3, 2, 1, 1, 1, 13, 10, 86, 1, 15, 21, 8, 4, 17, 13, 1, 922, 102, 111, 1, 5, 11, 196, 2636, 97, 2, 13, 1072, 16, 1, 6, 15, 4010, 583, 8633, 569, 7, 31, 1, 10, 4, 2, 79, 1, 10, 6, 30, 2, 5, 1, 10, 48, 7, 5, 4, 4, 1, 1, 10, 10, 1, 7, 1, 21, 5, 19, 688, 32, 32, 23, 4, 101, 75, 4, 1, 1, 55, 7, 4, 13, 64, 2, 1, 1, 1, 11, 2, 14, 6136, 8, 1238, 42, 9, 8935, 4, 1, 7, 1, 2, 1, 291, 15, 1, 29, 3, 2, 1, 14, 4, 8, 396, 2308, 107, 5, 13, 3, 9, 7, 10, 2, 1, 2, 1, 4, 4700, 46, 2, 23, 9, 116, 60, 246, 10, 39, 2, 60, 2, 3, 3, 6, 8, 8, 2, 7, 30, 4, 61, 21, 66, 3, 1, 122, 20, 12, 20, 12, 87, 9, 25, 135, 26, 26, 26, 7, 1, 18, 26, 26, 1, 1, 2, 2, 1, 2, 2, 2, 4, 1, 8, 4, 1, 1, 1, 7, 1, 11, 26, 26, 2, 1, 4, 2, 8, 1, 7, 1, 26, 2, 1, 4, 1, 5, 1, 1, 3, 7, 1, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28, 2, 25, 1, 25, 1, 6, 25, 1, 25, 1, 6, 25, 1, 25, 1, 6, 25, 1, 25, 1, 6, 25, 1, 25, 1, 6, 1, 1, 2, 50, 512, 55, 4, 50, 8, 1, 14, 1, 2, 5, 15, 5, 1, 15, 1104, 10, 1, 20, 6, 6, 213, 7, 1, 17, 2, 7, 1, 2, 1, 5, 5, 62, 33, 1, 112, 45, 3, 7, 7, 2, 10, 4, 1, 1, 320, 30, 1, 17, 44, 4, 10, 5, 1, 464, 27, 1, 4, 10, 742, 7, 1, 4, 1, 2, 1, 15, 1, 197, 2, 9, 7, 41, 34, 34, 7, 1, 4, 10, 4, 2, 785, 59, 1, 3, 1, 4, 76, 45, 1, 15, 194, 4, 1, 27, 1, 2, 1, 1, 2, 1, 1, 10, 1, 4, 1, 1, 1, 1, 6, 1, 4, 1, 1, 1, 1, 1, 1, 3, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 4, 1, 7, 1, 4, 1, 4, 1, 1, 1, 10, 1, 17, 5, 3, 1, 5, 1, 17, 52, 2, 270, 44, 4, 100, 12, 15, 2, 15, 1, 15, 1, 37, 10, 13, 161, 56, 29, 13, 44, 4, 9, 7, 2, 14, 6, 154, 251, 5, 728, 4, 17, 3, 13, 3, 119, 4, 95, 6, 12, 4, 1, 15, 12, 4, 56, 8, 10, 6, 40, 8, 30, 2, 2, 78, 340, 12, 14, 2, 13, 3, 9, 7, 46, 1, 7, 8, 14, 4, 9, 7, 9, 7, 147, 1, 55, 37, 10, 1030, 42720, 32, 4154, 6, 222, 2, 5762, 14, 7473, 3103, 542, 1506, 4939, 5, 4192, 711761, 1, 30, 96, 128, 240, 65040, 65534, 2, 65534]));
-    $thiz.jl_Character$__f_charTypeIndices = $p_jl_Character$__uncompressDeltas__AI__AI($thiz, deltas);
-    $thiz.jl_Character$__f_bitmap$0 = (((1 | $thiz.jl_Character$__f_bitmap$0) << 24) >> 24);
-  }
-  return $thiz.jl_Character$__f_charTypeIndices;
-}
-function $p_jl_Character$__charTypeIndices__AI($thiz) {
-  return (((((1 & $thiz.jl_Character$__f_bitmap$0) << 24) >> 24) === 0) ? $p_jl_Character$__charTypeIndices$lzycompute__AI($thiz) : $thiz.jl_Character$__f_charTypeIndices);
-}
-function $p_jl_Character$__charTypes$lzycompute__AI($thiz) {
-  if (((((2 & $thiz.jl_Character$__f_bitmap$0) << 24) >> 24) === 0)) {
-    $thiz.jl_Character$__f_charTypes = new $ac_I(new Int32Array([1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 5, 1, 2, 5, 1, 3, 2, 1, 3, 2, 1, 3, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 3, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 5, 2, 4, 27, 4, 27, 4, 27, 4, 27, 4, 27, 6, 1, 2, 1, 2, 4, 27, 1, 2, 0, 4, 2, 24, 1, 0, 27, 1, 24, 1, 0, 1, 0, 1, 2, 1, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 25, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 28, 6, 7, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 0, 1, 0, 4, 24, 2, 24, 20, 0, 28, 26, 0, 6, 20, 6, 24, 6, 24, 6, 24, 6, 0, 5, 0, 5, 24, 0, 16, 25, 24, 26, 24, 28, 6, 24, 16, 24, 5, 4, 5, 6, 9, 24, 5, 6, 5, 24, 5, 6, 16, 28, 6, 4, 6, 28, 6, 5, 9, 5, 28, 5, 24, 0, 16, 5, 6, 5, 6, 0, 5, 6, 5, 0, 9, 5, 6, 4, 28, 24, 4, 0, 6, 26, 5, 6, 4, 6, 4, 6, 4, 6, 0, 24, 0, 5, 6, 0, 24, 0, 5, 0, 5, 27, 5, 0, 16, 0, 6, 5, 4, 6, 16, 6, 8, 5, 6, 8, 6, 5, 8, 6, 8, 6, 8, 5, 6, 5, 6, 24, 9, 24, 4, 5, 6, 8, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 5, 8, 6, 0, 8, 0, 8, 6, 5, 0, 8, 0, 5, 0, 5, 6, 0, 9, 5, 26, 11, 28, 26, 5, 24, 6, 0, 6, 8, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 0, 8, 6, 0, 6, 0, 6, 0, 6, 0, 5, 0, 5, 0, 9, 6, 5, 6, 24, 0, 6, 8, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 5, 8, 6, 0, 6, 8, 0, 8, 6, 0, 5, 0, 5, 6, 0, 9, 24, 26, 0, 5, 6, 0, 6, 8, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 5, 8, 6, 8, 6, 0, 8, 0, 8, 6, 0, 6, 8, 0, 5, 0, 5, 6, 0, 9, 28, 5, 11, 0, 6, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 8, 6, 8, 0, 8, 0, 8, 6, 0, 5, 0, 8, 0, 9, 11, 28, 26, 28, 0, 6, 8, 6, 5, 0, 5, 0, 5, 0, 5, 0, 6, 5, 6, 8, 0, 6, 0, 6, 0, 6, 0, 5, 0, 5, 0, 5, 6, 0, 9, 0, 24, 11, 28, 5, 6, 8, 24, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 5, 8, 6, 8, 0, 6, 8, 0, 8, 6, 0, 8, 0, 5, 0, 5, 6, 0, 9, 0, 5, 8, 0, 6, 8, 5, 0, 5, 0, 5, 6, 5, 8, 6, 0, 8, 0, 8, 6, 5, 28, 0, 5, 8, 11, 5, 6, 0, 9, 11, 28, 5, 0, 6, 8, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 0, 8, 6, 0, 6, 0, 8, 0, 9, 0, 8, 24, 0, 5, 6, 5, 6, 0, 26, 5, 4, 6, 24, 9, 24, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 6, 5, 6, 5, 0, 5, 0, 4, 0, 6, 0, 9, 0, 5, 0, 5, 28, 24, 28, 24, 28, 6, 28, 9, 11, 28, 6, 28, 6, 28, 6, 21, 22, 21, 22, 8, 5, 0, 5, 0, 6, 8, 6, 24, 6, 5, 6, 0, 6, 0, 28, 6, 28, 0, 28, 24, 28, 24, 0, 5, 8, 6, 8, 6, 8, 6, 8, 6, 5, 9, 24, 5, 8, 6, 5, 6, 5, 8, 5, 8, 5, 6, 5, 6, 8, 6, 8, 6, 5, 8, 9, 8, 6, 28, 1, 0, 1, 0, 1, 0, 2, 24, 4, 2, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 24, 11, 0, 5, 28, 0, 1, 0, 2, 0, 20, 5, 28, 24, 5, 12, 5, 21, 22, 0, 5, 24, 10, 5, 0, 5, 6, 8, 0, 5, 6, 8, 24, 0, 5, 6, 0, 5, 0, 5, 0, 6, 0, 5, 6, 8, 6, 8, 6, 8, 6, 24, 4, 24, 26, 5, 6, 0, 9, 0, 11, 0, 24, 20, 24, 6, 16, 6, 9, 0, 5, 4, 5, 0, 5, 6, 5, 6, 5, 0, 5, 0, 5, 0, 6, 8, 6, 8, 0, 8, 6, 8, 6, 0, 28, 0, 24, 9, 5, 0, 5, 0, 5, 0, 5, 0, 9, 11, 0, 28, 5, 6, 8, 6, 0, 24, 5, 8, 6, 8, 6, 0, 6, 8, 6, 8, 6, 8, 6, 0, 6, 9, 0, 9, 0, 24, 4, 24, 0, 6, 7, 6, 0, 6, 8, 5, 6, 8, 6, 8, 6, 8, 6, 8, 5, 0, 9, 24, 28, 6, 28, 24, 0, 6, 8, 5, 8, 6, 8, 6, 8, 6, 5, 9, 5, 6, 8, 6, 8, 6, 8, 6, 8, 0, 24, 5, 8, 6, 8, 6, 0, 24, 9, 0, 5, 9, 5, 4, 24, 2, 0, 1, 0, 1, 24, 0, 6, 24, 6, 8, 6, 5, 6, 5, 6, 5, 8, 6, 5, 0, 2, 4, 2, 4, 2, 4, 6, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 0, 1, 0, 2, 1, 2, 1, 2, 0, 1, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 2, 0, 2, 3, 2, 3, 2, 3, 2, 0, 2, 1, 3, 27, 2, 27, 2, 0, 2, 1, 3, 27, 2, 0, 2, 1, 0, 27, 2, 1, 27, 0, 2, 0, 2, 1, 3, 27, 0, 12, 16, 20, 24, 29, 30, 21, 29, 30, 21, 29, 24, 13, 14, 16, 12, 24, 29, 30, 24, 23, 24, 25, 21, 22, 24, 25, 24, 23, 24, 12, 16, 0, 16, 11, 4, 0, 11, 25, 21, 22, 4, 11, 25, 21, 22, 0, 4, 0, 26, 0, 6, 7, 6, 7, 6, 0, 28, 1, 28, 1, 28, 2, 1, 2, 1, 2, 28, 1, 28, 25, 1, 28, 1, 28, 1, 28, 1, 28, 1, 28, 2, 1, 2, 5, 2, 28, 2, 1, 25, 1, 2, 28, 25, 28, 2, 28, 11, 10, 1, 2, 10, 11, 28, 0, 25, 28, 25, 28, 25, 28, 25, 28, 25, 28, 25, 28, 25, 28, 25, 28, 25, 28, 25, 28, 21, 22, 21, 22, 28, 25, 28, 21, 22, 28, 25, 28, 25, 28, 25, 28, 0, 28, 0, 11, 28, 11, 28, 25, 28, 25, 28, 25, 28, 25, 28, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 11, 28, 25, 21, 22, 25, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 25, 28, 25, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 25, 21, 22, 21, 22, 25, 21, 22, 25, 28, 25, 28, 25, 28, 0, 28, 0, 28, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 4, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 28, 1, 2, 1, 2, 6, 1, 2, 0, 24, 11, 24, 2, 0, 2, 0, 2, 0, 5, 0, 4, 24, 0, 6, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 24, 29, 30, 29, 30, 24, 29, 30, 24, 29, 30, 24, 20, 24, 20, 24, 29, 30, 24, 29, 30, 21, 22, 21, 22, 21, 22, 21, 22, 24, 4, 24, 20, 24, 20, 24, 21, 24, 28, 24, 21, 22, 21, 22, 21, 22, 21, 22, 20, 0, 28, 0, 28, 0, 28, 0, 28, 0, 12, 24, 28, 4, 5, 10, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 28, 21, 22, 21, 22, 21, 22, 21, 22, 20, 21, 22, 28, 10, 6, 8, 20, 4, 28, 10, 4, 5, 24, 28, 0, 5, 0, 6, 27, 4, 5, 20, 5, 24, 4, 5, 0, 5, 0, 5, 0, 28, 11, 28, 5, 28, 0, 5, 28, 0, 11, 28, 11, 28, 11, 28, 11, 28, 11, 28, 5, 28, 5, 4, 5, 0, 28, 0, 5, 4, 24, 5, 4, 24, 5, 9, 5, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 5, 6, 7, 24, 6, 24, 4, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 4, 6, 5, 10, 6, 24, 0, 27, 4, 27, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 4, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 4, 27, 1, 2, 1, 2, 5, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 0, 1, 2, 0, 2, 0, 2, 1, 2, 1, 2, 0, 4, 1, 2, 5, 4, 2, 5, 6, 5, 6, 5, 6, 5, 8, 6, 8, 28, 6, 0, 11, 28, 26, 28, 0, 5, 24, 0, 8, 5, 8, 6, 0, 24, 9, 0, 6, 5, 24, 5, 24, 5, 6, 9, 5, 6, 24, 5, 6, 8, 0, 24, 5, 0, 6, 8, 5, 6, 8, 6, 8, 6, 8, 24, 0, 4, 9, 0, 24, 5, 6, 4, 5, 9, 5, 0, 5, 6, 8, 6, 8, 6, 0, 5, 6, 5, 6, 8, 0, 9, 0, 24, 5, 4, 5, 28, 5, 8, 6, 8, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 0, 5, 4, 24, 5, 8, 6, 8, 24, 5, 4, 8, 6, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 2, 27, 4, 2, 4, 27, 0, 2, 5, 8, 6, 8, 6, 8, 24, 8, 6, 0, 9, 0, 5, 0, 5, 0, 5, 0, 19, 18, 5, 0, 5, 0, 2, 0, 2, 0, 5, 6, 5, 25, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 27, 0, 5, 22, 21, 28, 5, 0, 5, 0, 28, 0, 5, 26, 28, 6, 24, 21, 22, 24, 0, 6, 24, 20, 23, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 21, 22, 24, 21, 22, 24, 23, 24, 0, 24, 20, 21, 22, 21, 22, 21, 22, 24, 25, 20, 25, 0, 24, 26, 24, 0, 5, 0, 5, 0, 16, 0, 24, 26, 24, 21, 22, 24, 25, 24, 20, 24, 9, 24, 25, 24, 1, 21, 24, 22, 27, 23, 27, 2, 21, 25, 22, 25, 21, 22, 24, 21, 22, 24, 5, 4, 5, 4, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 26, 25, 27, 28, 26, 0, 28, 25, 28, 0, 16, 28, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 24, 0, 11, 0, 28, 10, 11, 28, 11, 28, 0, 28, 0, 28, 0, 28, 6, 0, 5, 0, 5, 0, 6, 11, 0, 5, 11, 0, 5, 10, 5, 10, 0, 5, 6, 0, 5, 0, 24, 5, 0, 5, 24, 10, 0, 1, 2, 5, 0, 9, 0, 1, 0, 2, 0, 5, 0, 5, 0, 24, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 2, 0, 2, 0, 2, 0, 5, 0, 5, 0, 5, 0, 4, 0, 4, 0, 4, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 24, 11, 5, 28, 11, 5, 0, 11, 0, 5, 0, 5, 0, 11, 5, 11, 0, 24, 5, 0, 24, 0, 5, 0, 11, 5, 11, 0, 11, 5, 6, 0, 6, 0, 6, 5, 0, 5, 0, 5, 0, 6, 0, 6, 11, 0, 24, 0, 5, 11, 24, 5, 11, 0, 5, 28, 5, 6, 0, 11, 24, 0, 5, 0, 24, 5, 0, 11, 5, 0, 11, 5, 0, 24, 0, 11, 0, 5, 0, 1, 0, 2, 0, 11, 5, 6, 0, 9, 0, 11, 0, 5, 0, 6, 20, 0, 5, 0, 6, 5, 11, 5, 0, 5, 6, 11, 24, 0, 5, 6, 24, 0, 5, 11, 0, 5, 0, 8, 6, 8, 5, 6, 24, 0, 11, 9, 6, 5, 6, 5, 0, 6, 8, 5, 8, 6, 8, 6, 24, 16, 24, 6, 0, 16, 0, 5, 0, 9, 0, 6, 5, 6, 8, 6, 0, 9, 24, 5, 8, 5, 0, 5, 6, 24, 5, 0, 6, 8, 5, 8, 6, 8, 5, 24, 6, 24, 8, 6, 9, 5, 24, 5, 24, 0, 11, 0, 5, 0, 5, 8, 6, 8, 6, 8, 6, 24, 6, 5, 6, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 24, 0, 5, 6, 8, 6, 0, 9, 0, 6, 8, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 6, 5, 8, 6, 8, 0, 8, 0, 8, 0, 5, 0, 8, 0, 5, 8, 0, 6, 0, 6, 0, 5, 8, 6, 8, 6, 8, 6, 5, 24, 9, 24, 0, 24, 6, 5, 0, 5, 8, 6, 8, 6, 8, 6, 8, 6, 5, 24, 5, 0, 9, 0, 5, 8, 6, 0, 8, 6, 8, 6, 24, 5, 6, 0, 5, 8, 6, 8, 6, 8, 6, 24, 5, 0, 9, 0, 24, 0, 5, 6, 8, 6, 8, 6, 8, 6, 5, 24, 0, 9, 0, 5, 0, 6, 8, 6, 8, 6, 0, 9, 11, 24, 28, 5, 0, 5, 8, 6, 8, 6, 24, 0, 1, 2, 9, 11, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 8, 0, 8, 0, 6, 8, 6, 5, 8, 5, 8, 6, 24, 0, 9, 0, 5, 0, 5, 8, 6, 0, 6, 8, 6, 5, 24, 5, 8, 0, 5, 6, 5, 6, 8, 5, 6, 24, 6, 0, 5, 6, 8, 6, 5, 6, 8, 6, 24, 5, 24, 0, 5, 0, 24, 0, 5, 0, 5, 8, 6, 0, 6, 8, 6, 5, 24, 0, 9, 11, 0, 24, 5, 0, 6, 0, 8, 6, 8, 6, 8, 6, 0, 5, 0, 5, 0, 5, 6, 0, 6, 0, 6, 0, 6, 5, 6, 0, 9, 0, 5, 0, 5, 0, 5, 8, 0, 6, 0, 8, 6, 8, 6, 5, 0, 9, 0, 5, 6, 8, 24, 0, 6, 5, 8, 5, 0, 5, 8, 6, 0, 8, 6, 8, 6, 24, 9, 0, 5, 0, 11, 28, 26, 28, 0, 24, 5, 0, 10, 0, 24, 0, 5, 0, 5, 24, 0, 5, 16, 6, 5, 6, 0, 5, 0, 5, 0, 5, 0, 9, 0, 24, 5, 0, 9, 0, 5, 0, 6, 24, 0, 5, 6, 24, 28, 4, 24, 28, 0, 9, 0, 11, 0, 5, 0, 5, 0, 1, 2, 11, 24, 0, 5, 0, 6, 5, 8, 0, 6, 4, 0, 4, 24, 4, 6, 0, 8, 0, 5, 0, 5, 0, 5, 0, 4, 0, 4, 0, 4, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 28, 6, 24, 16, 0, 6, 0, 6, 0, 28, 0, 28, 0, 28, 0, 28, 8, 6, 28, 8, 16, 6, 28, 6, 28, 6, 28, 0, 28, 6, 28, 0, 11, 0, 11, 0, 28, 0, 11, 0, 1, 2, 1, 2, 0, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 0, 2, 0, 2, 0, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0, 2, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 0, 1, 25, 2, 25, 2, 1, 25, 2, 25, 2, 1, 25, 2, 25, 2, 1, 25, 2, 25, 2, 1, 25, 2, 25, 2, 1, 2, 0, 9, 28, 6, 28, 6, 28, 6, 28, 6, 28, 24, 0, 6, 0, 6, 0, 2, 5, 2, 0, 2, 0, 6, 0, 6, 0, 6, 0, 6, 0, 6, 0, 4, 0, 6, 0, 5, 0, 6, 4, 0, 9, 0, 5, 28, 0, 5, 6, 0, 5, 6, 9, 0, 26, 0, 5, 4, 6, 9, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 11, 6, 0, 1, 2, 6, 4, 0, 9, 0, 24, 0, 11, 28, 11, 26, 11, 0, 11, 28, 11, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 25, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 11, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 27, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 28, 0, 9, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 16, 0, 16, 0, 6, 0, 18, 0, 18, 0]));
-    $thiz.jl_Character$__f_bitmap$0 = (((2 | $thiz.jl_Character$__f_bitmap$0) << 24) >> 24);
-  }
-  return $thiz.jl_Character$__f_charTypes;
-}
-function $p_jl_Character$__charTypes__AI($thiz) {
-  return (((((2 & $thiz.jl_Character$__f_bitmap$0) << 24) >> 24) === 0) ? $p_jl_Character$__charTypes$lzycompute__AI($thiz) : $thiz.jl_Character$__f_charTypes);
-}
-function $p_jl_Character$__uncompressDeltas__AI__AI($thiz, deltas) {
-  var acc = $n(deltas).get(0);
-  var i = 1;
-  var len = $n(deltas).u.length;
-  while ((i !== len)) {
-    acc = ((acc + $n(deltas).get(i)) | 0);
-    $n(deltas).set(i, acc);
-    i = ((1 + i) | 0);
-  }
-  return deltas;
-}
-function $p_jl_Character$__findIndexOfRange__AI__I__Z__I($thiz, startOfRangesArray, value, hasEmptyRanges) {
-  var i = $m_ju_Arrays$().binarySearch__AI__I__I(startOfRangesArray, value);
-  if ((i >= 0)) {
-    if (hasEmptyRanges) {
-      var j = ((1 + i) | 0);
-      while (((j < $n(startOfRangesArray).u.length) && ($n(startOfRangesArray).get(j) === value))) {
-        j = ((1 + j) | 0);
-      }
-      return j;
-    } else {
-      return ((1 + i) | 0);
-    }
-  } else {
-    return (~i);
-  }
-}
 /** @constructor */
 function $c_jl_Character$() {
-  this.jl_Character$__f_charTypeIndices = null;
-  this.jl_Character$__f_charTypes = null;
-  this.jl_Character$__f_java$lang$Character$$charTypesFirst256 = null;
   this.jl_Character$__f_nonASCIIZeroDigitCodePoints = null;
-  this.jl_Character$__f_bitmap$0 = 0;
   $n_jl_Character$ = this;
-  this.jl_Character$__f_java$lang$Character$$charTypesFirst256 = new $ac_I(new Int32Array([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 12, 24, 24, 24, 26, 24, 24, 24, 21, 22, 24, 25, 24, 20, 24, 24, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 24, 24, 25, 25, 25, 24, 24, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 21, 24, 22, 27, 23, 27, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 21, 25, 22, 25, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 12, 24, 26, 26, 26, 26, 28, 24, 27, 28, 5, 29, 25, 16, 28, 27, 28, 25, 11, 11, 27, 2, 24, 24, 27, 11, 5, 30, 11, 11, 11, 24, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 25, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 25, 2, 2, 2, 2, 2, 2, 2, 2]));
-  this.jl_Character$__f_nonASCIIZeroDigitCodePoints = new $ac_I(new Int32Array([1632, 1776, 1984, 2406, 2534, 2662, 2790, 2918, 3046, 3174, 3302, 3430, 3558, 3664, 3792, 3872, 4160, 4240, 6112, 6160, 6470, 6608, 6784, 6800, 6992, 7088, 7232, 7248, 42528, 43216, 43264, 43472, 43504, 43600, 44016, 65296, 66720, 68912, 69734, 69872, 69942, 70096, 70384, 70736, 70864, 71248, 71360, 71472, 71904, 72016, 72784, 73040, 73120, 73552, 92768, 92864, 93008, 120782, 120792, 120802, 120812, 120822, 123200, 123632, 124144, 125264, 130032]));
+  this.jl_Character$__f_nonASCIIZeroDigitCodePoints = $constArrUDiffs_I(67, "1C]4m6m=c4]4]4]4]4]4]4]4]4]3g4]2m9]2m1Jm1m9s4g5mm6]3]4mm12>mEm1m6m1]3]=]DI]1<m24mIs4g2c4w9];]4]<]3m3m=m3mH]8]2m=mBHm3]4mK3{gggg2:g=m@]13]4E]");
 }
 $c_jl_Character$.prototype = new $h_O();
 $c_jl_Character$.prototype.constructor = $c_jl_Character$;
@@ -11800,9 +11904,6 @@ $c_jl_Character$.prototype.toString__I__T = (function(codePoint) {
     throw $ct_jl_IllegalArgumentException__(new $c_jl_IllegalArgumentException());
   }
   return $as_T(String.fromCodePoint(codePoint));
-});
-$c_jl_Character$.prototype.getType__I__I = (function(codePoint) {
-  return ((codePoint < 0) ? 0 : ((codePoint < 256) ? $n(this.jl_Character$__f_java$lang$Character$$charTypesFirst256).get(codePoint) : $p_jl_Character$__getTypeGE256__I__I(this, codePoint)));
 });
 $c_jl_Character$.prototype.digitWithValidRadix__I__I__I = (function(codePoint, radix) {
   if ((codePoint < 256)) {
@@ -11822,16 +11923,6 @@ $c_jl_Character$.prototype.digitWithValidRadix__I__I__I = (function(codePoint, r
     }
   }
   return ((value < radix) ? value : (-1));
-});
-$c_jl_Character$.prototype.isUnicodeIdentifierStart__I__Z = (function(codePoint) {
-  var tpe = this.getType__I__I(codePoint);
-  return ((((((((tpe - 1) | 0) >>> 0) <= 1) || (tpe === 3)) || (tpe === 4)) || (tpe === 5)) || (tpe === 10));
-});
-$c_jl_Character$.prototype.isUnicodeIdentifierPart__I__Z = (function(codePoint) {
-  return this.isUnicodeIdentifierPartImpl__I__I__Z(codePoint, this.getType__I__I(codePoint));
-});
-$c_jl_Character$.prototype.isUnicodeIdentifierPartImpl__I__I__Z = (function(codePoint, tpe) {
-  return ((((((tpe === 9) || (tpe === 23)) || (tpe === 8)) || (tpe === 6)) || ((((((((tpe - 1) | 0) >>> 0) <= 1) || (tpe === 3)) || (tpe === 4)) || (tpe === 5)) || (tpe === 10))) || (((((codePoint >>> 0) <= 8) || ((((codePoint - 14) | 0) >>> 0) <= 13)) || ((((codePoint - 127) | 0) >>> 0) <= 32)) || (tpe === 16)));
 });
 var $d_jl_Character$ = new $TypeData().initClass($c_jl_Character$, "java.lang.Character$", ({
   jl_Character$: 1,
@@ -11870,7 +11961,7 @@ $c_jl_Integer$.prototype.java$lang$Integer$$parseIntImpl__T__I__I__I = (function
   var firstChar = $charAt(this$5, 0);
   var negative = (firstChar === 45);
   var sign = (negative ? (-1) : 0);
-  var i = ((negative || (firstChar === 43)) ? 1 : 0);
+  var i = ((negative || (firstChar === 43)) | 0);
   if ((i >= len)) {
     $m_jl_Integer$().parseIntFail__T__E(s);
   }
@@ -11957,8 +12048,8 @@ $c_jl_Long$.prototype.java$lang$Long$$toOctalString__I__I__T = (function(lo, hi)
     }
     var $x_1 = $as_T("0000000000".substring(beginIndex));
     var s$1 = $as_T((lp >>> 0.0).toString(8));
-    var this$11 = $n(s$1);
-    var beginIndex$1 = this$11.length;
+    var this$13 = $n(s$1);
+    var beginIndex$1 = this$13.length;
     if (((beginIndex$1 >>> 0) > 10)) {
       $charAt("0000000000", beginIndex$1);
     }
@@ -11966,8 +12057,8 @@ $c_jl_Long$.prototype.java$lang$Long$$toOctalString__I__I__T = (function(lo, hi)
   } else if ((mp !== 0)) {
     var $x_3 = $as_T((mp >>> 0.0).toString(8));
     var s$2 = $as_T((lp >>> 0.0).toString(8));
-    var this$18 = $n(s$2);
-    var beginIndex$2 = this$18.length;
+    var this$22 = $n(s$2);
+    var beginIndex$2 = this$22.length;
     if (((beginIndex$2 >>> 0) > 10)) {
       $charAt("0000000000", beginIndex$2);
     }
@@ -12082,23 +12173,23 @@ function $h_jl_String$() {
 $h_jl_String$.prototype = $c_jl_String$.prototype;
 $c_jl_String$.prototype.new__AC__I__I__T = (function(value, offset, count) {
   var arrayLength = $n(value).u.length;
-  if ((((offset < 0) || (count < 0)) || (offset > ((arrayLength - count) | 0)))) {
-    if (((offset < 0) || (offset >= arrayLength))) {
+  var endOffset = ((offset + count) | 0);
+  if (((((offset | count) | endOffset) | ((arrayLength - endOffset) | 0)) < 0)) {
+    if (((offset >>> 0) >= (arrayLength >>> 0))) {
       $charAt("", offset);
     }
     if ((count < 0)) {
       $charAt("", count);
     }
-    var index = ((((offset + count) | 0) - 1) | 0);
+    var index = ((endOffset - 1) | 0);
     $charAt("", index);
   }
-  var end = ((offset + count) | 0);
   var result = "";
   var i = offset;
-  while ((i !== end)) {
+  while ((i !== endOffset)) {
     var $x_1 = result;
-    var this$1 = $n(value).get(i);
-    result = ($x_1 + ("" + $cToS(this$1)));
+    var this$4 = $n(value).get(i);
+    result = ($x_1 + ("" + $cToS(this$4)));
     i = ((1 + i) | 0);
   }
   return result;
@@ -17414,14 +17505,16 @@ $c_jl_StringBuilder.prototype.subSequence__I__I__jl_CharSequence = (function(sta
 });
 $c_jl_StringBuilder.prototype.substring__I__I__T = (function(start, end) {
   var this$1 = $n(this.jl_StringBuilder__f_java$lang$StringBuilder$$content);
-  if ((start < 0)) {
-    $charAt(this$1, start);
-  }
-  if ((end > this$1.length)) {
+  var count = ((end - start) | 0);
+  var length = this$1.length;
+  if (((((start | count) | end) | ((length - end) | 0)) < 0)) {
+    if ((start < 0)) {
+      $charAt(this$1, start);
+    }
+    if ((end < start)) {
+      $charAt(this$1, (-1));
+    }
     $charAt(this$1, end);
-  }
-  if ((end < start)) {
-    $charAt(this$1, (-1));
   }
   return $as_T(this$1.substring(start, end));
 });
@@ -17528,24 +17621,27 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
     if ((nextPercentIndex < 0)) {
       var this$3 = $n(format);
       var beginIndex = fmtIndex;
-      if (((beginIndex < 0) || (beginIndex > this$3.length))) {
+      var length = this$3.length;
+      if (((beginIndex >>> 0) > (length >>> 0))) {
         $charAt(this$3, beginIndex);
       }
       $p_ju_Formatter__sendToDest__T__V($thiz, $as_T(this$3.substring(beginIndex)));
       return $thiz;
     }
-    var this$4 = $n(format);
+    var this$6 = $n(format);
     var beginIndex$1 = fmtIndex;
-    if ((beginIndex$1 < 0)) {
-      $charAt(this$4, beginIndex$1);
+    var count = ((nextPercentIndex - beginIndex$1) | 0);
+    var length$1 = this$6.length;
+    if (((((beginIndex$1 | count) | nextPercentIndex) | ((length$1 - nextPercentIndex) | 0)) < 0)) {
+      if ((beginIndex$1 < 0)) {
+        $charAt(this$6, beginIndex$1);
+      }
+      if ((nextPercentIndex < beginIndex$1)) {
+        $charAt(this$6, (-1));
+      }
+      $charAt(this$6, nextPercentIndex);
     }
-    if ((nextPercentIndex > this$4.length)) {
-      $charAt(this$4, nextPercentIndex);
-    }
-    if ((nextPercentIndex < beginIndex$1)) {
-      $charAt(this$4, (-1));
-    }
-    $p_ju_Formatter__sendToDest__T__V($thiz, $as_T(this$4.substring(beginIndex$1, nextPercentIndex)));
+    $p_ju_Formatter__sendToDest__T__V($thiz, $as_T(this$6.substring(beginIndex$1, nextPercentIndex)));
     var formatSpecifierIndex = ((1 + nextPercentIndex) | 0);
     var re = $m_ju_Formatter$().ju_Formatter$__f_java$util$Formatter$$FormatSpecifier;
     re.lastIndex = formatSpecifierIndex;
@@ -17554,15 +17650,15 @@ function $p_ju_Formatter__format__ju_Formatter$LocaleInfo__T__AO__ju_Formatter($
       if ((formatSpecifierIndex === fmtLength)) {
         var conversion = 37;
       } else {
-        var this$5 = $n(format);
-        var conversion = $charAt(this$5, formatSpecifierIndex);
+        var this$8 = $n(format);
+        var conversion = $charAt(this$8, formatSpecifierIndex);
       }
       $p_ju_Formatter__throwUnknownFormatConversionException__C__E($thiz, conversion);
     }
     fmtIndex = $uI(re.lastIndex);
-    var this$6 = $n(format);
+    var this$9 = $n(format);
     var index = ((fmtIndex - 1) | 0);
-    var conversion$2 = $charAt(this$6, index);
+    var conversion$2 = $charAt(this$9, index);
     var flags = $p_ju_Formatter__parseFlags__T__C__I($thiz, $as_T(execResult[2]), conversion$2);
     var width = $p_ju_Formatter__parsePositiveInt__O__I($thiz, execResult[3]);
     var precision = $p_ju_Formatter__parsePositiveInt__O__I($thiz, execResult[4]);
@@ -17723,7 +17819,7 @@ function $p_ju_Formatter__formatArg__ju_Formatter$LocaleInfo__O__C__I__I__I__V($
     case 115: {
       if ($is_ju_Formattable(arg)) {
         var x2 = $as_ju_Formattable(arg);
-        var formattableFlags = (((((1 & flags) !== 0) ? 1 : 0) | (((2 & flags) !== 0) ? 4 : 0)) | (((256 & flags) !== 0) ? 2 : 0));
+        var formattableFlags = (((((1 & flags) !== 0) | 0) | (((2 & flags) !== 0) ? 4 : 0)) | (((256 & flags) !== 0) ? 2 : 0));
         $n(x2).formatTo__ju_Formatter__I__I__I__V($thiz, formattableFlags, width, precision);
       } else {
         if (((2 & flags) !== 0)) {
@@ -17847,21 +17943,23 @@ function $p_ju_Formatter__computerizedScientificNotation__ju_Formatter$Decimal__
   var fractionalDigitCount = ((this$1.length - 1) | 0);
   var missingZeros = ((digitsAfterDot - fractionalDigitCount) | 0);
   var this$2 = $n(intStr);
-  if ((this$2.length < 1)) {
+  var length = this$2.length;
+  if ((((length - 1) | 0) < 0)) {
     $charAt(this$2, 1);
   }
   var integerPart = $as_T(this$2.substring(0, 1));
-  var this$3 = $n(intStr);
-  if ((this$3.length < 1)) {
-    $charAt(this$3, 1);
+  var this$4 = $n(intStr);
+  var length$1 = this$4.length;
+  if ((length$1 === 0)) {
+    $charAt(this$4, 1);
   }
-  var fractionalPart = (("" + $as_T(this$3.substring(1))) + $m_ju_Formatter$().java$util$Formatter$$strOfZeros__I__T(missingZeros));
+  var fractionalPart = (("" + $as_T(this$4.substring(1))) + $m_ju_Formatter$().java$util$Formatter$$strOfZeros__I__T(missingZeros));
   var significandStr = (((fractionalPart === "") && (!forceDecimalSep)) ? integerPart : ((integerPart + ".") + fractionalPart));
   var exponent = ((fractionalDigitCount - $n(rounded).ju_Formatter$Decimal__f_scale) | 0);
   var exponentSign = ((exponent < 0) ? "-" : "+");
   var sign = (exponent >> 31);
-  var this$5 = (((exponent ^ sign) - sign) | 0);
-  var exponentAbsStr0 = ("" + this$5);
+  var this$8 = (((exponent ^ sign) - sign) | 0);
+  var exponentAbsStr0 = ("" + this$8);
   var exponentAbsStr = ((exponentAbsStr0.length === 1) ? ("0" + exponentAbsStr0) : exponentAbsStr0);
   return ((((signStr + significandStr) + "e") + exponentSign) + exponentAbsStr);
 }
@@ -17876,21 +17974,23 @@ function $p_ju_Formatter__decimalNotation__ju_Formatter$Decimal__I__Z__T($thiz, 
   var this$2 = $n(expandedIntStr);
   var dotPos = ((this$2.length - scale) | 0);
   var this$3 = $n(expandedIntStr);
-  if ((dotPos > this$3.length)) {
+  var length = this$3.length;
+  if ((((dotPos | dotPos) | ((length - dotPos) | 0)) < 0)) {
+    if ((dotPos < 0)) {
+      $charAt(this$3, (-1));
+    }
     $charAt(this$3, dotPos);
-  }
-  if ((dotPos < 0)) {
-    $charAt(this$3, (-1));
   }
   var integerPart = (signStr + $as_T(this$3.substring(0, dotPos)));
   if (((scale === 0) && (!forceDecimalSep))) {
     return integerPart;
   } else {
-    var this$4 = $n(expandedIntStr);
-    if (((dotPos < 0) || (dotPos > this$4.length))) {
-      $charAt(this$4, dotPos);
+    var this$5 = $n(expandedIntStr);
+    var length$1 = this$5.length;
+    if (((dotPos >>> 0) > (length$1 >>> 0))) {
+      $charAt(this$5, dotPos);
     }
-    return ((integerPart + ".") + $as_T(this$4.substring(dotPos)));
+    return ((integerPart + ".") + $as_T(this$5.substring(dotPos)));
   }
 }
 function $p_ju_Formatter__generalScientificNotation__ju_Formatter$Decimal__I__Z__T($thiz, x, precision, forceDecimalSep) {
@@ -17959,7 +18059,7 @@ function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, wi
       var lo$3 = (((32 & n) === 0) ? (1 << n) : 0);
       var hi$4 = (((32 & n) === 0) ? 0 : (1 << n));
       var lo$4 = ((lo$3 - 1) | 0);
-      var hi$5 = ((((hi$4 - 1) | 0) + (((lo$3 | (~lo$4)) >>> 31) | 0)) | 0);
+      var hi$5 = ((((hi$4 - 1) | 0) + ((lo$4 !== (-1)) | 0)) | 0);
       var lo$5 = (((lo$3 >>> 1) | 0) | (hi$4 << 31));
       var hi$6 = (hi$4 >> 1);
       var lo$6 = (~lo$4);
@@ -17973,7 +18073,7 @@ function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, wi
         var roundedMantissa_$_hi = hi$8;
       } else if (((hi$9 === hi$6) ? ((lo$8 >>> 0) > (lo$5 >>> 0)) : (hi$9 > hi$6))) {
         var lo$9 = ((lo$7 + lo$3) | 0);
-        var hi$10 = ((((hi$8 + hi$4) | 0) + ((((lo$7 & lo$3) | ((lo$7 | lo$3) & (~lo$9))) >>> 31) | 0)) | 0);
+        var hi$10 = ((((hi$8 + hi$4) | 0) + (((lo$9 >>> 0) < (lo$7 >>> 0)) | 0)) | 0);
         var roundedMantissa_$_lo = lo$9;
         var roundedMantissa_$_hi = hi$10;
       } else {
@@ -17984,7 +18084,7 @@ function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, wi
           var roundedMantissa_$_hi = hi$8;
         } else {
           var lo$11 = ((lo$7 + lo$3) | 0);
-          var hi$12 = ((((hi$8 + hi$4) | 0) + ((((lo$7 & lo$3) | ((lo$7 | lo$3) & (~lo$11))) >>> 31) | 0)) | 0);
+          var hi$12 = ((((hi$8 + hi$4) | 0) + (((lo$11 >>> 0) < (lo$7 >>> 0)) | 0)) | 0);
           var roundedMantissa_$_lo = lo$11;
           var roundedMantissa_$_hi = hi$12;
         }
@@ -18019,11 +18119,12 @@ function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, wi
       }
     }
     var endIndex = len;
-    if ((endIndex > padded.length)) {
+    var length = padded.length;
+    if ((((endIndex | endIndex) | ((length - endIndex) | 0)) < 0)) {
+      if ((endIndex < 0)) {
+        $charAt(padded, (-1));
+      }
       $charAt(padded, endIndex);
-    }
-    if ((endIndex < 0)) {
-      $charAt(padded, (-1));
     }
     var mantissaStr = $as_T(padded.substring(0, endIndex));
     var exponentStr = ("" + exponent);
@@ -18033,23 +18134,20 @@ function $p_ju_Formatter__formatHexFloatingPoint__I__I__I__D__V($thiz, flags, wi
   }
 }
 function $p_ju_Formatter__formatNonNumericString__ju_Formatter$LocaleInfo__I__I__I__T__V($thiz, localeInfo, flags, width, precision, str) {
-  if ((precision < 0)) {
-    var $x_1 = true;
-  } else {
-    var this$1 = $n(str);
-    var $x_1 = (precision >= this$1.length);
-  }
-  if ($x_1) {
+  var this$1 = $n(str);
+  var length = this$1.length;
+  if (((precision >>> 0) >= (length >>> 0))) {
     var truncatedStr = str;
   } else {
-    var this$2 = $n(str);
-    if ((precision > this$2.length)) {
-      $charAt(this$2, precision);
+    var this$4 = $n(str);
+    var length$1 = this$4.length;
+    if ((((precision | precision) | ((length$1 - precision) | 0)) < 0)) {
+      if ((precision < 0)) {
+        $charAt(this$4, (-1));
+      }
+      $charAt(this$4, precision);
     }
-    if ((precision < 0)) {
-      $charAt(this$2, (-1));
-    }
-    var truncatedStr = $as_T(this$2.substring(0, precision));
+    var truncatedStr = $as_T(this$4.substring(0, precision));
   }
   $p_ju_Formatter__padAndSendToDestNoZeroPad__I__I__T__V($thiz, flags, width, $p_ju_Formatter__applyUpperCase__ju_Formatter$LocaleInfo__I__T__T($thiz, localeInfo, flags, truncatedStr));
 }
@@ -18080,18 +18178,20 @@ function $p_ju_Formatter__formatNumericString__ju_Formatter$LocaleInfo__I__I__T_
       }
     } else if (((64 & flags) !== 0)) {
       var this$9 = $n(str);
-      if ((this$9.length < 1)) {
+      var length = this$9.length;
+      if ((length === 0)) {
         $charAt(this$9, 1);
       }
       var _2 = ($as_T(this$9.substring(1)) + ")");
       var x1___1 = "(";
       var x1___2 = _2;
     } else {
-      var this$10 = $n(str);
-      if ((this$10.length < 1)) {
-        $charAt(this$10, 1);
+      var this$12 = $n(str);
+      var length$1 = this$12.length;
+      if ((length$1 === 0)) {
+        $charAt(this$12, 1);
       }
-      var _2$1 = $as_T(this$10.substring(1));
+      var _2$1 = $as_T(this$12.substring(1));
       var x1___1 = "-";
       var x1___2 = _2$1;
     }
@@ -18131,35 +18231,39 @@ function $p_ju_Formatter__insertGroupingCommas__ju_Formatter$LocaleInfo__T__T($t
   } else {
     var this$3 = $n(s);
     var beginIndex = index;
-    if (((beginIndex < 0) || (beginIndex > this$3.length))) {
+    var length = this$3.length;
+    if (((beginIndex >>> 0) > (length >>> 0))) {
       $charAt(this$3, beginIndex);
     }
     var result = $as_T(this$3.substring(beginIndex));
     while ((index > groupingSize)) {
       var next = ((index - groupingSize) | 0);
-      var this$4 = $n(s);
+      var this$6 = $n(s);
       var endIndex = index;
-      if ((next < 0)) {
-        $charAt(this$4, next);
+      var count = ((endIndex - next) | 0);
+      var length$1 = this$6.length;
+      if (((((next | count) | endIndex) | ((length$1 - endIndex) | 0)) < 0)) {
+        if ((next < 0)) {
+          $charAt(this$6, next);
+        }
+        if ((endIndex < next)) {
+          $charAt(this$6, (-1));
+        }
+        $charAt(this$6, endIndex);
       }
-      if ((endIndex > this$4.length)) {
-        $charAt(this$4, endIndex);
-      }
-      if ((endIndex < next)) {
-        $charAt(this$4, (-1));
-      }
-      result = (($as_T(this$4.substring(next, endIndex)) + ",") + result);
+      result = (($as_T(this$6.substring(next, endIndex)) + ",") + result);
       index = next;
     }
-    var this$5 = $n(s);
+    var this$8 = $n(s);
     var endIndex$1 = index;
-    if ((endIndex$1 > this$5.length)) {
-      $charAt(this$5, endIndex$1);
+    var length$2 = this$8.length;
+    if ((((endIndex$1 | endIndex$1) | ((length$2 - endIndex$1) | 0)) < 0)) {
+      if ((endIndex$1 < 0)) {
+        $charAt(this$8, (-1));
+      }
+      $charAt(this$8, endIndex$1);
     }
-    if ((endIndex$1 < 0)) {
-      $charAt(this$5, (-1));
-    }
-    return (($as_T(this$5.substring(0, endIndex$1)) + ",") + result);
+    return (($as_T(this$8.substring(0, endIndex$1)) + ",") + result);
   }
 }
 function $p_ju_Formatter__applyNumberUpperCase__I__T__T($thiz, flags, str) {
@@ -21924,7 +22028,7 @@ $c_s_Option.prototype.isEmpty__Z = (function() {
   return (this === $m_s_None$());
 });
 $c_s_Option.prototype.knownSize__I = (function() {
-  return (this.isEmpty__Z() ? 0 : 1);
+  return ((!this.isEmpty__Z()) | 0);
 });
 $c_s_Option.prototype.iterator__sc_Iterator = (function() {
   if (this.isEmpty__Z()) {
@@ -22859,14 +22963,16 @@ function $f_sc_LinearSeqOps__indexWhere__F1__I__I($thiz, p, from) {
 function $p_sc_LinearSeqOps__loop$1__I__sc_LinearSeq__I__I($thiz, i, xs, len$1) {
   while (true) {
     if ((i === len$1)) {
-      return ($n(xs).isEmpty__Z() ? 0 : 1);
-    } else if ($n(xs).isEmpty__Z()) {
-      return (-1);
+      return ((!$n(xs).isEmpty__Z()) | 0);
     } else {
-      var temp$i = ((1 + i) | 0);
-      var temp$xs = $as_sc_LinearSeq($n(xs).tail__O());
-      i = temp$i;
-      xs = temp$xs;
+      if ((!$n(xs).isEmpty__Z())) {
+        var temp$i = ((1 + i) | 0);
+        var temp$xs = $as_sc_LinearSeq($n(xs).tail__O());
+        i = temp$i;
+        xs = temp$xs;
+        continue;
+      }
+      return (-1);
     }
   }
 }
@@ -22994,14 +23100,16 @@ function $p_sc_StringOps$$anon$1__advance__T($thiz) {
   }
   var this$9 = $n($thiz.sc_StringOps$$anon$1__f_$this$2);
   var endIndex = end;
-  if ((start < 0)) {
-    $charAt(this$9, start);
-  }
-  if ((endIndex > this$9.length)) {
+  var count = ((endIndex - start) | 0);
+  var length = this$9.length;
+  if (((((start | count) | endIndex) | ((length - endIndex) | 0)) < 0)) {
+    if ((start < 0)) {
+      $charAt(this$9, start);
+    }
+    if ((endIndex < start)) {
+      $charAt(this$9, (-1));
+    }
     $charAt(this$9, endIndex);
-  }
-  if ((endIndex < start)) {
-    $charAt(this$9, (-1));
   }
   return $as_T(this$9.substring(start, endIndex));
 }
@@ -25239,14 +25347,17 @@ $c_scm_ArrayBuffer$.prototype.resizeUp__I__I__I = (function(arrayLen, targetLen)
     throw $ct_jl_RuntimeException__T__(new $c_jl_RuntimeException(), ((((("Overflow while resizing array of array-backed collection. Requested length: " + targetLen) + "; current length: ") + arrayLen) + "; increase: ") + ((targetLen - arrayLen) | 0)));
   } else if ((targetLen <= arrayLen)) {
     return (-1);
-  } else if ((targetLen > 2147483639)) {
-    throw $ct_jl_RuntimeException__T__(new $c_jl_RuntimeException(), ((("Array of array-backed collection exceeds VM length limit of 2147483639. Requested length: " + targetLen) + "; current length: ") + arrayLen));
-  } else if ((arrayLen > 1073741819)) {
-    return 2147483639;
   } else {
-    var x = (arrayLen << 1);
-    var y = ((x > 16) ? x : 16);
-    return ((targetLen > y) ? targetLen : y);
+    if ((targetLen > 2147483639)) {
+      throw $ct_jl_RuntimeException__T__(new $c_jl_RuntimeException(), ((("Array of array-backed collection exceeds VM length limit of 2147483639. Requested length: " + targetLen) + "; current length: ") + arrayLen));
+    }
+    if ((arrayLen > 1073741819)) {
+      return 2147483639;
+    } else {
+      var x = (arrayLen << 1);
+      var y = ((x > 16) ? x : 16);
+      return ((targetLen > y) ? targetLen : y);
+    }
   }
 });
 $c_scm_ArrayBuffer$.prototype.scala$collection$mutable$ArrayBuffer$$ensureSize__AO__I__I__AO = (function(array, curSize, targetSize) {
@@ -28593,7 +28704,9 @@ function $f_T__equals__O__Z($thiz, that) {
 }
 function $f_T__getChars__I__I__AC__I__V($thiz, srcBegin, srcEnd, dst, dstBegin) {
   var dstLength = $n(dst).u.length;
-  if (((((srcEnd > $thiz.length) || (srcBegin < 0)) || (srcEnd < 0)) || (srcBegin > srcEnd))) {
+  var count = ((srcEnd - srcBegin) | 0);
+  var length = $thiz.length;
+  if (((((srcBegin | count) | srcEnd) | ((length - srcEnd) | 0)) < 0)) {
     if ((srcBegin < 0)) {
       $charAt($thiz, srcBegin);
     }
@@ -28605,8 +28718,8 @@ function $f_T__getChars__I__I__AC__I__V($thiz, srcBegin, srcEnd, dst, dstBegin) 
   if ((dstBegin < 0)) {
     $charAt("", dstBegin);
   }
-  if ((dstBegin > ((dstLength - ((srcEnd - srcBegin) | 0)) | 0))) {
-    var index = ((dstBegin + ((srcEnd - srcBegin) | 0)) | 0);
+  if ((dstBegin > ((dstLength - count) | 0))) {
+    var index = ((dstBegin + count) | 0);
     $charAt("", index);
   }
   var offset = ((dstBegin - srcBegin) | 0);
@@ -28631,14 +28744,16 @@ function $f_T__repeat__I__T($thiz, count) {
   }
 }
 function $f_T__subSequence__I__I__jl_CharSequence($thiz, beginIndex, endIndex) {
-  if ((beginIndex < 0)) {
-    $charAt($thiz, beginIndex);
-  }
-  if ((endIndex > $thiz.length)) {
+  var count = ((endIndex - beginIndex) | 0);
+  var length = $thiz.length;
+  if (((((beginIndex | count) | endIndex) | ((length - endIndex) | 0)) < 0)) {
+    if ((beginIndex < 0)) {
+      $charAt($thiz, beginIndex);
+    }
+    if ((endIndex < beginIndex)) {
+      $charAt($thiz, (-1));
+    }
     $charAt($thiz, endIndex);
-  }
-  if ((endIndex < beginIndex)) {
-    $charAt($thiz, (-1));
   }
   return $as_T($thiz.substring(beginIndex, endIndex));
 }
@@ -30075,7 +30190,7 @@ $c_sci_RangeIterator.prototype.drop__I__sc_Iterator = (function(n) {
     var value$1 = Math.imul(this.sci_RangeIterator__f_step, n);
     var hi$1 = (value$1 >> 31);
     var lo = ((value + value$1) | 0);
-    var hi$2 = ((((hi + hi$1) | 0) + ((((value & value$1) | ((value | value$1) & (~lo))) >>> 31) | 0)) | 0);
+    var hi$2 = ((((hi + hi$1) | 0) + (((lo >>> 0) < (value >>> 0)) | 0)) | 0);
     if ((this.sci_RangeIterator__f_step > 0)) {
       var value$2 = this.sci_RangeIterator__f_lastElement;
       var hi$3 = (value$2 >> 31);
@@ -32381,20 +32496,22 @@ $c_jl_JSConsoleBasedPrintStream.prototype.java$lang$JSConsoleBasedPrintStream$$p
     } else {
       var $x_1 = this.jl_JSConsoleBasedPrintStream__f_buffer;
       var this$2 = $n(rest);
-      if ((nlPos > this$2.length)) {
+      var length = this$2.length;
+      if ((((nlPos | nlPos) | ((length - nlPos) | 0)) < 0)) {
+        if ((nlPos < 0)) {
+          $charAt(this$2, (-1));
+        }
         $charAt(this$2, nlPos);
-      }
-      if ((nlPos < 0)) {
-        $charAt(this$2, (-1));
       }
       $p_jl_JSConsoleBasedPrintStream__doWriteLine__T__V(this, (("" + $x_1) + $as_T(this$2.substring(0, nlPos))));
       this.jl_JSConsoleBasedPrintStream__f_buffer = "";
-      var this$3 = $n(rest);
+      var this$4 = $n(rest);
       var beginIndex = ((1 + nlPos) | 0);
-      if (((beginIndex < 0) || (beginIndex > this$3.length))) {
-        $charAt(this$3, beginIndex);
+      var length$1 = this$4.length;
+      if (((beginIndex >>> 0) > (length$1 >>> 0))) {
+        $charAt(this$4, beginIndex);
       }
-      rest = $as_T(this$3.substring(beginIndex));
+      rest = $as_T(this$4.substring(beginIndex));
     }
   }
 });
@@ -38391,14 +38508,16 @@ var $d_sci_ArraySeq$ofUnit = new $TypeData().initClass($c_sci_ArraySeq$ofUnit, "
 function $p_sci_List__loop$2__I__sci_List__I__I($thiz, i, xs, len$1) {
   while (true) {
     if ((i === len$1)) {
-      return ($n(xs).isEmpty__Z() ? 0 : 1);
-    } else if ($n(xs).isEmpty__Z()) {
-      return (-1);
+      return ((!$n(xs).isEmpty__Z()) | 0);
     } else {
-      var temp$i = ((1 + i) | 0);
-      var temp$xs = $as_sci_List($n(xs).tail__O());
-      i = temp$i;
-      xs = temp$xs;
+      if ((!$n(xs).isEmpty__Z())) {
+        var temp$i = ((1 + i) | 0);
+        var temp$xs = $as_sci_List($n(xs).tail__O());
+        i = temp$i;
+        xs = temp$xs;
+        continue;
+      }
+      return (-1);
     }
   }
 }
