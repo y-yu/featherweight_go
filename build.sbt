@@ -12,6 +12,7 @@ val defaultScalacOptions = Seq(
 
 lazy val root = project.in(file("."))
   .settings(
+    autoScalaLibrary := false,
     publishArtifact := false,
     publish := {},
     publishLocal := {}
@@ -24,7 +25,7 @@ lazy val root = project.in(file("."))
     featherweightGoJVM
   )
 
-lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) in file("."))
+lazy val featherweightGo = crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full).in(file("."))
   .settings(
     scalaVersion := scala213Version,
     scalacOptions ++= defaultScalacOptions,
@@ -47,19 +48,19 @@ lazy val featherweightGo = (crossProject(JVMPlatform, JSPlatform).crossType(Cros
     mainClass := Some("featherweightgo.Main")
   )
 
-lazy val featherweightGoCore = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Pure) in file("./core"))
+lazy val featherweightGoCore = crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Pure).in(file("./core"))
   .settings(
     organization := "com.github.y-yu",
     name := "featherweight_go",
     description := "Scala implementation of Featherweight (Generics) Go",
-    homepage := Some(url("https://github.com/y-yu")),
-    licenses := Seq("MIT" -> url(s"https://github.com/y-yu/featherweight_go/blob/master/LICENSE")),
+    homepage := Some(uri("https://github.com/y-yu")),
+    licenses := Seq("MIT" -> uri(s"https://github.com/y-yu/featherweight_go/blob/master/LICENSE")),
     scalaVersion := scala213Version,
     scalacOptions ++= defaultScalacOptions,
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %%% "scala-parser-combinators" % "2.4.0",
-      "org.scalatest" %%% "scalatest" % "3.2.20" % "test",
-      "com.lihaoyi" %%% "pprint" % "0.9.6"
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "2.4.0",
+      "org.scalatest" %% "scalatest" % "3.2.20" % "test",
+      "com.lihaoyi" %% "pprint" % "0.9.6"
     )
   )
   .settings(publishSettings)
@@ -74,9 +75,9 @@ lazy val publishSettings = Seq(
   publishMavenStyle := true,
   publishTo := (
     if (isSnapshot.value)
-      Opts.resolver.sonatypeOssSnapshots.headOption
+      None
     else
-      Some(Opts.resolver.sonatypeStaging)
+      localStaging.value
   ),
   Test / publishArtifact := false,
   pomExtra :=
@@ -107,7 +108,7 @@ lazy val publishSettings = Seq(
     setNextVersion,
     updateReadme,
     commitNextVersion,
-    releaseStepCommand("sonatypeReleaseAll"),
+    releaseStepCommand("sonaRelease"),
     pushChanges
   )
 )
@@ -117,6 +118,6 @@ val tagName = Def.setting {
 }
 
 val tagOrHash = Def.setting {
-  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lineStream_!.head
+  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lazyLines_!.head
   else tagName.value
 }
