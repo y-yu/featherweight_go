@@ -5,17 +5,17 @@ import sbtrelease.Git
 object UpdateReadme {
   private val snapshotMark = "SNAPSHOT"
 
-  val updateReadmeTask = { state: State =>
+  val updateReadmeTask = { (state: State) =>
     val extracted = Project.extract(state)
-    val v = extracted get version
-    val org =  extracted get organization
-    val n = extracted get name
-    val baseDir = extracted get baseDirectory
+    val v = extracted.get(version)
+    val org =  extracted.get(organization)
+    val n = extracted.get(name)
+    val baseDir = extracted.get(baseDirectory)
     val readmeFile = baseDir / "README.md"
 
     val str = s"""$org" % "$n" % "$v""""
     
-    val newReadme = Predef.augmentString(IO.read(readmeFile)).lines.map{ line =>
+    val newReadme = IO.readLines(readmeFile).map{ line =>
       if (v.contains(snapshotMark))
         line.replaceFirst(s"""(?<=addSbtPlugin\\().+ % .+ % [^-]+-$snapshotMark"(?=\\))""", str)
       else

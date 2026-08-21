@@ -10,10 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup Java 11
+      - name: Setup Java 17
         uses: actions/setup-java@v5
         with:
-          java-version: 11
+          java-version: 17
           distribution: temurin
 
       - name: Setup coursier cache
@@ -26,7 +26,7 @@ jobs:
         run: |
           mkdir -p ./public/js/target/scala-2.13
           cp index.html ./public/
-          cp ./js/target/scala-2.13/featherweightgo-fastopt.js ./public/js/target/scala-2.13/
+          cp ./target/out/sjs1/scala-2.13.18/featherweightgo/featherweightgo-fastopt.js ./public/js/target/scala-2.13/
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4

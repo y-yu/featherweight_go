@@ -10,7 +10,7 @@ jobs:
   build-test:
     strategy:
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17 ]
         java-distribution: [ 'temurin' ]
         os: [ macos-latest, ubuntu-latest ]
     runs-on: ${{ matrix.os }}
