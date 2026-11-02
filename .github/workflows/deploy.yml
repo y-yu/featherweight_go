@@ -17,7 +17,7 @@ jobs:
           distribution: temurin
 
       - name: Setup coursier cache
-        uses: coursier/cache-action@v8.2
+        uses: coursier/cache-action@v9.0
 
       - name: Make JS code
         run: ./sbt featherweightGoJS/fastOptJS
